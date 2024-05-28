@@ -1,0 +1,29 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello SortieController!{% endblock %}
+
+{% block body %}
+
+<div >
+    <h1>Liste des sorties prévues</h1>
+    {% for site in siteList %}
+    <table>
+        <thead>
+        <tr>
+            <th>{{ site.nom }}</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for sortie in sortieList %}
+        <tr>
+            <td>{{ sortie.nom }}</td>
+            <td>{{ sortie.infosSortie }}</td>
+            <td><a href="#" title="détail de la sortie">Détail</a></td>
+        </tr>
+        {% endfor %}
+
+        </tbody>
+    </table>
+    {% endfor %}
+</div>
+{% endblock %}
