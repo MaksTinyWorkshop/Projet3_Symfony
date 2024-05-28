@@ -28,9 +28,9 @@ class Site
     private Collection $sorties;
 
     /**
-     * @var Collection<int, User>
+     * @var Collection<int, Participants>
      */
-    #[ORM\OneToMany(targetEntity: User::class, mappedBy: 'site')]
+    #[ORM\OneToMany(targetEntity: Participants::class, mappedBy: 'site')]
     private Collection $participant;
 
     public function __construct()
@@ -87,14 +87,14 @@ class Site
     }
 
     /**
-     * @return Collection<int, User>
+     * @return Collection<int, Participants>
      */
     public function getParticipant(): Collection
     {
         return $this->participant;
     }
 
-    public function addParticipant(User $participant): static
+    public function addParticipant(Participants $participant): static
     {
         if (!$this->participant->contains($participant)) {
             $this->participant->add($participant);
@@ -104,7 +104,7 @@ class Site
         return $this;
     }
 
-    public function removeParticipant(User $participant): static
+    public function removeParticipant(Participants $participant): static
     {
         if ($this->participant->removeElement($participant)) {
             // set the owning side to null (unless already changed)

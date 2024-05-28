@@ -2,7 +2,7 @@
 
 namespace App\Entity;
 
-use App\Repository\UserRepository;
+use App\Repository\ParticipantsRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -10,10 +10,10 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
 
-#[ORM\Entity(repositoryClass: UserRepository::class)]
-#[ORM\Table(name: '`user`')]
+#[ORM\Entity(repositoryClass: ParticipantsRepository::class)]
+#[ORM\Table(name: '`participant`')]
 #[UniqueEntity(fields: ['email', 'pseudo'], message: 'Il existe déjà un compte associé à cet email/pseudo')]
-class User
+class Participants
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -62,20 +62,11 @@ class User
     )]
     private ?string $password = null;
 
-    /**
-     * @var Collection<int, Sortie>
-     */
-    #[ORM\OneToMany(targetEntity: Sortie::class, mappedBy: 'organisateur')]
-    private Collection $sorties;
 
     #[ORM\ManyToOne(inversedBy: 'participant')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Site $site = null;
 
-    public function __construct()
-    {
-        $this->sorties = new ArrayCollection();
-    }
 
     public function getId(): ?int
     {
@@ -176,35 +167,6 @@ class User
         return $this;
     }
 
-    /**
-     * @return Collection<int, Sortie>
-     */
-    public function getSorties(): Collection
-    {
-        return $this->sorties;
-    }
-
-    public function addSortie(Sortie $sortie): static
-    {
-        if (!$this->sorties->contains($sortie)) {
-            $this->sorties->add($sortie);
-            $sortie->setOrganisateur($this);
-        }
-
-        return $this;
-    }
-
-    public function removeSortie(Sortie $sortie): static
-    {
-        if ($this->sorties->removeElement($sortie)) {
-            // set the owning side to null (unless already changed)
-            if ($sortie->getOrganisateur() === $this) {
-                $sortie->setOrganisateur(null);
-            }
-        }
-
-        return $this;
-    }
 
     public function getSite(): ?Site
     {
@@ -217,4 +179,5 @@ class User
 
         return $this;
     }
+
 }
