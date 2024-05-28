@@ -49,12 +49,12 @@ class Ville
         return $this;
     }
 
-    public function getCodePPostal(): ?string
+    public function getCodePostal(): ?string
     {
         return $this->codePostal;
     }
 
-    public function setCodePPostal(string $codePostal): static
+    public function setCodePostal(string $codePostal): static
     {
         $this->codePostal = $codePostal;
 

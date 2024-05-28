@@ -3,8 +3,6 @@
 namespace App\Entity;
 
 use App\Repository\SortieRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -55,22 +53,12 @@ class Sortie
 
     #[ORM\ManyToOne(inversedBy: 'sorties')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?User $organisateur = null;
-
-    /**
-     * @var Collection<int, User>
-     */
-    #[ORM\ManyToMany(targetEntity: User::class)]
-    private Collection $inscrits;
-
-    #[ORM\ManyToOne(inversedBy: 'sorties')]
-    #[ORM\JoinColumn(nullable: false)]
     private ?Etat $etat = null;
 
-    public function __construct()
-    {
-        $this->inscrits = new ArrayCollection();
-    }
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Participants $organisateur = null;
+
 
     public function getId(): ?int
     {
@@ -174,41 +162,6 @@ class Sortie
         return $this;
     }
 
-    public function getOrganisateur(): ?User
-    {
-        return $this->organisateur;
-    }
-
-    public function setOrganisateur(?User $organisateur): static
-    {
-        $this->organisateur = $organisateur;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, User>
-     */
-    public function getInscrits(): Collection
-    {
-        return $this->inscrits;
-    }
-
-    public function addInscrit(User $inscrit): static
-    {
-        if (!$this->inscrits->contains($inscrit)) {
-            $this->inscrits->add($inscrit);
-        }
-
-        return $this;
-    }
-
-    public function removeInscrit(User $inscrit): static
-    {
-        $this->inscrits->removeElement($inscrit);
-
-        return $this;
-    }
 
     public function getEtat(): ?Etat
     {
@@ -221,4 +174,19 @@ class Sortie
 
         return $this;
     }
+
+    public function getOrganisateur(): ?Participants
+    {
+        return $this->organisateur;
+    }
+
+    public function setOrganisateur(?Participants $organisateur): static
+    {
+        $this->organisateur = $organisateur;
+
+        return $this;
+    }
+
+
+
 }
