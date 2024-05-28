@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ parent()}} | Archives des sorties{% endblock %}
+
+{% block body %}
+
+<div >
+    <h1>Archive des sorties passées</h1>
+    {% for site in sitesList %}
+        {% if sortiesList|length >= 1  %}
+        <table>
+            <thead>
+            <tr>
+                <th>{{ site.nom }}</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for sortie in sortiesList %}
+                {%  if sortie.site.id == site.id
+                    and sortie.etat.id == 5
+                %}
+                <tr>
+                    <td>{{ sortie.nom }} : </td>
+                    <td>{{ sortie.infosSortie }}</td>
+                    <td><a href="{{ path('sortie_detail', {'id':sortie.id}) }}" title="détail de la sortie">Détail</a></td>
+                    <td>{{ sortie.dateHeureDebut | date() }}</td>
+                </tr>
+                {% endif %}
+            {% endfor %}
+
+            </tbody>
+        </table>
+        {% endif %}
+    {% endfor %}
+    {% if sortiesList|length <= 0 %}
+        aucune archive pour le moment !
+    {% endif %}
+    <br>
+    <a href="{{ path('sortie_main') }}" title="retour sur les sorties en cours">Retour sorties en cours</a>
+</div>
+{% endblock %}
