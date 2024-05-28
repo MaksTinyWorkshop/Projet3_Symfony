@@ -1,10 +1,15 @@
 {% extends 'base.html.twig' %}
 
+{% block title %}{{ parent() }} | Liste{% endblock %}
+
 {% block body %}
+<h1>Hello</h1>
+    {% for participant in list %}
 
+        <a href="{{ path('participants_details', {'pseudo': participant.pseudo}) }}">{{ participant.pseudo }}</a>
+        <br>
+    {% endfor %}
 {% endblock %}
 
-{% block title %}
 
-{% endblock %}
 

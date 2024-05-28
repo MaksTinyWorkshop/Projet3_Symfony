@@ -8,11 +8,20 @@
     {{ form_errors(registrationForm) }}
 
     {{ form_start(registrationForm) }}
+    <fieldset>
+        <legend>Mes coordonnées</legend>
+        {{ form_row(registrationForm.nom) }}
+        {{ form_row(registrationForm.prenom) }}
+        {{ form_row(registrationForm.telephone) }}
+        {{ form_row(registrationForm.pseudo) }}
+        {{ form_row(registrationForm.site) }}
+    </fieldset>
+    <fieldset>
+        <legend>Mes Identifiants de connexion</legend>
         {{ form_row(registrationForm.email) }}
-        {{ form_row(registrationForm.plainPassword, {
-            label: 'Password'
-        }) }}
+        {{ form_row(registrationForm.plainPassword) }}
+    </fieldset>
 
-        <button type="submit" class="btn">Register</button>
+        <button type="submit" class="btn btn-primary">S'enregistrer</button>
     {{ form_end(registrationForm) }}
 {% endblock %}

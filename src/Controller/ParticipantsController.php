@@ -13,14 +13,14 @@ class ParticipantsController extends AbstractController
 {
     public function __construct(private ParticipantsService $participantsService) {}
 
-    #[Route('/', name: 'list', methods: ['GET'])]
+    #[Route('/', name: 'list')]
     public function index(){
         $list = $this->participantsService->getAll();
         return $this->render('participants/list.html.twig', compact('list'));
     }
 
 
-    #[Route('/{id}', name: 'details')]
+    #[Route('/{pseudo}', name: 'details')]
     public function details(Participants $participant): Response
     {
         return $this->render('participants/details.html.twig', compact('participant'));

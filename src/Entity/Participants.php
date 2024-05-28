@@ -34,7 +34,6 @@ class Participants implements UserInterface, PasswordAuthenticatedUserInterface
      * @var string The hashed password
      */
     #[ORM\Column]
-    #[Assert\NotBlank]
     #[Assert\Length(min: 8, max: 20)]
     #[Assert\Regex(
         pattern: '/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_])[a-zA-Z\d\W_]{8,20}$/',
@@ -65,6 +64,12 @@ class Participants implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
     private ?Site $site = null;
+
+    public function __construct()
+    {
+        $this->isActif = true;
+        $this->roles = ['ROLE_USER'];
+    }
 
 
     public function getId(): ?int
