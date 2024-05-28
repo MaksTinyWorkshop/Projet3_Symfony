@@ -12,7 +12,6 @@ security:
         main:
             lazy: true
             provider: users_in_memory
-            custom_authenticator: App\Security\AppAuthenticator
             logout:
                 path: app_logout
                 # where to redirect after logout
@@ -22,6 +21,8 @@ security:
                 secret: '%kernel.secret%'
                 lifetime: 604800
                 path: /
+                #always_remember_me: true
+            custom_authenticator: App\Security\AppAuthenticator
                 # by default, the feature is enabled by checking a checkbox in the
                 # login form, uncomment the following line to always enable it.
                 #always_remember_me: true

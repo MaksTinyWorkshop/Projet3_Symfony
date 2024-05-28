@@ -7,13 +7,14 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
 
 #[ORM\Entity(repositoryClass: ParticipantsRepository::class)]
 #[ORM\Table(name: '`participant`')]
 #[UniqueEntity(fields: ['email', 'pseudo'], message: 'Il existe déjà un compte associé à cet email/pseudo')]
-class Participants
+class Participants implements UserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -46,6 +47,7 @@ class Participants
     )]
     private ?string $telephone = null;
 
+    private $roles = [];
 
     #[ORM\Column]
     private ?bool $isAdmin = null;
@@ -58,7 +60,8 @@ class Participants
     #[Assert\Length(min: 8, max: 20)]
     #[Assert\Regex(
         pattern: '/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_])[a-zA-Z\d\W_]{8,20}$/',
-        message: 'Le mot de passe doit contenir entre 8 et 20 caractères, avec au moins une majuscule, une minuscule, un chiffre et un caractère spécial.'
+        message: 'Le mot de passe doit contenir entre 8 et 20 caractères, avec au moins une majuscule, une minuscule, 
+        un chiffre et un caractère spécial.'
     )]
     private ?string $password = null;
 
@@ -180,4 +183,22 @@ class Participants
         return $this;
     }
 
+    public function getRoles(): array
+    {
+        $roles = $this->roles;
+
+        $roles[] = 'ROLE_USER';
+
+        return array_unique($roles);
+    }
+
+    public function eraseCredentials()
+    {
+
+    }
+
+    public function getUserIdentifier(): string
+    {
+        return $this->email;
+    }
 }
