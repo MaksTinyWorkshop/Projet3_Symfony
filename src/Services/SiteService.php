@@ -1,33 +1,15 @@
 <?php
 
-////////////////// SITE SERVICE /////////////////////////
-///                                                   ///
-/// Sert à gérer les différents traitement liés au    ///
-/// Sites.                                            ///
-///                                                   ///
-/////////////////////////////////////////////////////////
-
-
-
 namespace App\Services;
 
 use App\Repository\SiteRepository;
 
 class SiteService
 {
-    ////////////////////////////////// les variables
-    private $siteRepository;
-
-    ////////////////////////////////// Constructeur
-    public function __construct(SiteRepository $siteRepository)
+    function showAll() : array
     {
-        $this->siteRepository = $siteRepository;
-    }
-
-    ////////////////////////////////// Les fonctions
-    public function showAll()
-    {
-        $sites = $this->siteRepository->findAll();
+        $SR = SiteRepository::class;
+        $sites = $SR->findAll();
         return $sites;
     }
 }
