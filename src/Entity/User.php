@@ -12,13 +12,19 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
-#[UniqueEntity(fields: ['email'], message: 'Il existe déjà un compte associé à cet email')]
+#[UniqueEntity(fields: ['email', 'pseudo'], message: 'Il existe déjà un compte associé à cet email/pseudo')]
 class User
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
+
+    #[ORM\Column(length: 30)]
+    #[Assert\Regex(
+        pattern: '/^[a-zA-Z0-9_]{4,20}$/',
+        message: 'Le pseudo doit contenir entre 4 et 20 caractères et ne peut contenir que des lettres, des chiffres et des underscores.')]
+    private ?string $pseudo = null;
 
     #[ORM\Column(length: 100)]
     #[Assert\NotBlank]
@@ -41,7 +47,6 @@ class User
     private ?string $telephone = null;
 
 
-
     #[ORM\Column]
     private ?bool $isAdmin = null;
 
@@ -49,6 +54,12 @@ class User
     private ?bool $isActif = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank]
+    #[Assert\Length(min: 8, max: 20)]
+    #[Assert\Regex(
+        pattern: '/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_])[a-zA-Z\d\W_]{8,20}$/',
+        message: 'Le mot de passe doit contenir entre 8 et 20 caractères, avec au moins une majuscule, une minuscule, un chiffre et un caractère spécial.'
+    )]
     private ?string $password = null;
 
     /**
@@ -69,6 +80,16 @@ class User
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function getPseudo(): ?string
+    {
+        return $this->pseudo;
+    }
+
+    public function setPseudo(?string $pseudo): void
+    {
+        $this->pseudo = $pseudo;
     }
 
     public function getNom(): ?string
@@ -163,22 +184,22 @@ class User
         return $this->sorties;
     }
 
-    public function addSorty(Sortie $sorty): static
+    public function addSortie(Sortie $sortie): static
     {
-        if (!$this->sorties->contains($sorty)) {
-            $this->sorties->add($sorty);
-            $sorty->setOrganisateur($this);
+        if (!$this->sorties->contains($sortie)) {
+            $this->sorties->add($sortie);
+            $sortie->setOrganisateur($this);
         }
 
         return $this;
     }
 
-    public function removeSorty(Sortie $sorty): static
+    public function removeSortie(Sortie $sortie): static
     {
-        if ($this->sorties->removeElement($sorty)) {
+        if ($this->sorties->removeElement($sortie)) {
             // set the owning side to null (unless already changed)
-            if ($sorty->getOrganisateur() === $this) {
-                $sorty->setOrganisateur(null);
+            if ($sortie->getOrganisateur() === $this) {
+                $sortie->setOrganisateur(null);
             }
         }
 

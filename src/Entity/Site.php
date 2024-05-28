@@ -16,9 +16,9 @@ class Site
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 30)]
     #[Assert\NotBlank]
-    #[Assert\Length(min: 3, max: 255, minMessage: 'Au moins {{limit}} caractères', maxMessage: 'Au moins {{limit}} caractères')]
+    #[Assert\Length(min: 3, max: 30, minMessage: 'Au moins {{limit}} caractères', maxMessage: 'Au moins {{limit}} caractères')]
     private ?string $nom = null;
 
     /**
@@ -64,22 +64,22 @@ class Site
         return $this->sorties;
     }
 
-    public function addSorty(Sortie $sorty): static
+    public function ie(Sortie $sortie): static
     {
-        if (!$this->sorties->contains($sorty)) {
-            $this->sorties->add($sorty);
-            $sorty->setSite($this);
+        if (!$this->sorties->contains($sortie)) {
+            $this->sorties->add($sortie);
+            $sortie->setSite($this);
         }
 
         return $this;
     }
 
-    public function removeSorty(Sortie $sorty): static
+    public function removeSortie(Sortie $sortie): static
     {
-        if ($this->sorties->removeElement($sorty)) {
+        if ($this->sorties->removeElement($sortie)) {
             // set the owning side to null (unless already changed)
-            if ($sorty->getSite() === $this) {
-                $sorty->setSite(null);
+            if ($sortie->getSite() === $this) {
+                $sortie->setSite(null);
             }
         }
 

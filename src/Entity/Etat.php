@@ -6,6 +6,7 @@ use App\Repository\EtatRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: EtatRepository::class)]
 class Etat
@@ -15,7 +16,9 @@ class Etat
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 30)]
+    #[Assert\NotBlank]
+    #[Assert\Choice(choices: ["Créée", "Ouverte", "Clôturée", "Activité en cours", "Activitée passée", "Activité annulée"])]
     private ?string $libelle = null;
 
     /**
@@ -54,22 +57,22 @@ class Etat
         return $this->sorties;
     }
 
-    public function addSorty(Sortie $sorty): static
+    public function addSortie(Sortie $sortie): static
     {
-        if (!$this->sorties->contains($sorty)) {
-            $this->sorties->add($sorty);
-            $sorty->setEtat($this);
+        if (!$this->sorties->contains($sortie)) {
+            $this->sorties->add($sortie);
+            $sortie->setEtat($this);
         }
 
         return $this;
     }
 
-    public function removeSorty(Sortie $sorty): static
+    public function removeSortie(Sortie $sortie): static
     {
-        if ($this->sorties->removeElement($sorty)) {
+        if ($this->sorties->removeElement($sortie)) {
             // set the owning side to null (unless already changed)
-            if ($sorty->getEtat() === $this) {
-                $sorty->setEtat(null);
+            if ($sortie->getEtat() === $this) {
+                $sortie->setEtat(null);
             }
         }
 

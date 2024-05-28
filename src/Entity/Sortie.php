@@ -17,21 +17,26 @@ class Sortie
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 30)]
     #[Assert\NotBlank]
-    #[Assert\Length(min: 3, max: 255, minMessage: 'Au moins {{limit}} caractères', maxMessage: 'Au moins {{limit}} caractères')]
+    #[Assert\Length(min: 3, max: 30, minMessage: 'Au moins {{limit}} caractères', maxMessage: 'Au moins {{limit}} caractères')]
     private ?string $nom = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[Assert\NotBlank]
     private ?\DateTimeInterface $dateHeureDebut = null;
 
     #[ORM\Column(type: Types::TIME_MUTABLE)]
+    #[Assert\NotBlank]
     private ?\DateTimeInterface $duree = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[Assert\NotBlank]
     private ?\DateTimeInterface $dateLimiteInscription = null;
 
     #[ORM\Column]
+    #[Assert\NotBlank]
+    #[Assert\Positive]
     private ?int $nbInscriptionsMax = null;
 
     #[ORM\Column(type: Types::TEXT)]

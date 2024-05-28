@@ -16,20 +16,20 @@ class Ville
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $no√m = null;
+    private ?string $nom = null;
 
     #[ORM\Column(length: 5)]
-    private ?string $codePPostal = null;
+    private ?string $codePostal = null;
 
     /**
      * @var Collection<int, Lieu>
      */
     #[ORM\OneToMany(targetEntity: Lieu::class, mappedBy: 'ville', orphanRemoval: true)]
-    private Collection $lieus;
+    private Collection $lieux;
 
     public function __construct()
     {
-        $this->lieus = new ArrayCollection();
+        $this->lieux = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -37,26 +37,26 @@ class Ville
         return $this->id;
     }
 
-    public function getNo√m(): ?string
+    public function getNom(): ?string
     {
-        return $this->no√m;
+        return $this->nom;
     }
 
-    public function setNo√m(string $no√m): static
+    public function setNom(string $nom): static
     {
-        $this->no√m = $no√m;
+        $this->nom = $nom;
 
         return $this;
     }
 
     public function getCodePPostal(): ?string
     {
-        return $this->codePPostal;
+        return $this->codePostal;
     }
 
-    public function setCodePPostal(string $codePPostal): static
+    public function setCodePPostal(string $codePostal): static
     {
-        $this->codePPostal = $codePPostal;
+        $this->codePostal = $codePostal;
 
         return $this;
     }
@@ -64,15 +64,15 @@ class Ville
     /**
      * @return Collection<int, Lieu>
      */
-    public function getLieus(): Collection
+    public function getLieux(): Collection
     {
-        return $this->lieus;
+        return $this->lieux;
     }
 
     public function addLieu(Lieu $lieu): static
     {
-        if (!$this->lieus->contains($lieu)) {
-            $this->lieus->add($lieu);
+        if (!$this->lieux->contains($lieu)) {
+            $this->lieux->add($lieu);
             $lieu->setVille($this);
         }
 
@@ -81,7 +81,7 @@ class Ville
 
     public function removeLieu(Lieu $lieu): static
     {
-        if ($this->lieus->removeElement($lieu)) {
+        if ($this->lieux->removeElement($lieu)) {
             // set the owning side to null (unless already changed)
             if ($lieu->getVille() === $this) {
                 $lieu->setVille(null);
