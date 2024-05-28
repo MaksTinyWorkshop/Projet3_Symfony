@@ -16,14 +16,14 @@ class Lieu
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 30)]
+    #[ORM\Column(length: 100)]
     #[Assert\NotBlank]
-    #[Assert\Length(min: 1, max: 30, minMessage: "Le nom doit contenir au moins 1 caractère", maxMessage: "Au maximum 30 caractères")]
+    #[Assert\Length(min: 1, max: 100, minMessage: "Le nom doit contenir au moins 1 caractère", maxMessage: "Au maximum 30 caractères")]
     private ?string $nom = null;
 
-    #[ORM\Column(length: 30)]
+    #[ORM\Column(length: 100)]
     #[Assert\NotBlank]
-    #[Assert\Length(min: 1, max: 30, minMessage: "La rue doit contenir au moins 1 caractère", maxMessage: "Au maximum 30 caractères")]
+    #[Assert\Length(min: 1, max: 100, minMessage: "La rue doit contenir au moins 1 caractère", maxMessage: "Au maximum 30 caractères")]
     private ?string $rue = null;
 
     #[ORM\Column]

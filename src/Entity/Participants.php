@@ -7,13 +7,15 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
 
 #[ORM\Entity(repositoryClass: ParticipantsRepository::class)]
 #[ORM\Table(name: '`participant`')]
 #[UniqueEntity(fields: ['email', 'pseudo'], message: 'Il existe déjà un compte associé à cet email/pseudo')]
-class Participants
+class Participants implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -39,16 +41,9 @@ class Participants
     #[Assert\NotBlank(message: 'Ce champ ne peut pas être vide')]
     private ?string $prenom = null;
 
-    #[ORM\Column(length: 10)]
-    #[Assert\Regex(
-        pattern: '/^\d{10}$/',
-        message: 'Votre numéro de téléphone n\'est pas valide'
-    )]
+    #[ORM\Column(length: 20)]
     private ?string $telephone = null;
 
-
-    #[ORM\Column]
-    private ?bool $isAdmin = null;
 
     #[ORM\Column]
     private ?bool $isActif = null;
@@ -66,6 +61,12 @@ class Participants
     #[ORM\ManyToOne(inversedBy: 'participant')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Site $site = null;
+
+    /**
+     * @var list<string> The user roles
+     */
+    #[ORM\Column]
+    private array $roles = [];
 
 
     public function getId(): ?int
@@ -131,18 +132,6 @@ class Participants
         return $this;
     }
 
-    public function isAdmin(): ?bool
-    {
-        return $this->isAdmin;
-    }
-
-    public function setAdmin(bool $isAdmin): static
-    {
-        $this->isAdmin = $isAdmin;
-
-        return $this;
-    }
-
     public function isActif(): ?bool
     {
         return $this->isActif;
@@ -180,4 +169,40 @@ class Participants
         return $this;
     }
 
+    public function getUserIdentifier(): string
+    {
+        return (string)$this->email;
+    }
+
+    /**
+     * @return list<string>
+     * @see UserInterface
+     */
+    public function getRoles(): array
+    {
+        $roles = $this->roles;
+        // guarantee every user at least has ROLE_USER
+        $roles[] = 'ROLE_USER';
+
+        return array_unique($roles);
+    }
+
+    /**
+     * @param list<string> $roles
+     */
+    public function setRoles(array $roles): static
+    {
+        $this->roles = $roles;
+
+        return $this;
+    }
+
+    /**
+     * @see UserInterface
+     */
+    public function eraseCredentials(): void
+    {
+        // If you store any temporary, sensitive data on the user, clear it here
+        // $this->plainPassword = null;
+    }
 }
