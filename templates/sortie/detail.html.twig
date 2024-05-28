@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ parent()}} | détail de la sortie {{ sortie.nom }}{% endblock %}
+
+{% block body %}
+
+<div >
+    <h1>{{ sortie.nom }}</h1>
+    <h3>{{ sortie.dateHeureDebut | date() }}</h3>
+    <p>{{ sortie.infosSortie }}</p>
+</div>
+{% endblock %}

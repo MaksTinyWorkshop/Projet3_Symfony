@@ -1,6 +1,6 @@
 <?php
 
-////////////////// SORTIES SERVICES /////////////////////
+//////////////////// SORTIE SERVICE /////////////////////
 ///                                                   ///
 /// Sert à gérer les différents traitement liés au    ///
 /// ServiceController.                                ///
@@ -10,15 +10,28 @@
 
 namespace App\Services;
 
+use App\Entity\Sortie;
 use App\Repository\SortieRepository;
-use Doctrine\ORM\EntityManager;
-
 class SortiesService
 {
-    function showAll() : array
+    ////////////////////////////////////// les variables
+    private $sortieRepository;
+
+    ////////////////////////////////////// constructeur
+    public function __construct(SortieRepository $sortieRepository)
     {
-        $SR = SortieRepository::class;
-        $sorties = $SR->findAll();
+        $this->sortieRepository = $sortieRepository;
+    }
+
+    ////////////////////////////////////// les fonctions
+    public function showActive()   //recherche de toutes les sorties
+    {
+        $sorties = $this->sortieRepository->findBy([ 'etat' => [2,3,4,6] ]);
+        return $sorties;
+    }
+    public function showOld()   //recherche des sorties archivées
+    {
+        $sorties = $this->sortieRepository->findBy([ 'etat' => 5 ]);
         return $sorties;
     }
 }
