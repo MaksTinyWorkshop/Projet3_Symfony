@@ -15,18 +15,20 @@ class Sortie
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 30)]
+    #[ORM\Column(length: 60)]
     #[Assert\NotBlank]
-    #[Assert\Length(min: 3, max: 30, minMessage: 'Au moins {{limit}} caractères', maxMessage: 'Au moins {{limit}} caractères')]
+    #[Assert\Length(min: 3, max: 60, minMessage: 'Au moins {{limit}} caractères', maxMessage: 'Au moins {{limit}} caractères')]
     private ?string $nom = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     #[Assert\NotBlank]
     private ?\DateTimeInterface $dateHeureDebut = null;
 
-    #[ORM\Column(type: Types::TIME_MUTABLE)]
+    #[ORM\Column]
     #[Assert\NotBlank]
-    private ?\DateTimeInterface $duree = null;
+    #[Assert\Positive]
+    #[Assert\Range(min: 1, max: 300)]
+    private ?int $duree = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     #[Assert\NotBlank]
@@ -89,12 +91,12 @@ class Sortie
         return $this;
     }
 
-    public function getDuree(): ?\DateTimeInterface
+    public function getDuree(): ?int
     {
         return $this->duree;
     }
 
-    public function setDuree(\DateTimeInterface $duree): static
+    public function setDuree(int $duree): static
     {
         $this->duree = $duree;
 

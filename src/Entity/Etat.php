@@ -16,7 +16,7 @@ class Etat
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 30)]
+    #[ORM\Column(length: 40)]
     #[Assert\NotBlank]
     #[Assert\Choice(choices: ["Créée", "Ouverte", "Clôturée", "Activité en cours", "Activitée passée", "Activité annulée"])]
     private ?string $libelle = null;
