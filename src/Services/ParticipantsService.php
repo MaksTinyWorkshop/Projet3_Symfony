@@ -13,11 +13,13 @@ use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Csrf\TokenGenerator\TokenGeneratorInterface;
+use Symfony\Component\String\Slugger\SluggerInterface;
 
 /**
  * Service de gestion des participants : inscription, confirmation par email, oubli de mot de passe, gestion du profil
@@ -35,6 +37,8 @@ class ParticipantsService extends AbstractController
         private SendMailService             $mail,
         private TokenGeneratorInterface     $tokenGenerator,
         private FormFactoryInterface        $formFactory,
+        private SluggerInterface            $slugger,
+        private string                      $photosDirectory
     ){}
 
 
@@ -59,6 +63,25 @@ class ParticipantsService extends AbstractController
                     $participant,
                     $form->get('plainPassword')->getData()
                 ));
+
+            $photoFile = $form->get('photo')->getData();
+            if ($photoFile) {
+                $originalFilename = pathinfo($photoFile->getClientOriginalName(), PATHINFO_FILENAME);
+                $safeFilename = $this->slugger->slug($originalFilename);
+                $newFilename = $safeFilename.'-'.uniqid().'.'.$photoFile->guessExtension();
+
+                try {
+                    $photoFile->move(
+                        $this->photosDirectory,
+                        $newFilename
+                    );
+                } catch (FileException $e) {
+                    // gère les exceptions si quequechose se passe pendant l'upload
+                }
+
+                $participant->setPhoto($newFilename);
+            }
+
             $this->entityManager->persist($participant);
             $this->entityManager->flush();
 
