@@ -1,0 +1,66 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ parent()}} | liste des sorties{% endblock %}
+
+{% block body %}
+
+    {# I . Partie filtrage et recherche #}
+<div>
+
+</div>
+
+    {# II . Partie affichage de la liste #}
+    {{ form_start(form) }}
+    {{ form_row(form.site) }}
+    {{ form_row(form.name) }}
+    {{ form_row(form.startDate) }}
+    {{ form_row(form.endDate) }}
+    {{ form_row(form.checkbox1) }}
+    {{ form_row(form.checkbox2) }}
+    {{ form_row(form.checkbox3) }}
+    {{ form_row(form.checkbox4) }}
+    <button type="submit">Filter</button>
+    {{ form_end(form) }}
+<div >
+    <h1>Liste des sorties prévues</h1>
+    {% for site in sitesList %}
+        {% set exist = 0 %}
+        {% for sortie in sortiesList %}
+            {% if site.nom == sortie.site.nom %}
+                {% set exist = exist +1 %}
+            {% endif %}
+        {% endfor %}
+
+        {% if exist >= 1 %}
+            <table>
+                <thead>
+                <tr>
+                    <th>{{ site.nom }}</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for sortie in sortiesList %}
+                    {%  if sortie.site.id == site.id
+                        and (sortie.dateHeureDebut) >= dateActuelle
+                    %}
+                        <tr>
+                        <td>{{ sortie.nom }} : </td>
+                        <td>{{ sortie.dateHeureDebut|date("d/d/Y - h:i") }}</td>
+                        <td>{{ sortie.dateLimiteInscription|date("d/d/Y") }}</td>
+                        <td>X/{{ sortie.nbInscriptionsMax }}</td>
+                        <td>{{ sortie.etat.libelle }}</td>
+                        <td>je suis inscrit ?</td>
+                        <td>{# sortie.organisateur.pseudo #}</td>
+                        <td><a href="{{ path('sortie_detail', {'id':sortie.id}) }}" title="détail de la sortie">Afficher</a></td>
+                        </tr>
+                    {% endif %}
+                {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+        <br>
+    {% endfor %}
+    <br>
+    <a href="{{ path('sortie_archives') }}" title="les archives des sorties passées">Archives</a>
+</div>
+{% endblock %}
