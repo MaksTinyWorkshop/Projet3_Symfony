@@ -14,15 +14,19 @@ class Inscriptions
     private ?\DateTimeInterface $dateInscription = null;
 
     #[ORM\Id]
-    #[ORM\OneToOne(targetEntity: Sortie::class)]
+    #[ORM\ManyToOne(targetEntity: Sortie::class)]
     #[ORM\JoinColumn(name: 'sorties_id_sortie', referencedColumnName: 'id', nullable: false)]
-    private ?int $sortiesIdSortie = null;
+    private ?Sortie $sortie = null;
 
     #[ORM\Id]
-    #[ORM\OneToOne(targetEntity: Participants::class)]
-    #[ORM\JoinColumn(name: 'participants_id_participants', referencedColumnName: 'id', nullable: false)]
-    private ?int $participantsIdParticipant = null;
+    #[ORM\ManyToOne(targetEntity: Participants::class)]
+    #[ORM\JoinColumn(name: 'participants_id_participant', referencedColumnName: 'id', nullable: false)]
+    private ?Participants $participant = null;
 
+    public function __construct()
+    {
+        $this->dateInscription = new \DateTime();
+    }
 
     public function getDateInscription(): ?\DateTimeInterface
     {
@@ -36,28 +40,27 @@ class Inscriptions
         return $this;
     }
 
-    public function getSortiesIdSortie(): ?int
+    public function getSortie(): ?Sortie
     {
-        return $this->sortiesIdSortie;
+        return $this->sortie;
     }
 
-    public function setSortiesIdSortie(int $sortiesIdSortie): static
+    public function setSortie(?Sortie $sortie): static
     {
-        $this->sortiesIdSortie = $sortiesIdSortie;
+        $this->sortie = $sortie;
 
         return $this;
     }
 
-    public function getParticipantsIdParticipant(): ?int
+    public function getParticipant(): ?Participants
     {
-        return $this->participantsIdParticipant;
+        return $this->participant;
     }
 
-    public function setParticipantsIdParticipant(int $participantsIdParticipant): static
+    public function setParticipant(?Participants $participant): static
     {
-        $this->participantsIdParticipant = $participantsIdParticipant;
+        $this->participant = $participant;
 
         return $this;
     }
-
 }
