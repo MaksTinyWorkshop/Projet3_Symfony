@@ -106,7 +106,6 @@ class RegistrationFormType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Participants::class,
-            'is_edit' => false, // Défaut à false pour l'inscription
         ]);
     }
 }
