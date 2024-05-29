@@ -34,12 +34,6 @@ class Participants implements UserInterface, PasswordAuthenticatedUserInterface
      * @var string The hashed password
      */
     #[ORM\Column]
-    #[Assert\NotBlank]
-    #[Assert\Length(min: 8, max: 20)]
-    #[Assert\Regex(
-        pattern: '/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_])[a-zA-Z\d\W_]{8,20}$/',
-        message: 'Le mot de passe doit contenir entre 8 et 20 caractères, avec au moins une majuscule, une minuscule, un chiffre et un caractère spécial.'
-    )]
     private ?string $password = null;
 
     #[ORM\Column(length: 30)]
@@ -66,8 +60,17 @@ class Participants implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\JoinColumn(nullable: false)]
     private ?Site $site = null;
 
+    #[ORM\Column(length: 100, nullable: true)]
+    private ?string $resetToken;
 
-    public function getId(): ?int
+
+    public function __construct()
+    {
+        $this->isActif = false;
+        $this->roles = ['ROLE_USER'];
+    }
+
+        public function getId(): ?int
     {
         return $this->id;
     }
@@ -212,5 +215,15 @@ class Participants implements UserInterface, PasswordAuthenticatedUserInterface
         $this->site = $site;
 
         return $this;
+    }
+
+    public function getResetToken(): ?string
+    {
+        return $this->resetToken;
+    }
+
+    public function setResetToken(?string $resetToken): void
+    {
+        $this->resetToken = $resetToken;
     }
 }

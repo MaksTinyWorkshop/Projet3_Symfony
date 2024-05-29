@@ -2,43 +2,68 @@
 
 namespace App\Controller;
 
-use App\Entity\Participants;
-use App\Form\RegistrationFormType;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Services\ParticipantsService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Routing\Attribute\Route;
+
+/**
+ * Controleur qui gère le routage des Enregistrements User
+ * /register -> S'enregistrer
+ * /verif/{token} -> Validation du compte via envoi d'email après inscription (Lien envoyé par mail)
+ * /renvoiVerif -> Renvoi du mail de confirmation
+ */
 
 class RegistrationController extends AbstractController
 {
+    ///////////////////// Constructeur pour injection du ParticipantsService
+    public function __construct(private ParticipantsService $partService){}
+
+    ///////////////////// Routage et appel au service
+    /**
+     * @throws TransportExceptionInterface
+     */
     #[Route('/register', name: 'app_register')]
-    public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager): Response
+    public function register(Request $request): Response
     {
-        $user = new Participants();
-        $form = $this->createForm(RegistrationFormType::class, $user);
-        $form->handleRequest($request);
+       return $this->partService->register($request);
+    }
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            // encode the plain password
-            $user->setPassword(
-                $userPasswordHasher->hashPassword(
-                    $user,
-                    $form->get('plainPassword')->getData()
-                )
-            );
+    #[Route('/verif/{token}', name: 'verify')]
+    public function verify($token): Response
+    {
+        $jwtSecret = $this->getParameter('app.jwtsecret');
+        $isVerified = $this->partService->verify($token, $jwtSecret);
 
-            $entityManager->persist($user);
-            $entityManager->flush();
-
-            // do anything else you need here, like send an email
-
-            return $this->redirectToRoute('app_login');
+        if ($isVerified) {
+            $this->addFlash('success', 'Utilisateur activé!');
+        } else {
+            $this->addFlash('danger', 'Le token est invalide ou a expiré');
         }
 
-        return $this->render('registration/register.html.twig', [
-            'registrationForm' => $form,
-        ]);
+        return $this->redirectToRoute('main');
     }
+
+    #[Route('/renvoiVerif', name: 'resend_verif')]
+    public function resendVerif(): Response
+    {
+        $participant = $this->getUser();
+        if(!$participant){
+            $this->addFlash('danger', 'Vous devez être connecté pour accéder à cette page');
+            return $this->redirectToRoute('app_login');
+        }
+        if ($participant->isActif()) {
+            $this->addFlash('warning', 'Vous êtes déjà activé');
+            return $this->redirectToRoute('app_login');
+        }
+        $jwtSecret = $this->getParameter('app.jwtsecret');
+
+        $this->partService->resendVerif($participant, $jwtSecret);
+
+        $this->addFlash('success', 'Email de vérification envoyé');
+        return $this->redirectToRoute('main');
+    }
+
 }
