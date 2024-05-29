@@ -12,6 +12,7 @@ namespace App\Services;
 
 use App\Entity\Sortie;
 use App\Repository\SortieRepository;
+
 class SortiesService
 {
     ////////////////////////////////////// les variables
