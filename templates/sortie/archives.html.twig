@@ -7,8 +7,15 @@
 <div >
     <h1>Archive des sorties passées</h1>
     {% for site in sitesList %}
-        {% if sortiesList|length >= 1  %}
-        <table>
+        {% set exist = 0 %}
+        {% for sortie in sortiesList %}
+            {% if site.nom == sortie.site.nom %}
+                {% set exist = exist +1 %}
+            {% endif %}
+        {% endfor %}
+
+        {% if exist >= 1 %}
+            <table>
             <thead>
             <tr>
                 <th>{{ site.nom }}</th>
@@ -23,7 +30,6 @@
                     <td>{{ sortie.nom }} : </td>
                     <td>{{ sortie.infosSortie }}</td>
                     <td><a href="{{ path('sortie_detail', {'id':sortie.id}) }}" title="détail de la sortie">Détail</a></td>
-                    <td>{{ sortie.dateHeureDebut | date() }}</td>
                 </tr>
                 {% endif %}
             {% endfor %}
