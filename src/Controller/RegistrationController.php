@@ -18,7 +18,7 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class RegistrationController extends AbstractController
 {
-    ///////////////////// Constructeur pour injectionn du ParticipantsService
+    ///////////////////// Constructeur pour injection du ParticipantsService
     public function __construct(private ParticipantsService $partService){}
 
     ///////////////////// Routage et appel au service

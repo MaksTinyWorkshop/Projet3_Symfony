@@ -19,7 +19,7 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
  */
 class SecurityController extends AbstractController
 {
-    ///////////////////// Constructeur pour injectionn du ParticipantsService
+    ///////////////////// Constructeur pour injection du ParticipantsService
     public function __construct(private readonly ParticipantsService $participantsService)
     {
     }

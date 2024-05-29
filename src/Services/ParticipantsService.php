@@ -16,10 +16,11 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Csrf\TokenGenerator\TokenGeneratorInterface;
 
 /**
- * Service de gestion des participants : inscription, confirmation par email, oubli de mot de passe
+ * Service de gestion des participants : inscription, confirmation par email, oubli de mot de passe, gestion du profil
  */
 
 class ParticipantsService extends AbstractController
@@ -181,6 +182,52 @@ class ParticipantsService extends AbstractController
         return ['success' => false, 'form' => null];
     }
 
+
+    ///////////////////////////////////////////// Méthodes de gestion du profil
+    public function updateProfil(Request $request, $participant): Response
+    {
+        // Création du formulaire de création de compte et handleRequest
+        $form = $this->createForm(RegistrationFormType::class, $participant, ['is_edit' => true]);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            //Encodage du mot de passe
+            $participant->setPassword(
+                $this->passwordHasher->hashPassword(
+                    $participant,
+                    $form->get('plainPassword')->getData()
+                ));
+            $this->entityManager->persist($participant);
+            $this->entityManager->flush();
+
+            $this->addFlash('success', 'Profil correctement mis à jour');
+
+            return $this->redirectToRoute('participants_details', ['pseudo' => $participant->getPseudo()]);
+        }
+        return $this->render('participants/details.html.twig', compact('participant', 'form'));
+    }
+
+    public function consultationProfil(string $pseudo): Response
+    {
+        $participant = $this->participantsRepository->findOneBy(['pseudo' => $pseudo]);
+        return $this->render('participants/details.html.twig', compact('participant'));
+    }
+
+    public function deleteProfil(string $pseudo, TokenStorageInterface $tokenStorage): Response
+    {
+        $tokenStorage->setToken(null);
+        $participant = $this->participantsRepository->findOneBy(['pseudo' => $pseudo]);
+        if($participant) {
+            $this->entityManager->remove($participant);
+            $this->entityManager->flush();
+
+            $this->addFlash('success', 'Compte supprimé avec succès, ravi de vous avoir eu parmi nous');
+            return $this->redirectToRoute('main');
+        } else {
+            $this->addFlash('danger', 'Une erreur s\'est produite, veuillez recommencer');
+            return $this->redirectToRoute('participants_details', compact('pseudo'));
+        }
+
+    }
 
 
     ///////////////////////////////////////////// Méthodes de recherche en base (utile ??)

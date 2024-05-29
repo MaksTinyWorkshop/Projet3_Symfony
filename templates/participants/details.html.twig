@@ -4,10 +4,43 @@
 
 {% block body %}
 <h1>Hello</h1>
-    {% if app.user.pseudo == participant.pseudo %}
+    {% if app.user and app.user.pseudo == participant.pseudo %}
         <h2>C'est moi</h2>
+        <section class="container">
+            <div class="row">
+                <div class="col">
+                    <h3>Update de mon profil</h3>
+
+                    {{ form_errors(form) }}
+
+                    {{ form_start(form) }}
+                    <fieldset class="mb-3">
+                        <legend>Mes coordonnées</legend>
+                        {{ form_row(form.nom) }}
+                        {{ form_row(form.prenom) }}
+                        {{ form_row(form.telephone) }}
+                        {{ form_row(form.pseudo) }}
+                        {{ form_row(form.site) }}
+                    </fieldset>
+                    <fieldset class="mb-3">
+                        <legend>Mes Identifiants de connexion</legend>
+                        {{ form_row(form.email) }}
+                        {{ form_row(form.plainPassword) }}
+                    </fieldset>
+
+                    <button type="submit" class="btn btn-primary">Update</button>
+                    {{ form_end(form) }}
+                    <a href="{{ path('participants_delete', {'pseudo': app.user.pseudo}) }}" role="button" class="btn btn-danger">Se désinscrire</a>
+                </div>
+            </div>
+        </section>
     {% else %}
         <h2>C'est pas moi</h2>
+        <p>Pseudo : {{ participant.pseudo }}</p>
+        <p>Nom : {{ participant.nom }}</p>
+        <p>Prénom : {{ participant.prenom }}</p>
+        <p>Téléphone : {{ participant.telephone }}</p>
+        <p>Site de rattachement : {{ participant.site.nom }}</p>
     {% endif %}
 
 {% endblock %}

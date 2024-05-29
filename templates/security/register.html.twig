@@ -3,25 +3,32 @@
 {% block title %}Register{% endblock %}
 
 {% block body %}
-    <h1>Register</h1>
+    <section class="container">
+        <div class="row">
+            <div class="col">
+                <h1>Register</h1>
 
-    {{ form_errors(registrationForm) }}
+                {{ form_errors(registrationForm) }}
 
-    {{ form_start(registrationForm) }}
-    <fieldset>
-        <legend>Mes coordonnées</legend>
-        {{ form_row(registrationForm.nom) }}
-        {{ form_row(registrationForm.prenom) }}
-        {{ form_row(registrationForm.telephone) }}
-        {{ form_row(registrationForm.pseudo) }}
-        {{ form_row(registrationForm.site) }}
-    </fieldset>
-    <fieldset>
-        <legend>Mes Identifiants de connexion</legend>
-        {{ form_row(registrationForm.email) }}
-        {{ form_row(registrationForm.plainPassword) }}
-    </fieldset>
+                {{ form_start(registrationForm) }}
+                <fieldset class="mb-3">
+                    <legend>Mes coordonnées</legend>
+                    {{ form_row(registrationForm.nom) }}
+                    {{ form_row(registrationForm.prenom) }}
+                    {{ form_row(registrationForm.telephone) }}
+                    {{ form_row(registrationForm.pseudo) }}
+                    {{ form_row(registrationForm.site) }}
+                </fieldset>
+                <fieldset class="mb-3">
+                    <legend>Mes Identifiants de connexion</legend>
+                    {{ form_row(registrationForm.email) }}
+                    {{ form_row(registrationForm.plainPassword) }}
+                    {{ form_row(registrationForm.RGPD) }}
+                </fieldset>
 
-        <button type="submit" class="btn btn-primary">S'enregistrer</button>
+                <button type="submit" class="btn btn-primary">S'enregistrer</button>
+            </div>
+        </div>
+    </section>
     {{ form_end(registrationForm) }}
 {% endblock %}
