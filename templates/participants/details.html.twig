@@ -1,10 +1,14 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}
-
-{% endblock %}
+{% block title %} {{ parent()}} | Profil {{ participant.pseudo }} {% endblock %}
 
 {% block body %}
+<h1>Hello</h1>
+    {% if app.user.pseudo == participant.pseudo %}
+        <h2>C'est moi</h2>
+    {% else %}
+        <h2>C'est pas moi</h2>
+    {% endif %}
 
 {% endblock %}
 

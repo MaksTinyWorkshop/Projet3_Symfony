@@ -2,19 +2,32 @@
 
 namespace App\Controller;
 
+use App\Form\ResetPasswordRequestFormType;
+use App\Services\ParticipantsService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
+/**
+ * Classe de Routage qui gère la connexion/déconnexion et l'oubli du mot de passe
+ * /login -> connexion
+ * /logout -> déconnexion
+ * /oubli-pass -> envoi de mail avec lien de réinitialisation
+ * /oubli-pass/{token} -> check du token et réinitialisation mot de passe
+ */
 class SecurityController extends AbstractController
 {
+    ///////////////////// Constructeur pour injectionn du ParticipantsService
+    public function __construct(private readonly ParticipantsService $participantsService)
+    {
+    }
+
+    //////////////////// Routage et appel au service
     #[Route(path: '/login', name: 'app_login')]
     public function login(AuthenticationUtils $authenticationUtils): Response
     {
-        // if ($this->getUser()) {
-        //     return $this->redirectToRoute('target_path');
-        // }
 
         // get the login error if there is one
         $error = $authenticationUtils->getLastAuthenticationError();
@@ -28,5 +41,43 @@ class SecurityController extends AbstractController
     public function logout(): void
     {
         throw new \LogicException('This method can be blank - it will be intercepted by the logout key on your firewall.');
+    }
+
+    #[Route('oubli-pass', name: 'forgot_password')]
+    public function forgotPassword(Request $request): Response
+    {
+        $form = $this->createForm(ResetPasswordRequestFormType::class);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $email = $form->get('email')->getData();
+            $participant = $this->participantsService->forgotPassword($email);
+
+            if ($participant) {
+                $this->addFlash('success', 'Email envoyé avec succès');
+            } else {
+                $this->addFlash('danger', 'Un problème est survenu');
+            }
+            return $this->redirectToRoute('app_login');
+        }
+        return $this->render('security/reset_password_request.html.twig', ['requestPassForm' => $form->createView()]);
+    }
+
+    #[Route('/oubli-pass/{token}', name: 'reset_password')]
+    public function resetPassword(string $token, Request $request): Response
+    {
+        $result = $this->participantsService->resetPassword($token, $request);
+
+        if ($result['success']) {
+            $this->addFlash('success', 'Mot de passe modifié avec succès');
+            return $this->redirectToRoute('app_login');
+        }
+
+        if ($result['form']) {
+            return $this->render('security/reset_password.html.twig', [
+                'passForm' => $result['form']->createView(),
+            ]);
+        }
+        $this->addFlash('danger', 'Jeton invalide ou formulaire non valide');
+        return $this->redirectToRoute('app_login');
     }
 }

@@ -34,6 +34,12 @@
     <button class="btn btn-lg btn-primary" type="submit">
         C'est parti !
     </button>
+    <a href="{{ path('app_register') }}" type="submit" class="btn btn-secondary mt-3">
+        M'inscrire
+    </a>
+    <a href="{{ path('forgot_password') }}" type="submit" class="btn btn-secondary mt-3">
+        Mot de passe oublié
+    </a>
 </form>
 </div>
 {% endblock %}
