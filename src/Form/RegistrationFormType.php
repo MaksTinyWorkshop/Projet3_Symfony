@@ -16,6 +16,9 @@ use Symfony\Component\Validator\Constraints\IsTrue;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
+/**
+ * Formulaire de création de compte
+ */
 class RegistrationFormType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
@@ -40,13 +43,13 @@ class RegistrationFormType extends AbstractType
                 'label' => 'Prénom',
             ])
             ->add('telephone', TextType::class, [
-                'attr'=> [
+                'attr' => [
                     'class' => 'form-control'
                 ],
                 'label' => 'Téléphone',
             ])
             ->add('pseudo', TextType::class, [
-                'attr'=> [
+                'attr' => [
                     'class' => 'form-control'
                 ],
                 'label' => 'Pseudo',

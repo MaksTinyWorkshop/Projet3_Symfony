@@ -65,14 +65,17 @@ class Participants implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\JoinColumn(nullable: false)]
     private ?Site $site = null;
 
+    #[ORM\Column(length: 100, nullable: true)]
+    private ?string $resetToken;
+
+
     public function __construct()
     {
-        $this->isActif = true;
+        $this->isActif = false;
         $this->roles = ['ROLE_USER'];
     }
 
-
-    public function getId(): ?int
+        public function getId(): ?int
     {
         return $this->id;
     }
@@ -217,5 +220,15 @@ class Participants implements UserInterface, PasswordAuthenticatedUserInterface
         $this->site = $site;
 
         return $this;
+    }
+
+    public function getResetToken(): ?string
+    {
+        return $this->resetToken;
+    }
+
+    public function setResetToken(?string $resetToken): void
+    {
+        $this->resetToken = $resetToken;
     }
 }

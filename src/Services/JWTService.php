@@ -6,6 +6,9 @@ use DateTimeImmutable;
 
 /**
  * Service de génération de tokens pour l'inscription/validation ou l'oubli de mot de passe
+ * Penser à ajouter dans le .env une ligne JWT_SECRET='blablabla' (ce qu'on veut de compliqué) ainsi
+ * que modifier le fichier config/services.yaml pour ajouter sous parameters, et indenté le couple clé-valeur suivant :
+ *                                                                                  app.jwtsecret: '%env(JWT_SECRET)%'
  */
 class JWTService
 {
