@@ -1,35 +1,37 @@
-<nav class="navbar navbar-expand-lg bg-body-tertiary" data-bs-theme="dark">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href="{{ path('main') }}">
-            <img src="{{ asset('img/logo/logo.png') }}" alt="Logo" width="80" height="80" class="d-inline-block">Sortir.com</a>
+            <img src="{{ asset('img/logo/logo.png') }}" alt="Logo" width="100" height="100" class="d-inline-block align-text-top"> Sortir.com
+        </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
                 aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
-
             <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                 {% if app.user %}
-
                     <li class="nav-item">
-                        <a href="{{ path('participants_details', {'pseudo': app.user.pseudo }) }}" class="nav-link">
-                            {{ source('@svg_path/user-regular.svg') }}
+                        <a href="{{ path('participants_details', {'pseudo': app.user.pseudo }) }}" class="nav-link" title="Profil">
+                            <i class="fas fa-user"></i> Profil
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="{{ path('app_logout') }}" class="nav-link">
-                            {{ source('@svg_path/quit.svg') }}
+                        <a href="{{ path('app_logout') }}" class="nav-link" title="Se déconnecter">
+                            <i class="fas fa-sign-out-alt"></i> Se déconnecter
                         </a>
                     </li>
                 {% else %}
                     <li class="nav-item">
-                        <a href="{{ path('app_login') }}" class="nav-link">Me Connecter</a>
+                        <a href="{{ path('app_login') }}" class="nav-link">
+                            <i class="fas fa-sign-in-alt"></i> Me Connecter
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a href="{{ path('app_register') }}" class="nav-link">M'inscrire</a>
+                        <a href="{{ path('app_register') }}" class="nav-link">
+                            <i class="fas fa-user-plus"></i> M'inscrire
+                        </a>
                     </li>
                 {% endif %}
-
             </ul>
         </div>
     </div>

@@ -5,28 +5,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Sortir.com{% endblock %}</title>
     <link rel="icon"
-          href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
+          href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text
+          y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22
+          fill=%22%23fff%22>sf</text></svg>">
     <link rel="stylesheet" href="{{ asset('css/bootstrap.css') }}">
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     {% block stylesheets %}{% endblock %}
-
-    <script src="{{ asset('js/bootstrap.bundle.js') }}" defer></script>
-    <script src="{{ asset('js/script.js') }}" defer></script>
-    {% block javascripts %}{% endblock %}
 </head>
 <body data-bs-theme="dark">
 {% include '_partials/_nav.html.twig' %}
 {% if app.user and app.user.actif == false %}
-    <div class="alert alert-warning alert-dismissible" role="alert">
+    <div class="alert alert-warning alert-dismissible fade show" role="alert">
         <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="close"></button>
         <div class="alert-message">
-            <strong>Votre Compte n'est pas activé</strong>, <a href="{{ path('resend_verif') }}">renvoyez le lien
-                d'activation</a>
+            <strong>Votre Compte n'est pas activé</strong>, <a href="{{ path('resend_verif') }}">renvoyez le lien d'activation</a>
         </div>
     </div>
 {% endif %}
 {% include '_partials/_flash.html.twig'%}
 
-{% block body %}{% endblock %}
+<div class="container">
+    {% block body %}{% endblock %}
+</div>
+
+<script src="{{ asset('js/bootstrap.bundle.js') }}" defer></script>
+<script src="{{ asset('js/script.js') }}" defer></script>
+{% block javascripts %}{% endblock %}
 </body>
 </html>

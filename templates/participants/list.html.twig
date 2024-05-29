@@ -3,13 +3,14 @@
 {% block title %}{{ parent() }} | Liste{% endblock %}
 
 {% block body %}
-<h1>Hello</h1>
-    {% for participant in list %}
-
-        <a href="{{ path('participants_details', {'pseudo': participant.pseudo}) }}">{{ participant.pseudo }}</a>
-        <br>
-    {% endfor %}
+    <div class="container mt-5">
+        <h1>Liste des Participants</h1>
+        <ul class="list-group">
+            {% for participant in list %}
+                <li class="list-group-item">
+                    <a href="{{ path('participants_details', {'pseudo': participant.pseudo}) }}">{{ participant.pseudo }}</a>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
 {% endblock %}
-
-
-

@@ -1,16 +1,15 @@
 <?php
 
 //////////////////// SORTIE SERVICE /////////////////////
+////////////////// SORTIES SERVICES /////////////////////
 ///                                                   ///
-/// Sert à gérer les différents traitement liés au    ///
+/// Sert à gérer les différents traitements liés au   ///
 /// ServiceController.                                ///
 ///                                                   ///
 /////////////////////////////////////////////////////////
 
-
 namespace App\Services;
 
-use App\Entity\Sortie;
 use App\Repository\SortieRepository;
 
 class SortiesService
@@ -25,14 +24,21 @@ class SortiesService
     }
 
     ////////////////////////////////////// les fonctions
-    public function showActive()   //recherche de toutes les sorties
+    public function showActive()   // recherche de toutes les sorties actives
     {
-        $sorties = $this->sortieRepository->findBy([ 'etat' => [2,3,4,6] ]);
+        $sorties = $this->sortieRepository->findBy(['etat' => [2, 3, 4, 6]]);
         return $sorties;
     }
-    public function showOld()   //recherche des sorties archivées
+
+    public function showOld()   // recherche des sorties archivées
     {
-        $sorties = $this->sortieRepository->findBy([ 'etat' => 5 ]);
+        $sorties = $this->sortieRepository->findBy(['etat' => 5]);
+        return $sorties;
+    }
+
+    public function showAll() : array  // recherche de toutes les sorties
+    {
+        $sorties = $this->sortieRepository->findAll();
         return $sorties;
     }
 }
