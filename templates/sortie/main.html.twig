@@ -50,7 +50,7 @@
                         <td>X/{{ sortie.nbInscriptionsMax }}</td>
                         <td>{{ sortie.etat.libelle }}</td>
                         <td>je suis inscrit ?</td>
-                        <td>{# sortie.organisateur.pseudo #}</td>
+                        <td>{{ sortie.organisateur.pseudo }}</td>
                         <td><a href="{{ path('sortie_detail', {'id':sortie.id}) }}" title="détail de la sortie">Afficher</a></td>
                         </tr>
                     {% endif %}

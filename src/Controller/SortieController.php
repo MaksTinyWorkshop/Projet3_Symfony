@@ -32,58 +32,12 @@ class SortieController extends AbstractController
     }*/
     ///////// route 1-1 : la partie filtre de la page des sorties
     #[Route('', name: 'main')]
-    public function list(SiteService $SiSe, SortieRepository $SoRe, Request $request)
+    public function list(SiteService $SiSe, SortiesService $SoSe, Request $request)
     {
-        // Create the form
         $form = $this->createForm(SortieFilterForm::class);
         $form->handleRequest($request);
 
-        // Initialize query builder
-        $queryBuilder = $SoRe->createQueryBuilder('s');
-
-        $queryBuilder->andWhere($queryBuilder->expr()->in('s.etat', [2, 3, 4, 6]));
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $data = $form->getData();
-
-            if ($data['site']) {
-                $queryBuilder->andWhere('s.site = :site')
-                    ->setParameter('site', $data['site']);
-            }
-
-            if (!empty($data['name'])) {
-                $queryBuilder->andWhere('s.nom LIKE :name')
-                    ->setParameter('name', '%' . $data['name'] . '%');
-            }
-
-            if ($data['startDate']) {
-                $queryBuilder->andWhere('s.dateHeureDebut >= :startDate')
-                    ->setParameter('startDate', $data['startDate']);
-            }
-
-            if ($data['endDate']) {
-                $queryBuilder->andWhere('s.dateLimiteInscription <= :endDate')
-                    ->setParameter('endDate', $data['endDate']);
-            }
-
-            if ($data['checkbox1']) {
-                $queryBuilder->andWhere('s.option1 = true');
-            }
-
-            if ($data['checkbox2']) {
-                $queryBuilder->andWhere('s.option2 = true');
-            }
-
-            if ($data['checkbox3']) {
-                $queryBuilder->andWhere('s.option3 = true');
-            }
-
-            if ($data['checkbox4']) {
-                $queryBuilder->andWhere('s.option4 = true');
-            }
-        }
-
-        $sortieList = $queryBuilder->getQuery()->getResult();
+        $sortieList = $SoSe->makeFilter($form);
         $sitesList = $SiSe->showAll();        //délégation de la recherche au SiteService
         $dateActuelle = new DateTime();
 
