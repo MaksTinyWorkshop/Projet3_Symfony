@@ -1,14 +1,19 @@
 {% extends 'base.html.twig' %}
 
-{% block title %} {{ parent()}} | Profil {{ participant.pseudo }} {% endblock %}
+{% block title %} {{ parent() }} | Profil {{ participant.pseudo }} {% endblock %}
 
 {% block body %}
-<h1>Hello</h1>
+    <h1>Profil de {{ participant.pseudo }}</h1>
+
+    {% if participant.photo %}
+        <img src="{{ asset('uploads/photos/' ~ participant.photo) }}" alt="{{ participant.pseudo }}" style="max-width: 200px;">
+    {% else %}
+        <p>Aucune photo de profil</p>
+    {% endif %}
+
     {% if app.user.pseudo == participant.pseudo %}
         <h2>C'est moi</h2>
     {% else %}
         <h2>C'est pas moi</h2>
     {% endif %}
-
 {% endblock %}
-

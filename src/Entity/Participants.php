@@ -68,6 +68,14 @@ class Participants implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 100, nullable: true)]
     private ?string $resetToken;
 
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
+    #[Assert\File(
+        maxSize: "1024k",
+        mimeTypes: ["image/jpeg", "image/png", "image/gif"],
+        mimeTypesMessage: "Please upload a valid image"
+    )]
+    private ?string $photo = null;
+
 
     public function __construct()
     {
@@ -75,7 +83,7 @@ class Participants implements UserInterface, PasswordAuthenticatedUserInterface
         $this->roles = ['ROLE_USER'];
     }
 
-        public function getId(): ?int
+    public function getId(): ?int
     {
         return $this->id;
     }
@@ -99,13 +107,13 @@ class Participants implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function getUserIdentifier(): string
     {
-        return (string) $this->email;
+        return (string)$this->email;
     }
 
     /**
+     * @return list<string>
      * @see UserInterface
      *
-     * @return list<string>
      */
     public function getRoles(): array
     {
@@ -231,4 +239,17 @@ class Participants implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $this->resetToken = $resetToken;
     }
+
+
+    public function getPhoto(): ?string
+    {
+        return $this->photo;
+    }
+
+    public function setPhoto(?string $photo): self
+    {
+        $this->photo = $photo;
+        return $this;
+    }
 }
+

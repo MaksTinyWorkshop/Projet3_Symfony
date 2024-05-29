@@ -6,6 +6,7 @@ use App\Entity\Participants;
 use App\Entity\Site;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
@@ -15,6 +16,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\IsTrue;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\File;
 
 /**
  * Formulaire de création de compte
@@ -60,16 +62,38 @@ class RegistrationFormType extends AbstractType
                 'placeholder' => 'Choisissez un site',
             ])
             ->add('plainPassword', PasswordType::class, [
-                // instead of being set onto the object directly,
-                // this is read and encoded in the controller
+                // lu et encodé dans le controller
                 'mapped' => false,
                 'attr' => ['autocomplete' => 'new-password', 'class' => 'form-control'],
 
                 'label' => 'Mot de Passe',
-            ]);
+            ])
+            ->add('photo', FileType::class, [
+                'label' => 'Photo de profil (JPEG, PNG, GIF)',
+
+                // unmapped pour qu'il ne soit pas associé à une  entity property
+                'mapped' => false,
+
+                // pour le rendre optionnel
+                'required' => false,
+
+                // Contraintes de validations de fichier
+                'constraints' => [
+                    new File([
+                        'maxSize' => '1024k',
+                        'mimeTypes' => [
+                            'image/jpeg',
+                            'image/png',
+                            'image/gif',
+                        ],
+                        'mimeTypesMessage' => 'Veuillez sélectionner une image valide',
+                    ])
+                ],
+            ])
+        ;
     }
 
-    public function configureOptions(OptionsResolver $resolver): void
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
             'data_class' => Participants::class,
