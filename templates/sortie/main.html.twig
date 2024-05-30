@@ -4,12 +4,8 @@
 
 {% block body %}
 
-    {# I . Partie filtrage et recherche #}
+{# I . Partie filtrage et recherche #}
 <div>
-
-</div>
-
-    {# II . Partie affichage de la liste #}
     {{ form_start(form) }}
     {{ form_row(form.site) }}
     {{ form_row(form.name) }}
@@ -21,13 +17,23 @@
     {{ form_row(form.checkbox4) }}
     <button type="submit">Filter</button>
     {{ form_end(form) }}
+</div>
+
+{# II . Partie affichage de la liste #}
 <div >
-    {% set data = form.vars.value %}
-    {% if data.checkbox4 %}
-        <h1>Liste des sorties archivées</h1>
+    {# modification du titre en fonction de archive ou pas archive #}
+    {% if form.vars.value %}
+        {% set data = form.vars.value %}
+        {% if data.checkbox4 %}
+            <h1>Liste des sorties archivées</h1>
+        {% else %}
+            <h1>Liste des sorties prévues</h1>
+        {% endif %}
     {% else %}
         <h1>Liste des sorties prévues</h1>
     {% endif %}
+
+    {# affichage de la liste des events par site #}
     {% for site in sitesList %}
         {% set exist = 0 %}
         {% for sortie in sortiesList %}
