@@ -63,7 +63,6 @@ class Participants implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 100, nullable: true)]
     private ?string $resetToken;
 
-
     public function __construct()
     {
         $this->isActif = false;

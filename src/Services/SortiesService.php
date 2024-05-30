@@ -7,18 +7,12 @@
 ///                                                   ///
 /////////////////////////////////////////////////////////
 
-
 namespace App\Services;
 
-
-
-use App\Entity\Sortie;
+use App\Entity\Inscriptions;
 use App\Form\SortieFilterForm;
 use App\Repository\SortieRepository;
-use http\Client\Curl\User;
 use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Security\Core\User\UserInterface;
 
 class SortiesService
 {
@@ -26,7 +20,6 @@ class SortiesService
     private $sortieRepository;
     private $sortieFilterForm;
     private $secu;
-
 
     ////////////////////////////////////// constructeur
     public function __construct(Security $secu, SortieRepository $sortieRepository, SortieFilterForm $sortieFilterForm)
@@ -43,9 +36,16 @@ class SortiesService
         $sorties = $this->sortieRepository->findBy([ 'etat' => 5 ]);
         return $sorties;
     }
+
+
     public function makeFilter($form){                                           /// I /// Recherche avec les filtres (ou pas)
 
         $baseFiltered = false;                                                          //défini si on est passé par le formulaire de filtres ou pas
+
+        $user = $this->secu->getUser();
+        if ($user) {
+            $user = $user->getId();
+        }
 
         // construction de la requête
         $queryBuilder = $this->sortieRepository->createQueryBuilder('s');
@@ -74,56 +74,38 @@ class SortiesService
             }
 
             if ($data['checkbox1']) {                                                   //par organisateur (soi-même)
-                $user = $this->secu->getUser();
-                if ($user) {
-                    $user = $user->getUserIdentifier();
-                    $queryBuilder->join('s.organisateur', 'p');
-                    $queryBuilder->andWhere('p.email = :pseudo')
-                                 ->setParameter('pseudo', $user);
-                }else{
-                    print (" !!!!!!!!!!!! personne n'est connecté !!!!!!!!!!!!!!!!!! ");
-                }
+                $queryBuilder->join('s.organisateur', 'p');
+                $queryBuilder->andWhere('p.id = :userId')
+                             ->setParameter('userId', $user);
             }
 
-            if ($data['checkbox2']) {
-                $user = $this->secu->getUser();
-                if ($user) {
-                    $user = $user->getId();
-                    print($user);
-
-                    $queryBuilder->join('s.sortiesIdSorties', 'i')
-                        ->andWhere('i.participantsIdParticipants = :userId')
-                        ->setParameter('userId', $user);
-
-                }else{
-                    print (" !!!!!!!!!!!! personne n'est connecté !!!!!!!!!!!!!!!!!! ");
-                }
+            if ($data['checkbox2']) {                                                   //par participation (soi-même)
+                $queryBuilder->leftJoin('App\Entity\Inscriptions', 'i', 'WITH', 'i.sortie = s.id');
+                $queryBuilder->andWhere('i.participant = :userId')
+                             ->setParameter('userId', $user);
             }
 
-            if ($data['checkbox3']) {
-                $user = $this->secu->getUser();
-                if ($user) {
-                    $user = $user->getId();
-                    print($user);
+            if ($data['checkbox3']) {                                                   //par non-participation (soi-même)
+                $subQuery = $this->sortieRepository->createQueryBuilder('sq')
+                    ->select('1')
+                    ->from('App\Entity\Inscriptions', 'j')
+                    ->where('j.sortie = s.id')
+                    ->andWhere('j.participant = :userId')
+                    ->getDQL();
 
-                    $queryBuilder->join('s.sortiesIdSorties', 'i')
-                        ->andWhere('i.participantsIdParticipants != :userId')
-                        ->setParameter('userId', $user);
-
-                }else{
-                    print (" !!!!!!!!!!!! personne n'est connecté !!!!!!!!!!!!!!!!!! ");
-                }
+                $queryBuilder->andWhere($queryBuilder->expr()->not($queryBuilder->expr()->exists($subQuery)))
+                    ->setParameter('userId', $user);
             }
 
             if ($data['checkbox4']) {                                                   //pour consulter dans les archives
-                $queryBuilder->andWhere($queryBuilder->expr()->in('s.etat', 5));
+                $queryBuilder->andWhere($queryBuilder->expr()->eq('s.etat', 5));
             }else{
                 $queryBuilder->andWhere($queryBuilder->expr()->in('s.etat', [2, 3, 4, 6]));
             }
             $baseFiltered = true;
         }
 
-        // si on est pas passé par le formulaire (au premier chargement par exemple) on joue le filtrage par défaut
+        // si on a activé aucun filtre (au premier chargement par exemple) on joue le filtrage par défaut en fonction des états
         if (!$baseFiltered){
             $queryBuilder->andWhere($queryBuilder->expr()->in('s.etat', [2, 3, 4, 6]));
         }
