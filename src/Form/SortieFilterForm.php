@@ -42,11 +42,11 @@ class SortieFilterForm extends AbstractType
             ])
             ->add('checkbox2', CheckboxType::class, [
                 'required' => false,
-                'label' => "Sorties ausquelles je suis inscrit/e"
+                'label' => "Sorties auxquelles je suis inscrit/e"
             ])
             ->add('checkbox3', CheckboxType::class, [
                 'required' => false,
-                'label' => "Sorties ausquelles je ne suis pas inscrit/e"
+                'label' => "Sorties auxquelles je ne suis pas inscrit/e"
             ])
             ->add('checkbox4', CheckboxType::class, [
                 'required' => false,

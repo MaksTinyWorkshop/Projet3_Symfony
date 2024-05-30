@@ -4,12 +4,8 @@
 
 {% block body %}
 
-    {# I . Partie filtrage et recherche #}
+{# I . Partie filtrage et recherche #}
 <div>
-
-</div>
-
-    {# II . Partie affichage de la liste #}
     {{ form_start(form) }}
     {{ form_row(form.site) }}
     {{ form_row(form.name) }}
@@ -21,8 +17,23 @@
     {{ form_row(form.checkbox4) }}
     <button type="submit">Filter</button>
     {{ form_end(form) }}
+</div>
+
+{# II . Partie affichage de la liste #}
 <div >
-    <h1>Liste des sorties prévues</h1>
+    {# modification du titre en fonction de archive ou pas archive #}
+    {% if form.vars.value %}
+        {% set data = form.vars.value %}
+        {% if data.checkbox4 %}
+            <h1>Liste des sorties archivées</h1>
+        {% else %}
+            <h1>Liste des sorties prévues</h1>
+        {% endif %}
+    {% else %}
+        <h1>Liste des sorties prévues</h1>
+    {% endif %}
+
+    {# affichage de la liste des events par site #}
     {% for site in sitesList %}
         {% set exist = 0 %}
         {% for sortie in sortiesList %}
@@ -45,13 +56,31 @@
                     %}
                         <tr>
                         <td>{{ sortie.nom }} : </td>
-                        <td>{{ sortie.dateHeureDebut|date("d/d/Y - h:i") }}</td>
-                        <td>{{ sortie.dateLimiteInscription|date("d/d/Y") }}</td>
-                        <td>X/{{ sortie.nbInscriptionsMax }}</td>
+                        <td>{{ sortie.dateHeureDebut|date("d/m/Y - h:i") }}</td>
+                        <td>{{ sortie.dateLimiteInscription|date("d/m/Y") }}</td>
+                        {% set inscCount = 0 %}
+                        {% set myInsc = '' %}
+                        {% for inscription in inscriptionsList %}
+                            {% if inscription.sortie.id == sortie.id %}
+                                {% set inscCount = inscCount + 1 %}
+                                {% if inscription.participant.id == app.user.id %}
+                                    {% set myInsc = 'X' %}
+                                {% endif %}
+                            {% endif %}
+                        {%  endfor %}
+                        <td>{{ inscCount }}/{{ sortie.nbInscriptionsMax }}</td>
                         <td>{{ sortie.etat.libelle }}</td>
-                        <td>je suis inscrit ?</td>
-                        <td>{# sortie.organisateur.pseudo #}</td>
+                            {# comparaison dans al table inscription pour vérifier si l'ID en session correspond à un inscrit à cet event #}
+                        <td>{{ myInsc }}</td>
+                        <td>{{ sortie.organisateur.pseudo }}</td>
                         <td><a href="{{ path('sortie_detail', {'id':sortie.id}) }}" title="détail de la sortie">Afficher</a></td>
+                        {% if sortie.etat.id == 2 %}
+                            {% if myInsc =="X" %}
+                                <td><a href="#" title="se désister">Me retirer</a></td>
+                            {% else %}
+                                <td><a href="#" title="s'inscrire">M'inscrire</a></td>
+                            {% endif %}
+                        {% endif %}
                         </tr>
                     {% endif %}
                 {% endfor %}
@@ -61,6 +90,5 @@
         <br>
     {% endfor %}
     <br>
-    <a href="{{ path('sortie_archives') }}" title="les archives des sorties passées">Archives</a>
 </div>
 {% endblock %}
