@@ -19,12 +19,6 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
  */
 class SecurityController extends AbstractController
 {
-    ///////////////////// Constructeur pour injection du ParticipantsService
-    public function __construct(private readonly ParticipantsService $participantsService)
-    {
-    }
-
-    //////////////////// Routage et appel au service
     #[Route(path: '/login', name: 'app_login')]
     public function login(AuthenticationUtils $authenticationUtils): Response
     {
@@ -44,13 +38,13 @@ class SecurityController extends AbstractController
     }
 
     #[Route('oubli-pass', name: 'forgot_password')]
-    public function forgotPassword(Request $request): Response
+    public function forgotPassword(Request $request, ParticipantsService $participantsService): Response
     {
         $form = $this->createForm(ResetPasswordRequestFormType::class);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $email = $form->get('email')->getData();
-            $participant = $this->participantsService->forgotPassword($email);
+            $participant = $participantsService->forgotPassword($email);
 
             if ($participant) {
                 $this->addFlash('success', 'Email envoyé avec succès');
@@ -63,9 +57,9 @@ class SecurityController extends AbstractController
     }
 
     #[Route('/oubli-pass/{token}', name: 'reset_password')]
-    public function resetPassword(string $token, Request $request): Response
+    public function resetPassword(string $token, Request $request, ParticipantsService $participantsService): Response
     {
-        $result = $this->participantsService->resetPassword($token, $request);
+        $result = $participantsService->resetPassword($token, $request);
 
         if ($result['success']) {
             $this->addFlash('success', 'Mot de passe modifié avec succès');

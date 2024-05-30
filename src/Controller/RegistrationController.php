@@ -18,24 +18,20 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class RegistrationController extends AbstractController
 {
-    ///////////////////// Constructeur pour injection du ParticipantsService
-    public function __construct(private ParticipantsService $partService){}
-
-    ///////////////////// Routage et appel au service
     /**
      * @throws TransportExceptionInterface
      */
     #[Route('/register', name: 'app_register')]
-    public function register(Request $request): Response
+    public function register(Request $request,ParticipantsService $partService): Response
     {
-       return $this->partService->register($request);
+       return $partService->register($request);
     }
 
     #[Route('/verif/{token}', name: 'verify')]
-    public function verify($token): Response
+    public function verify($token,ParticipantsService $partService): Response
     {
         $jwtSecret = $this->getParameter('app.jwtsecret');
-        $isVerified = $this->partService->verify($token, $jwtSecret);
+        $isVerified = $partService->verify($token, $jwtSecret);
 
         if ($isVerified) {
             $this->addFlash('success', 'Utilisateur activé!');
@@ -47,7 +43,7 @@ class RegistrationController extends AbstractController
     }
 
     #[Route('/renvoiVerif', name: 'resend_verif')]
-    public function resendVerif(): Response
+    public function resendVerif(ParticipantsService $partService): Response
     {
         $participant = $this->getUser();
         if(!$participant){
@@ -60,10 +56,9 @@ class RegistrationController extends AbstractController
         }
         $jwtSecret = $this->getParameter('app.jwtsecret');
 
-        $this->partService->resendVerif($participant, $jwtSecret);
+        $partService->resendVerif($participant, $jwtSecret);
 
         $this->addFlash('success', 'Email de vérification envoyé');
         return $this->redirectToRoute('main');
     }
-
 }

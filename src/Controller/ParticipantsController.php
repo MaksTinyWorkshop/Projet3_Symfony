@@ -25,50 +25,50 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 #[Route('/participants', name: 'participants_')]
 class ParticipantsController extends AbstractController
 {
-    //////////////////////////// Constructeur pour l'injection de dépendances
-    public function __construct(
-        private ParticipantsService $participantsService,
-        private Security            $security,
-        private TokenStorageInterface       $tokenStorage
-    ){}
 
-    //////////////////// Routage et appel au service
     #[Route('/', name: 'list')]
-    public function index(): Response
+    public function index(ParticipantsService $participantsService): Response
     {
-        $list = $this->participantsService->getAll();
+        $list = $participantsService->getAll();
         return $this->render('participants/list.html.twig', compact('list'));
     }
 
     #[Route('/{pseudo}', name: 'details')]
-    public function details(Request $request, string $pseudo): Response
+    public function details(
+        Request $request,
+        string $pseudo,
+        Security $security,
+        ParticipantsService $participantsService
+    ): Response
     {
         // On checke si le User connecté est celui qui correspond au pseudo
-        $participant = $this->security->getUser();
+        $participant = $security->getUser();
         $participantPseudo = $participant->getPseudo();
 
         if ($participantPseudo === $pseudo) {
             // Si oui, méthode d'update par le service
-           return $this->participantsService->updateProfil($request, $participant);
+           return $participantsService->updateProfil($request, $participant);
         } else
             // Si non, méthode de consultation par le service
-           return $this->participantsService->consultationProfil($pseudo); // Si non, simple consultation
+           return $participantsService->consultationProfil($pseudo); // Si non, simple consultation
     }
 
     #[Route('/{pseudo}/desinscription', name: 'delete')]
-    public function delete(Request $request, string $pseudo): Response
+    public function delete(
+        string $pseudo,
+        Security $security,
+        ParticipantsService $participantsService,
+        TokenStorageInterface $tokenStorage
+    ): Response
     {
-        $participant = $this->security->getUser();
+        $participant = $security->getUser();
         $participantPseudo = $participant->getPseudo();
 
         if ($participantPseudo === $pseudo) {
-            $this->participantsService->deleteProfil($pseudo, $this->tokenStorage);
+            $participantsService->deleteProfil($pseudo, $tokenStorage);
             return $this->redirectToRoute('participants_list');
         } else
-            return $this->participantsService->consultationProfil($pseudo);
+            return $participantsService->consultationProfil($pseudo);
     }
-
-
-
 }
 

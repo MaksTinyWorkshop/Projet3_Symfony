@@ -19,45 +19,43 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/admin', name: 'admin_')]
 class AdminController extends AbstractController
 {
-    public function __construct(
-        private AdminService $adminService,
-        private ParticipantsRepository $participantsRepository,
-        private ParticipantsService  $participantsService
-    )
-    {
-    }
 
     #[Route('/', name: 'index')]
-    public function index(): Response
+    public function index(
+        ParticipantsRepository $participantsRepository
+    ): Response
     {
-        $participants = $this->participantsRepository->findAll();
+        $participants = $participantsRepository->findAll();
         return $this->render('admin/index.html.twig', compact('participants'));
     }
 
     #[Route('/addUser', name: 'addSingleUser')]
-    public function addSingleUser(Request $request): Response
+    public function addSingleUser(Request $request, AdminService $adminService): Response
     {
-        return $this->adminService->addSingleUser($request);
+        return $adminService->addSingleUser($request);
     }
 
 
     #[Route('/addUsersFile', name: 'addUsersByFile')]
-    public function addUsersByFile(Request $request): Response
+    public function addUsersByFile(
+        Request $request,
+        AdminService $adminService
+    ): Response
     {
-        return $this->adminService->addUsersByCSV($request);
+        return $adminService->addUsersByCSV($request);
     }
 
     #[Route('/toggleUser/{pseudo}', name: 'toggleActif')]
-    public function toggleActif($pseudo): Response
+    public function toggleActif($pseudo, AdminService $adminService): Response
     {
-        $this->adminService->toggleActiveUser($pseudo);
+        $adminService->toggleActiveUser($pseudo);
         return $this->redirectToRoute('admin_index');
     }
 
     #[Route('/deleteUser/{pseudo}', name: 'deleteUser')]
-    public function deleteUser($pseudo): Response
+    public function deleteUser($pseudo, ParticipantsService $participantsService ): Response
     {
-            $this->participantsService->deleteProfil($pseudo);
+            $participantsService->deleteProfil($pseudo);
             return $this->redirectToRoute('admin_index');
     }
 
