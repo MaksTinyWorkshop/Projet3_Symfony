@@ -239,19 +239,18 @@ class ParticipantsService extends AbstractController
         return $this->render('participants/details.html.twig', compact('participant'));
     }
 
-    public function deleteProfil(string $pseudo, TokenStorageInterface $tokenStorage): Response
+    public function deleteProfil(string $pseudo, TokenStorageInterface $tokenStorage = null): void
     {
-        $tokenStorage->setToken(null);
+        $tokenStorage?->setToken(null);
         $participant = $this->participantsRepository->findOneBy(['pseudo' => $pseudo]);
         if($participant) {
             $this->entityManager->remove($participant);
             $this->entityManager->flush();
 
-            $this->addFlash('success', 'Compte supprimé avec succès, ravi de vous avoir eu parmi nous');
-            return $this->redirectToRoute('main');
+            $this->addFlash('success', 'Utilisateur'. $participant->getPseudo(). ' supprimé avec succès');
         } else {
             $this->addFlash('danger', 'Une erreur s\'est produite, veuillez recommencer');
-            return $this->redirectToRoute('participants_details', compact('pseudo'));
+
         }
 
     }

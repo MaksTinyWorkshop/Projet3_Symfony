@@ -51,7 +51,7 @@ class AdminService extends AbstractController
                 $this->addFlash('success', 'Profil correctement importé');
                 $this->participantsService->forgotPassword($participant->getEmail(), 'email/import_by_admin.html.twig');
 
-                return $this->render('admin/index.html.twig', []);
+                return $this->redirectToRoute('admin_index', []);
             } else {
                 $this->addFlash('warning', 'Un utilisateur avec cet email est déjà enregistré');
             }
@@ -145,5 +145,20 @@ class AdminService extends AbstractController
             'registrationForm' => $form->createView(),
         ]);
 
+    }
+
+    public function toggleActiveUser(string $pseudo):void
+    {
+        $user = $this->participantsRepository->findOneBy(['pseudo' => $pseudo]);
+        if ($user->isActif()){
+            $user->setActif(false);
+            $this->addFlash('success', 'Utilisateur '. $user->getPseudo() . ' désactivé');
+        } else {
+            $user->setActif(true);
+            $this->addFlash('success', 'Utilisateur '. $user->getPseudo() . ' activé');
+        }
+
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
     }
 }

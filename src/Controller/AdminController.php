@@ -2,11 +2,12 @@
 
 namespace App\Controller;
 
+use App\Repository\ParticipantsRepository;
 use App\Services\AdminService;
+use App\Services\ParticipantsService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Routing\Attribute\Route;
 
 /**
@@ -20,6 +21,8 @@ class AdminController extends AbstractController
 {
     public function __construct(
         private AdminService $adminService,
+        private ParticipantsRepository $participantsRepository,
+        private ParticipantsService  $participantsService
     )
     {
     }
@@ -27,7 +30,8 @@ class AdminController extends AbstractController
     #[Route('/', name: 'index')]
     public function index(): Response
     {
-        return $this->render('admin/index.html.twig');
+        $participants = $this->participantsRepository->findAll();
+        return $this->render('admin/index.html.twig', compact('participants'));
     }
 
     #[Route('/addUser', name: 'addSingleUser')]
@@ -42,4 +46,19 @@ class AdminController extends AbstractController
     {
         return $this->adminService->addUsersByCSV($request);
     }
+
+    #[Route('/toggleUser/{pseudo}', name: 'toggleActif')]
+    public function toggleActif($pseudo): Response
+    {
+        $this->adminService->toggleActiveUser($pseudo);
+        return $this->redirectToRoute('admin_index');
+    }
+
+    #[Route('/deleteUser/{pseudo}', name: 'deleteUser')]
+    public function deleteUser($pseudo): Response
+    {
+            $this->participantsService->deleteProfil($pseudo);
+            return $this->redirectToRoute('admin_index');
+    }
+
 }

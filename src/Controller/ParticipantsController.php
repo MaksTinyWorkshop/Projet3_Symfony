@@ -62,10 +62,13 @@ class ParticipantsController extends AbstractController
         $participantPseudo = $participant->getPseudo();
 
         if ($participantPseudo === $pseudo) {
-            return $this->participantsService->deleteProfil($pseudo, $this->tokenStorage);
+            $this->participantsService->deleteProfil($pseudo, $this->tokenStorage);
+            return $this->redirectToRoute('participants_list');
         } else
             return $this->participantsService->consultationProfil($pseudo);
     }
+
+
 
 }
 
