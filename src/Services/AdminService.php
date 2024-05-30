@@ -3,7 +3,9 @@
 namespace App\Services;
 
 use App\Entity\Participants;
+use App\Entity\Site;
 use App\Form\AdminImportFormType;
+use App\Form\CSVImportFormType;
 use App\Repository\ParticipantsRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -23,7 +25,6 @@ class AdminService extends AbstractController
 {
 
     public function __construct(
-        private string                      $dataDirectory,
         private ParticipantsRepository      $participantsRepository,
         private EntityManagerInterface      $entityManager,
         private ParticipantsService         $participantsService,
@@ -32,48 +33,117 @@ class AdminService extends AbstractController
     {
     }
 
-    /**
-     * @throws TransportExceptionInterface
-     */
-    public function addUserByCSV(Request $request): Response
+    public function addSingleUser(Request $request): Response
     {
-        $filepath = $this->dataDirectory . 'RandomSolo.csv';
-        $normalizers = [new ObjectNormalizer()];
-        $encoders = [new CsvEncoder()];
-
-        $serializer = new Serializer($normalizers, $encoders);
-        $fileString = file_get_contents($filepath);
-        $data = $serializer->decode($fileString, 'csv');
-        $data = $data[0];
-        $email = $data['email'];
-        $userEnBase = $this->participantsRepository->findOneBy(['email' => $email]);
-        if (!$userEnBase) {
-            $participant = new Participants();
-            $participant->setEmail($email)
-                ->setPseudo($data['login']['username'])
-                ->setNom($data['name']['last'])
-                ->setPrenom($data['name']['first'])
-                ->setTelephone($data['cell'])
-                ->setActif(true)
-                ->setPassword($this->passwordHasher->hashPassword($participant, 'Pa$$w0rd'));
-        } else {
-            $this->addFlash('warning', 'cet email existe en base');
-            return $this->redirectToRoute('admin_index');
-        }
+        //Nouvelle instance de participant
+        $participant = new Participants();
+        $participant
+            ->setActif(true)
+            ->setPassword($this->passwordHasher->hashPassword($participant, 'Pa$$w0rd'));
         $form = $this->createForm(AdminImportFormType::class, $participant);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->entityManager->persist($participant);
-            $this->entityManager->flush();
+            $userEnBase = $this->participantsRepository->findOneBy(['email' => $participant->getEmail()]);
+            if (!$userEnBase) {
+                $this->entityManager->persist($participant);
+                $this->entityManager->flush();
 
-            $this->addFlash('success', 'Profil correctement importé');
-            $this->participantsService->forgotPassword($participant->getEmail(), 'email/import_by_admin.html.twig');
+                $this->addFlash('success', 'Profil correctement importé');
+                $this->participantsService->forgotPassword($participant->getEmail(), 'email/import_by_admin.html.twig');
 
-            return $this->redirectToRoute('main');
+                return $this->render('admin/index.html.twig', []);
+            } else {
+                $this->addFlash('warning', 'Un utilisateur avec cet email est déjà enregistré');
+            }
         }
-        return $this->render('security/registerByAdmin.html.twig', [
+
+        return $this->render('admin/importSingle.html.twig', [
             'registrationForm' => $form,
         ]);
     }
 
+    /**
+     * @throws TransportExceptionInterface
+     */
+    public function addUsersByCSV(Request $request): Response
+    {
+        $form = $this->createForm(CSVImportFormType::class);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $csvFile = $form->get('csvFile')->getData();
+            if ($csvFile) {
+                // Déplacez le fichier temporaire vers l'emplacement défini
+                $csvFileName = pathinfo($csvFile->getClientOriginalName(), PATHINFO_FILENAME) . '.' . $csvFile->guessExtension();
+                $csvFilePath = $this->getParameter('csv_directory') . '/' . $csvFileName;
+                $csvFile->move($this->getParameter('csv_directory'), $csvFileName);
+
+                // Traitement du fichier CSV ...
+                // Création d'un compteur de participants ajoutés
+                $newParticipants = [];
+                $normalizers = [new ObjectNormalizer()];
+                $encoders = [new CsvEncoder([CsvEncoder::DELIMITER_KEY => ';'])];
+
+                $serializer = new Serializer($normalizers, $encoders);
+                $fileString = file_get_contents($csvFilePath);
+                $data = $serializer->decode($fileString, 'csv');
+                // Extraction des données
+                foreach ($data as $userData) {
+                    // Recherche du user en base
+                    $email = $userData['email'];
+                    $userEnBase = $this->participantsRepository->findOneBy(['email' => $email]);
+                    // S'il n'est pas trouvé, on le crée
+                    if (!$userEnBase) {
+                        $participant = new Participants();
+                        $participant->setEmail($email)
+                            ->setPseudo($userData['pseudo'])
+                            ->setNom($userData['nom'])
+                            ->setPrenom($userData['prenom'])
+                            ->setTelephone($userData['telephone'])
+                            ->setActif(true)
+                            ->setPassword($this->passwordHasher->hashPassword($participant, 'Pa$$w0rd'));
+
+                        // Recherche de l'entité Site correspondante dans la base de données
+                        $siteRepository = $this->entityManager->getRepository(Site::class);
+                        $site = $siteRepository->findOneBy(['nom' => $userData['site']]);
+
+                        // Si le site est trouvé en base de données, l'associer à l'utilisateur
+                        if ($site) {
+                            $participant->setSite($site);
+                        } else {
+                            // Sinon on lui met le premier en base par défaut
+                            $siteDefault = $siteRepository->findOneBy([], ['id' => 'ASC']);
+                            $this->addFlash('warning', 'Le site ' . $userData['site'] . ' n\'existe pas en base de données.
+                    Utilisateur ' . $participant->getEmail() . ' inscrit à ' . $siteDefault->getNom() . ' à la place.');
+                        }
+
+                        $this->entityManager->persist($participant);
+                        $newParticipants[] = $participant;
+                    } else {
+                        $this->addFlash('warning', 'L\'email ' . $email . ' existe déjà en base.');
+                    }
+                }
+                $this->entityManager->flush();
+
+                // Envoi de lien de reset du MDP à chaque user nouvellement crée
+                foreach ($newParticipants as $participant) {
+                    $this->participantsService->forgotPassword($participant->getEmail(), 'email/import_by_admin.html.twig');
+                }
+
+                $this->addFlash('success', count($newParticipants) . ' utilisateurs importés avec succès.');
+
+
+                return $this->redirectToRoute('admin_index');
+
+
+            } else {
+                $this->addFlash('warning', 'Veuillez sélectionner un fichier CSV.');
+            }
+        }
+
+        return $this->render('admin/importMultiple.html.twig', [
+            'registrationForm' => $form->createView(),
+        ]);
+
+    }
 }

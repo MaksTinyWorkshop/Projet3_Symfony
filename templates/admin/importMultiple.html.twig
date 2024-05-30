@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Register{% endblock %}
+
+{% block body %}
+    <section class="container">
+        <div class="row">
+            <div class="col">
+                    <h1>Importer des profils</h1>
+
+                    {{ form_errors(registrationForm) }}
+
+                    {{ form_start(registrationForm) }}
+                    <fieldset class="mb-3">
+                        <legend>Le fichier</legend>
+                        {{ form_row(registrationForm.csvFile) }}
+                    </fieldset>
+
+                    <button type="submit" class="btn btn-primary">Enregistrer les profils</button>
+                    {{ form_end(registrationForm) }}
+
+            </div>
+        </div>
+    </section>
+
+{% endblock %}

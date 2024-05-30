@@ -27,17 +27,19 @@ class AdminController extends AbstractController
     #[Route('/', name: 'index')]
     public function index(): Response
     {
-        return $this->render('admin/index.html.twig', [
-            'controller_name' => 'AdminController',
-        ]);
+        return $this->render('admin/index.html.twig');
     }
 
-    /**
-     * @throws TransportExceptionInterface
-     */
-    #[Route('/addUser', name: 'app_admin')]
-    public function addUser(Request $request): Response
+    #[Route('/addUser', name: 'addSingleUser')]
+    public function addSingleUser(Request $request): Response
     {
-        return $this->adminService->addUserByCSV($request);
+        return $this->adminService->addSingleUser($request);
+    }
+
+
+    #[Route('/addUsersFile', name: 'addUsersByFile')]
+    public function addUsersByFile(Request $request): Response
+    {
+        return $this->adminService->addUsersByCSV($request);
     }
 }
