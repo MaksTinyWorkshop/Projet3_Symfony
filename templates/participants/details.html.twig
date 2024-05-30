@@ -3,35 +3,38 @@
 {% block title %} {{ parent()}} | Profil {{ participant.pseudo }} {% endblock %}
 
 {% block body %}
-    <h1>Profil de {{ participant.pseudo }}</h1>
-    {% if app.user.pseudo == participant.pseudo %}
-        <h2>C'est moi</h2>
+    <div class="container mt-5">
+        <h1>Profil de {{ participant.pseudo }}</h1>
+
         {% if participant.photo %}
-            <img src="{{ asset('uploads/photos/' ~ participant.photo) }}" alt="{{ participant.pseudo }}" style="max-width: 200px;">
+            <img src="{{ asset('uploads/photos/' ~ participant.photo) }}" alt="{{ participant.pseudo }}" class="img-thumbnail" style="max-width: 200px;">
         {% else %}
             <p>Aucune photo de profil</p>
         {% endif %}
-        <section class="container">
-            <div class="row">
-                <div class="col">
-                    <h3>Update de mon profil</h3>
+
+        {% if app.user and app.user.pseudo == participant.pseudo %}
+            <h2>C'est moi</h2>
+            <section class="container">
+                <div class="row">
+                    <div class="col">
+                        <h3>Update de mon profil</h3>
 
                     {{ form_errors(form) }}
 
-                    {{ form_start(form) }}
-                    <fieldset class="mb-3">
-                        <legend>Mes coordonnées</legend>
-                        {{ form_row(form.nom) }}
-                        {{ form_row(form.prenom) }}
-                        {{ form_row(form.telephone) }}
-                        {{ form_row(form.pseudo) }}
-                        {{ form_row(form.site) }}
-                    </fieldset>
-                    <fieldset class="mb-3">
-                        <legend>Mes Identifiants de connexion</legend>
-                        {{ form_row(form.email) }}
-                        {{ form_row(form.plainPassword) }}
-                    </fieldset>
+                        {{ form_start(form) }}
+                        <fieldset class="mb-3">
+                            <legend>Mes coordonnées</legend>
+                            {{ form_row(form.nom, {'attr': {'class': 'form-control'}}) }}
+                            {{ form_row(form.prenom, {'attr': {'class': 'form-control'}}) }}
+                            {{ form_row(form.telephone, {'attr': {'class': 'form-control'}}) }}
+                            {{ form_row(form.pseudo, {'attr': {'class': 'form-control'}}) }}
+                            {{ form_row(form.site, {'attr': {'class': 'form-control'}}) }}
+                        </fieldset>
+                        <fieldset class="mb-3">
+                            <legend>Mes Identifiants de connexion</legend>
+                            {{ form_row(form.email, {'attr': {'class': 'form-control'}}) }}
+                            {{ form_row(form.plainPassword, {'attr': {'class': 'form-control'}}) }}
+                        </fieldset>
 
                     <button type="submit" class="btn btn-primary">Update</button>
                     {{ form_end(form) }}
@@ -41,6 +44,11 @@
         </section>
     {% else %}
         <h2>C'est pas moi</h2>
+        <p>Pseudo : {{ participant.pseudo }}</p>
+        <p>Nom : {{ participant.nom }}</p>
+        <p>Prénom : {{ participant.prenom }}</p>
+        <p>Téléphone : {{ participant.telephone }}</p>
+        <p>Site de rattachement : {{ participant.site.nom }}</p>
     {% endif %}
 
 {% endblock %}

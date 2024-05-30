@@ -29,7 +29,7 @@ class RegistrationFormType extends AbstractType
             'label' => 'Mot de Passe',
             'constraints' => [
                 new Assert\NotBlank([
-                    'message' => 'Veuillez entre un mot de passe',
+                    'message' => 'Veuillez entrer un mot de passe',
                 ]),
                 new Assert\Length([
                     'min' => 8,
@@ -99,7 +99,7 @@ class RegistrationFormType extends AbstractType
 
                 // Contraintes de validations de fichier
                 'constraints' => [
-                    new File([
+                    new Assert\File([
                         'maxSize' => '1024k',
                         'mimeTypes' => [
                             'image/jpeg',
