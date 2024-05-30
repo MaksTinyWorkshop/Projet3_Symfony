@@ -130,7 +130,11 @@ class ParticipantsService extends AbstractController
 
 
     ///////////////////////////////////////////// Méthodes de gestion de l'oubli de mot de passe
-    public function forgotPassword($email)
+
+    /**
+     * @throws TransportExceptionInterface
+     */
+    public function forgotPassword($email, $template ='email/password_reset.html.twig')
     {
         // On récupère le User par son mail
         $participant = $this->participantsRepository->findOneBy(['email' => $email]);
@@ -150,7 +154,7 @@ class ParticipantsService extends AbstractController
                 'no-reply-passwordreset@sortir.com',
                 $participant->getEmail(),
                 'Réinitialisation de votre mot de passe',
-                'email/password_reset.html.twig',
+                $template,
                 $context
             );
             return $participant;

@@ -10,7 +10,13 @@
 
             <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                 {% if app.user %}
-
+                    {% if is_granted('ROLE_ADMIN') %}
+                        <li class="nav-item">
+                            <a href="{{ path('admin_index') }}" class="nav-link">
+                                {{ source('@svg_path/settings.svg') }}
+                            </a>
+                        </li>
+                    {% endif %}
                     <li class="nav-item">
                         <a href="{{ path('participants_details', {'pseudo': app.user.pseudo }) }}" class="nav-link">
                             {{ source('@svg_path/user-regular.svg') }}
