@@ -87,8 +87,29 @@ class RegistrationFormType extends AbstractType
                 'choice_label' => 'nom',
                 'placeholder' => 'Choisissez un site',
             ])
-            ->add('plainPassword', PasswordType::class, $passwordOptions);
+            ->add('plainPassword', PasswordType::class, $passwordOptions)
+            ->add('photo', FileType::class, [
+                'label' => 'Photo de profil (JPEG, PNG, GIF)',
 
+                // unmapped pour qu'il ne soit pas associé à une  entity property
+                'mapped' => false,
+
+                // pour le rendre optionnel
+                'required' => false,
+
+                // Contraintes de validations de fichier
+                'constraints' => [
+                    new File([
+                        'maxSize' => '1024k',
+                        'mimeTypes' => [
+                            'image/jpeg',
+                            'image/png',
+                            'image/gif',
+                        ],
+                        'mimeTypesMessage' => 'Veuillez sélectionner une image valide',
+                    ])
+                ],
+            ]);
         // Si on est déjà inscrit, ce champ est coché automatiquement
         if (!$options['is_edit']) {
             $builder->add('RGPD', CheckboxType::class, [
@@ -100,6 +121,8 @@ class RegistrationFormType extends AbstractType
                 ],
             ]);
         }
+
+        ;
     }
 
     public function configureOptions(OptionsResolver $resolver): void
