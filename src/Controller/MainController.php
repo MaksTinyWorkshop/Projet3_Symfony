@@ -15,4 +15,10 @@ class MainController extends AbstractController
             'controller_name' => 'MainController',
         ]);
     }
+
+    #[Route('/inactive', name: 'inactive')]
+    public function inactive(): Response
+    {
+        return $this->render('security/inactif.html.twig', []);
+    }
 }

@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{parent()}} | Compte inactif{% endblock %}
+
+{% block body %}
+    <div class="container mt-5">
+        <h1>Compte inactif</h1>
+        <h2>Veuillez contacter le bel admin</h2>
+        <a href="{{ path('app_logout') }}" role="button" class="btn btn-primary">Se déconnecter</a>
+    </div>
+{% endblock %}

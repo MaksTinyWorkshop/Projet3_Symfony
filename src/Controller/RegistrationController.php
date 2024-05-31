@@ -27,6 +27,7 @@ class RegistrationController extends AbstractController
        return $partService->register($request);
     }
 
+    /* Routes désactivées (User automatiquement actif)
     #[Route('/verif/{token}', name: 'verify')]
     public function verify($token,ParticipantsService $partService): Response
     {
@@ -61,4 +62,5 @@ class RegistrationController extends AbstractController
         $this->addFlash('success', 'Email de vérification envoyé');
         return $this->redirectToRoute('main');
     }
+    */
 }

@@ -4,6 +4,9 @@ namespace App\Services;
 
 use DateTimeImmutable;
 
+
+///////////////////// SERVICE INACTIF ////////////////////////
+
 /**
  * Service de génération de tokens pour l'inscription/validation ou l'oubli de mot de passe
  * Penser à ajouter dans le .env une ligne JWT_SECRET='blablabla' (ce qu'on veut de compliqué) ainsi

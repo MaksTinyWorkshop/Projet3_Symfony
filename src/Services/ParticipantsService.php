@@ -24,7 +24,6 @@ use Symfony\Component\String\Slugger\SluggerInterface;
 /**
  * Service de gestion des participants : inscription, confirmation par email, oubli de mot de passe, gestion du profil
  */
-
 class ParticipantsService extends AbstractController
 {
     ///////////////////////////////////////// Constructeur pour injection de dépendances nécessaires au service
@@ -33,13 +32,15 @@ class ParticipantsService extends AbstractController
         private UserPasswordHasherInterface $passwordHasher,
         private EntityManagerInterface      $entityManager,
         private Security                    $security,
-        private JWTService                  $jwt,
+        //private JWTService                  $jwt,
         private SendMailService             $mail,
         private TokenGeneratorInterface     $tokenGenerator,
         private FormFactoryInterface        $formFactory,
         private SluggerInterface            $slugger,
         private string                      $photosDirectory
-    ){}
+    )
+    {
+    }
 
 
     ///////////////////////////////////////////// Méthodes d'enregistrement du User
@@ -68,7 +69,7 @@ class ParticipantsService extends AbstractController
             if ($photoFile) {
                 $originalFilename = pathinfo($photoFile->getClientOriginalName(), PATHINFO_FILENAME);
                 $safeFilename = $this->slugger->slug($originalFilename);
-                $newFilename = $safeFilename.'-'.uniqid().'.'.$photoFile->guessExtension();
+                $newFilename = $safeFilename . '-' . uniqid() . '.' . $photoFile->guessExtension();
 
                 try {
                     $photoFile->move(
@@ -85,6 +86,7 @@ class ParticipantsService extends AbstractController
             $this->entityManager->persist($participant);
             $this->entityManager->flush();
 
+            /* Feature désactivée
             // On génère le JWT du nouveau Participant
             // On crée le Header
             $header = [
@@ -97,16 +99,19 @@ class ParticipantsService extends AbstractController
             ];
             // On génère le token
             $token = $this->jwt->generate($header, $payload, $_ENV['JWT_SECRET']);
+            */
 
             // Envoi de mail de confirmation
-
             $this->mail->sendMail(
                 'no-reply@sortir.com',
                 $participant->getEmail(),
-                'Activation de votre compte',
+                'Bienvenue',
                 'email/register.html.twig',
-                compact('participant', 'token')
-            );
+                compact(
+                    'participant',
+                // 'token')
+                ));
+            $this->addFlash('success', 'Bienvenue '. $participant->getPseudo() .' sur Sortir.com ');
             return $this->security->login($participant, AppAuthenticator::class, 'main');
         }
         return $this->render('security/register.html.twig', [
@@ -114,6 +119,7 @@ class ParticipantsService extends AbstractController
         ]);
     }
 
+    /* Features désactivées
     public function verify(string $token, string $jwtSecret): bool
     {
         // On vérifie la validité et intégrité du token
@@ -150,14 +156,14 @@ class ParticipantsService extends AbstractController
             compact('participant', 'token')
         );
     }
-
+    */
 
     ///////////////////////////////////////////// Méthodes de gestion de l'oubli de mot de passe
 
     /**
      * @throws TransportExceptionInterface
      */
-    public function forgotPassword($email, $template ='email/password_reset.html.twig')
+    public function forgotPassword($email, $template = 'email/password_reset.html.twig')
     {
         // On récupère le User par son mail
         $participant = $this->participantsRepository->findOneBy(['email' => $email]);
@@ -243,11 +249,11 @@ class ParticipantsService extends AbstractController
     {
         $tokenStorage?->setToken(null);
         $participant = $this->participantsRepository->findOneBy(['pseudo' => $pseudo]);
-        if($participant) {
+        if ($participant) {
             $this->entityManager->remove($participant);
             $this->entityManager->flush();
 
-            $this->addFlash('success', 'Utilisateur'. $participant->getPseudo(). ' supprimé avec succès');
+            $this->addFlash('success', 'Utilisateur' . $participant->getPseudo() . ' supprimé avec succès');
         } else {
             $this->addFlash('danger', 'Une erreur s\'est produite, veuillez recommencer');
 

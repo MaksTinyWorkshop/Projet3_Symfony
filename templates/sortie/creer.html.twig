@@ -1,0 +1,36 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ parent() }} | Créer une sortie{% endblock %}
+
+{% block body %}
+    <h1>Créer une Sortie</h1>
+    <div class="container" >
+        {{ form_errors(sortieForm) }}
+        {{ form_start(sortieForm) }}
+        <div class="row">
+            <div class="col-6">
+                {{ form_row(sortieForm.nom) }}
+                {{ form_row(sortieForm.dateHeureDebut) }}
+                {{ form_row(sortieForm.dateLimiteInscription) }}
+                {{ form_row(sortieForm.duree) }}
+                {{ form_row(sortieForm.nbInscriptionsMax) }}
+                {{ form_row(sortieForm.infosSortie) }}
+            </div>
+            <div class="col-6">
+                <p>Ville Organisatrice : {{ organisateur.site.nom }}</p>
+                {{ form_row(sortieForm.ville) }}
+                {{ form_row(sortieForm.lieu) }}
+                <p>Rue : </p>
+                <p>Code Postal : </p>
+                {{ form_row(sortieForm.latitude) }}
+                {{ form_row(sortieForm.longitude) }}
+            </div>
+            {{ form_end(sortieForm) }}
+        </div>
+
+    </div>
+
+{% endblock %}
+
+
+
