@@ -7,7 +7,6 @@ use App\Form\CreaSortieFormType;
 use App\Form\SortieFilterForm;
 use App\Repository\LieuRepository;
 use App\Repository\SortieRepository;
-use App\Repository\VilleRepository;
 use App\Services\InscriptionsService;
 use App\Services\SiteService;
 use App\Services\SortiesService;
@@ -67,7 +66,7 @@ class SortieController extends AbstractController
     }
 
     #[Route('/creer', name: 'creer')]
-    public function creerUneSortie(Request $request, SiteService $SiteService, VilleRepository $vr, LieuRepository $lr): Response
+    public function creerUneSortie(Request $request, SiteService $SiteService, LieuRepository $lr): Response
     {
         $sortie = new Sortie();
         $organisateur = $this->getUser();
