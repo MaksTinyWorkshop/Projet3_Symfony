@@ -4,15 +4,14 @@ namespace App\DataFixtures;
 
 use App\Entity\Lieu;
 use Doctrine\Bundle\FixturesBundle\Fixture;
-use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
+use Faker\Factory;
 
-class LieuxFixtures extends Fixture implements DependentFixtureInterface
+class LieuxFixtures extends Fixture
 {
-
     public function load(ObjectManager $manager): void
     {
-        $faker = \Faker\Factory::create('fr_FR');
+        $faker = Factory::create('fr_FR');
 
         for ($i = 0; $i < 10; $i++) {
             $lieu = new Lieu();
@@ -20,20 +19,12 @@ class LieuxFixtures extends Fixture implements DependentFixtureInterface
             $lieu->setLatitude($faker->latitude());
             $lieu->setLongitude($faker->longitude());
             $lieu->setRue($faker->streetAddress());
-            $ville = $this->getReference('ville_'.rand(1,5));
-            $lieu->setVille($ville);
+            $lieu->setCodePostal($faker->postcode());
 
             $this->addReference('lieu_'.$i, $lieu);
 
             $manager->persist($lieu);
         }
         $manager->flush();
-    }
-
-    public function getDependencies(): array
-    {
-        return [
-            VilleFixtures::class,
-        ];
     }
 }

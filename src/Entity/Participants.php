@@ -74,7 +74,7 @@ class Participants implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function __construct()
     {
-        $this->isActif = false;
+        $this->isActif = true;
         $this->roles = ['ROLE_USER'];
     }
 

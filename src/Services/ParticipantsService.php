@@ -21,13 +21,8 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 use Symfony\Component\Security\Csrf\TokenGenerator\TokenGeneratorInterface;
 use Symfony\Component\String\Slugger\SluggerInterface;
 
-/**
- * Service de gestion des participants : inscription, confirmation par email, oubli de mot de passe, gestion du profil
- */
-
 class ParticipantsService extends AbstractController
 {
-    ///////////////////////////////////////// Constructeur pour injection de dépendances nécessaires au service
     public function __construct(
         private ParticipantsRepository      $participantsRepository,
         private UserPasswordHasherInterface $passwordHasher,
@@ -38,9 +33,8 @@ class ParticipantsService extends AbstractController
         private TokenGeneratorInterface     $tokenGenerator,
         private FormFactoryInterface        $formFactory,
         private SluggerInterface            $slugger,
-        private string                      $photosDirectory
-    ){}
-
+        private string                      $photosDirectory // Add this parameter
+    ) {}
 
     ///////////////////////////////////////////// Méthodes d'enregistrement du User
 
@@ -261,4 +255,5 @@ class ParticipantsService extends AbstractController
     {
         return $this->participantsRepository->findAll();
     }
+
 }
