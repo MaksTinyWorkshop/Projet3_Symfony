@@ -12,8 +12,7 @@ class InscriptionController extends AbstractController
     #[Route('/add/{id}', name: 'add')]
     public function add(): Response
     {
-        return $this->render('inscription/index.html.twig', [
-            'controller_name' => 'InscriptionController',
-        ]);
+
+        return $this->redirectToRoute('sortie_main');
     }
 }

@@ -76,9 +76,9 @@
                         <td><a href="{{ path('sortie_detail', {'id':sortie.id}) }}" title="détail de la sortie">Afficher</a></td>
                         {% if sortie.etat.id == 2 %}
                             {% if myInsc =="X" %}
-                                <td><a href="#" title="se désister">Me retirer</a></td>
+                                <td><a href="#" title="se désister" id="cut-link">Me retirer</a></td>
                             {% else %}
-                                <td><a href="#" title="s'inscrire">M'inscrire</a></td>
+                                <td><a href="#" title="s'inscrire" id="signup-link">M'inscrire</a></td>
                             {% endif %}
                         {% endif %}
                         </tr>
@@ -91,4 +91,28 @@
     {% endfor %}
     <br>
 </div>
+{% endblock %}
+{% block javascripts %}
+    <script>
+        // 1. confirmation d'inscription
+        document.getElementById('signup-link').addEventListener('click', function(event) {
+            // Afficher la popup de confirmation
+            var userConfirmed = confirm('Êtes-vous sûr de vouloir vous inscrire à cette sortie ?');
+
+            // Si l'utilisateur clique sur "Annuler", empêcher le comportement par défaut du lien
+            if (!userConfirmed) {
+                event.preventDefault();
+            }
+        });
+        // 2. confirmation de désistement
+        document.getElementById('cut-link').addEventListener('click', function(event) {
+            // Afficher la popup de confirmation
+            var userConfirmed = confirm('Êtes-vous sûr de vouloir vous retirer de cette sortie ?');
+
+            // Si l'utilisateur clique sur "Annuler", empêcher le comportement par défaut du lien
+            if (!userConfirmed) {
+                event.preventDefault();
+            }
+        });
+    </script>
 {% endblock %}

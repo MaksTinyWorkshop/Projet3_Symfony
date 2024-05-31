@@ -21,6 +21,8 @@ class SortieController extends AbstractController
     #[Route('', name: 'main')]
     public function list(SiteService $SiSe, SortiesService $SoSe, InscriptionsService $insServ, Request $request)
     {
+        //To Do : faire une vérification à l'ouverture de cette route : checker les dates et les status des events
+        // faire les bascules en conséquence
         $form = $this->createForm(SortieFilterForm::class);
         $form->handleRequest($request);
 
@@ -48,17 +50,25 @@ class SortieController extends AbstractController
     }
 
     ///////// route 3 : les archives de sorties
-    #[Route('/archives', name: 'archives')]
-    public function sortieArchives(SortiesService $SoSe, SiteService $SiSe): Response
+    #[Route('/public', name: 'public')]
+    public function sortieArchives(SiteService $SiSe, SortiesService $SoSe, InscriptionsService $insServ, Request $request): Response
     {
+        $form = $this->createForm(SortieFilterForm::class);
+        $form->handleRequest($request);
+
+        $sortieList = $SoSe->makeFilter($form);
         $sitesList = $SiSe->showAll();        //délégation de la recherche au SiteService
-        $sortieList = $SoSe->showOld();       //délégation de la recherche au SortieService
+        $inscritsList = $insServ->showAll();  //délégation de la recherche au InscriptionService
         $dateActuelle = new DateTime();
 
-        return $this->render('sortie/archives.html.twig', [
+
+        return $this->render('sortie/public.html.twig', [
+            'form' => $form->createView(),
             'sortiesList' => $sortieList,
             'sitesList' => $sitesList,
+            'inscriptionsList' => $inscritsList,
             'dateActuelle' => $dateActuelle,
         ]);
     }
+
 }
