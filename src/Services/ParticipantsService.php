@@ -21,9 +21,6 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 use Symfony\Component\Security\Csrf\TokenGenerator\TokenGeneratorInterface;
 use Symfony\Component\String\Slugger\SluggerInterface;
 
-/**
- * Service de gestion des participants : inscription, confirmation par email, oubli de mot de passe, gestion du profil
- */
 class ParticipantsService extends AbstractController
 {
     ///////////////////////////////////////// Constructeur pour injection de dépendances nécessaires au service
@@ -38,9 +35,7 @@ class ParticipantsService extends AbstractController
         private FormFactoryInterface        $formFactory,
         private SluggerInterface            $slugger,
         private string                      $photosDirectory
-    )
-    {
-    }
+    ){}
 
 
     ///////////////////////////////////////////// Méthodes d'enregistrement du User
@@ -102,6 +97,7 @@ class ParticipantsService extends AbstractController
             */
 
             // Envoi de mail de confirmation
+
             $this->mail->sendMail(
                 'no-reply@sortir.com',
                 $participant->getEmail(),
@@ -253,7 +249,7 @@ class ParticipantsService extends AbstractController
             $this->entityManager->remove($participant);
             $this->entityManager->flush();
 
-            $this->addFlash('success', 'Utilisateur' . $participant->getPseudo() . ' supprimé avec succès');
+            $this->addFlash('success', 'Utilisateur'. $participant->getPseudo(). ' supprimé avec succès');
         } else {
             $this->addFlash('danger', 'Une erreur s\'est produite, veuillez recommencer');
 

@@ -18,12 +18,12 @@ class Lieu
 
     #[ORM\Column(length: 100)]
     #[Assert\NotBlank]
-    #[Assert\Length(min: 1, max: 100, minMessage: "Le nom doit contenir au moins 1 caractère", maxMessage: "Au maximum 30 caractères")]
+    #[Assert\Length(min: 1, max: 100, minMessage: "Le nom doit contenir au moins 1 caractère", maxMessage: "Au maximum 100 caractères")]
     private ?string $nom = null;
 
     #[ORM\Column(length: 100)]
     #[Assert\NotBlank]
-    #[Assert\Length(min: 1, max: 100, minMessage: "La rue doit contenir au moins 1 caractère", maxMessage: "Au maximum 30 caractères")]
+    #[Assert\Length(min: 1, max: 100, minMessage: "La rue doit contenir au moins 1 caractère", maxMessage: "Au maximum 100 caractères")]
     private ?string $rue = null;
 
     #[ORM\Column]
@@ -32,9 +32,9 @@ class Lieu
     #[ORM\Column]
     private ?float $longitude = null;
 
-    #[ORM\ManyToOne(inversedBy: 'lieux')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?Ville $ville = null;
+    #[ORM\Column(length: 10)]
+    #[Assert\NotBlank]
+    private ?string $codePostal = null;
 
     /**
      * @var Collection<int, Sortie>
@@ -100,14 +100,14 @@ class Lieu
         return $this;
     }
 
-    public function getVille(): ?Ville
+    public function getCodePostal(): ?string
     {
-        return $this->ville;
+        return $this->codePostal;
     }
 
-    public function setVille(?Ville $ville): static
+    public function setCodePostal(string $codePostal): static
     {
-        $this->ville = $ville;
+        $this->codePostal = $codePostal;
 
         return $this;
     }

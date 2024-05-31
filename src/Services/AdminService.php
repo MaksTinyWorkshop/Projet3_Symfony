@@ -24,6 +24,7 @@ use Symfony\Component\Serializer\Serializer;
 class AdminService extends AbstractController
 {
 
+
     public function __construct(
         private ParticipantsRepository      $participantsRepository,
         private EntityManagerInterface      $entityManager,
@@ -31,7 +32,9 @@ class AdminService extends AbstractController
         private UserPasswordHasherInterface $passwordHasher,
     )
     {
+
     }
+
 
     public function addSingleUser(Request $request): Response
     {

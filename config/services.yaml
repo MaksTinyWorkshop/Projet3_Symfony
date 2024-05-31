@@ -1,8 +1,4 @@
-# This file is the entry point to configure your own services.
-# Files in the packages/ subdirectory configure your dependencies.
-
-# Put parameters here that don't need to change on each machine where the app is deployed
-# https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
+# config/services.yaml
 parameters:
     app.jwtsecret: '%env(JWT_SECRET)%'
     photos_directory: '%kernel.project_dir%/public/uploads/photos'
@@ -30,3 +26,8 @@ services:
             - { name: kernel.event_listener, event: security.authentication.success }
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+    App\Controller\:
+        resource: '../src/Controller'
+        tags: ['controller.service_arguments']
+
+    # Add more service definitions here if needed
