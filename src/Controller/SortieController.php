@@ -2,16 +2,14 @@
 
 namespace App\Controller;
 
-use App\Entity\Sortie;
-use App\Form\CreaSortieFormType;
 use App\Form\SortieFilterForm;
-use App\Repository\LieuRepository;
 use App\Repository\SortieRepository;
 use App\Services\InscriptionsService;
 use App\Services\SiteService;
 use App\Services\SortiesService;
 use DateTime;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -21,6 +19,8 @@ class SortieController extends AbstractController
 {
 
     ///////// route 1 : la partie filtre de la page des sorties
+
+
     #[Route('', name: 'main')]
     public function list(SiteService $SiSe, SortiesService $SoSe, InscriptionsService $insServ, Request $request)
     {
@@ -65,17 +65,46 @@ class SortieController extends AbstractController
         ]);
     }
 
+    /////// route 4 : création d'une sortie
     #[Route('/creer', name: 'creer')]
-    public function creerUneSortie(Request $request, SiteService $SiteService, LieuRepository $lr): Response
+    public function creerUneSortie(Request $request, SortiesService $sortiesService): Response
     {
-        $sortie = new Sortie();
-        $organisateur = $this->getUser();
-        $form = $this->createForm(CreaSortieFormType::class, $sortie);
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {}
-        return $this->render('sortie/creer.html.twig', [
-            'sortieForm' => $form->createView(),
-            'organisateur' => $organisateur,
-        ]);
+        return $sortiesService->creerSortie($request);
+    }
+
+    /////// route 5 : sorties du user en session
+    #[Route('/{pseudo}', name: 'mes_sorties')]
+    public function mesSortiesList(string $pseudo, SortieRepository $sortieRepository): Response
+    {
+        $user = $this->getUser();
+        if ($user && $user->getPseudo() === $pseudo) {
+            $sortiesList = $sortieRepository->findBy(['organisateur'=> $user]);
+            return $this->render('sortie/mes_sorties.html.twig', [
+                'sortiesList' => $sortiesList,
+            ]);
+        }
+        return $this->redirectToRoute('sortie_main');
+    }
+
+    /////// route 6 :modifier une sortie
+    #[Route('/{pseudo}/modifier/{id}', name: 'modifier')]
+    public function modifierUneSortie(Request $request,string $pseudo, string $id, SortiesService $sortiesService): Response
+    {
+        $user = $this->getUser();
+        if ($user && $user->getPseudo() === $pseudo) {
+            return $sortiesService->modifierUneSortie($request, $id);
+        }
+        return $this->redirectToRoute('sortie_main');
+    }
+
+    /////// route 7 : supprimer une sortie
+    #[Route('/{pseudo}/supprimer/{id}', name: 'supprimer')]
+    public function supprimerUneSortie(Request $request, string $pseudo, string $id, SortiesService $sortiesService): Response
+    {
+        $user = $this->getUser();
+        if ($user && $user->getPseudo() === $pseudo) {
+            return $sortiesService->supprimerUneSortie($request, $id);
+        }
+        return $this->redirectToRoute('sortie_mes_sorties');
     }
 }

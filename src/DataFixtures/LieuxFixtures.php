@@ -21,7 +21,7 @@ class LieuxFixtures extends Fixture
             $lieu->setRue($faker->streetAddress());
             $lieu->setVille($faker->city());
             $lieu->setCodePostal($faker->postcode());
-
+            $lieu->setVille($faker->city());
             $this->addReference('lieu_'.$i, $lieu);
 
             $manager->persist($lieu);

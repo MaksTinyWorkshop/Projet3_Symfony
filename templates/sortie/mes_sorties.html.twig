@@ -1,0 +1,45 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} {{ parent() }} | Sorties {{ app.user.pseudo }}{% endblock %}
+
+{% block body %}
+    <div class="row m-5 text-center">
+        <h1>Mes sorties crées</h1>
+    </div>
+
+
+    <div class="row bg-gradient mb-3 text-center">
+        <div class="col-4">Sortie</div>
+        <div class="col-3">Etat</div>
+        <div class="col-3">Lieu</div>
+        <div class="col-1">Modifier</div>
+        <div class="col-1">Supprimer</div>
+    </div>
+    {% for sortie in sortiesList %}
+
+        <div class="row mb-3 ">
+            <div class="col-4">
+                {{ sortie.nom }}
+            </div>
+            <div class="col-3">
+                {{ sortie.etat.libelle }}
+            </div>
+            <div class="col-3">
+                {{ sortie.lieu.nom }}
+            </div>
+            <div class="col-1">
+                <a href="{{ path('sortie_modifier', {'pseudo': app.user.pseudo, 'id': sortie.id}) }}">
+                    {{ source('@svg_path/edit.svg') }}
+                </a>
+            </div>
+            <div class="col-1">
+                <a href="#">{{ source('@svg_path/delete.svg') }}</a>
+            </div>
+
+        </div>
+
+    {% endfor %}
+{% endblock %}
+
+
+

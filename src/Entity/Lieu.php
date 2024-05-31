@@ -32,6 +32,11 @@ class Lieu
     #[ORM\Column]
     private ?float $longitude = null;
 
+    #[ORM\Column(length:100)]
+    #[Assert\NotBlank]
+    private ?string $ville = null;
+
+
     #[ORM\Column(length: 10)]
     #[Assert\NotBlank]
     private ?string $codePostal = null;
@@ -98,6 +103,16 @@ class Lieu
         $this->longitude = $longitude;
 
         return $this;
+    }
+
+    public function getVille(): ?string
+    {
+        return $this->ville;
+    }
+
+    public function setVille(?string $ville): void
+    {
+        $this->ville = $ville;
     }
 
     public function getCodePostal(): ?string

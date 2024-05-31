@@ -1,0 +1,100 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ parent() }} | Créer une sortie {% endblock %}
+
+{% block body %}
+    <h1>{% if is_edit %}Momifier une sortie LOL  {% else %}Créer une Sortie {% endif %}</h1>
+    <div class="container">
+        {{ form_errors(sortieForm) }}
+        {{ form_start(sortieForm) }}
+        <div class="row">
+            <div class="col-6">
+                {{ form_row(sortieForm.nom) }}
+                {{ form_row(sortieForm.dateHeureDebut) }}
+                {{ form_row(sortieForm.dateLimiteInscription) }}
+                {{ form_row(sortieForm.duree) }}
+                {{ form_row(sortieForm.nbInscriptionsMax) }}
+                {{ form_row(sortieForm.infosSortie) }}
+            </div>
+            <div class="col-6">
+                {% if is_edit %}
+                    {{ form_row(sortieForm.site) }}
+                {% else %}
+                    <p>Campus Organisateur : {{ organisateur.site.nom }}</p>
+                {% endif %}
+
+                {{ form_row(sortieForm.lieu) }}
+                <p id="lieuVille">Ville : </p>
+                <p id="lieuRue">Rue : </p>
+                <p id="lieuCodePostal">Code Postal : </p>
+            </div>
+            <div class="row text-center">
+                {% if is_edit %}
+                    <div class="col-3">
+                        {{ form_row(sortieForm.enregistrer) }}
+                    </div>
+                    <div class="col-3">
+                        {{ form_row(sortieForm.publier) }}
+                    </div>
+                    <div class="col-3">
+                        <a href="#" data-bs-toggle="modal" data-bs-target="#confirmationModal{{ sortie.id }} "
+                           class="btn btn-primary" role="button">
+                            Supprimer
+                        </a>
+                    </div>
+
+                    <div class="col-3">
+                        <a href="{{ path('sortie_main') }}" role="button" class="btn btn-primary">Annuler</a>
+                    </div>
+                {% else %}
+                    <div class="col-4">
+                        {{ form_row(sortieForm.enregistrer) }}
+                    </div>
+                    <div class="col-4">
+                        {{ form_row(sortieForm.publier) }}
+                    </div>
+                    <div class="col-4">
+                        <a href="{{ path('sortie_main') }}" role="button" class="btn btn-primary">Annuler</a>
+                    </div>
+                {% endif %}
+
+                {{ form_end(sortieForm) }}
+            </div>
+            {% if is_edit %}
+                <!-- Modale de confirmation spécifique à chaque participant -->
+            <div class="modal fade" id="confirmationModal{{ sortie.id }}" tabindex="-1"
+                 aria-labelledby="confirmationModalLabel{{ sortie.id }}" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="confirmationModalLabel{{ sortie.id }}">Confirmation de
+                                Suppression</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p>Êtes-vous sûr de vouloir supprimer la sortie {{ sortie.nom }} ?</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                            <!-- Formulaire de suppression spécifique à chaque participant -->
+                            <form method="post" action="#">
+                                <button type="submit" class="btn btn-danger">Confirmer</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                </div>{% endif %}
+        </div>
+
+    </div>
+
+
+{% endblock %}
+
+    {% block javascripts %}
+        <script>
+            let lieuxData = {{ lieux | raw }};
+        </script>
+        <script src="{{ asset('js/EventListenerSortieForm.js') }}" defer></script>
+    {% endblock %}
+

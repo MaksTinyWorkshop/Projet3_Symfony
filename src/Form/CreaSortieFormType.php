@@ -3,9 +3,11 @@
 namespace App\Form;
 
 use App\Entity\Lieu;
+use App\Entity\Site;
 use App\Entity\Sortie;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -29,14 +31,29 @@ class CreaSortieFormType extends AbstractType
                 'class' => Lieu::class,
                 'choice_label' => 'nom',
                 'placeholder' => 'Choisissez une lieu',
-
+            ])
+            ->add('enregistrer', SubmitType::class,[
+                'label' => 'Enregistrer',
+            ])
+            ->add('publier', SubmitType::class,[
+                'label' => 'Publier',
             ]);
+        if ($options['is_edit']) {
+            $builder->add('site', EntityType::class, [
+                'label' => 'Campus Organisateur',
+                'class' => Site::class,
+                'choice_label' => 'nom',
+            ]);
+
+        }
+
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => Sortie::class,
+            'is_edit' => false, // Défaut à false pour la création
         ]);
     }
 }

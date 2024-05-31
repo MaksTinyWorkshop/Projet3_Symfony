@@ -12,7 +12,6 @@ use Symfony\Component\Routing\Attribute\Route;
 
 /**
  * Classe de routage d'administration
- * todo: ajouter la possibilité d'upload un CSV
  * /admin -> index page d'administration
  * /admin/addUser -> ajoute un user
  */

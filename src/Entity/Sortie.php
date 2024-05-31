@@ -60,7 +60,7 @@ class Sortie
     private ?Etat $etat = null;
 
     #[ORM\ManyToOne]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: true)]
     private ?Participants $organisateur = null;
 
 
