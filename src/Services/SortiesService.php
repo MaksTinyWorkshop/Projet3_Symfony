@@ -44,7 +44,6 @@ class SortiesService extends AbstractController
         return $sorties;
     }
 
-
     public function makeFilter($form)
     {
         /// I /// Recherche avec les filtres (ou pas)
@@ -185,13 +184,22 @@ class SortiesService extends AbstractController
                 break;
             // La sortie est crée et publiée
             case 2:
-                $motifAnnulation = $request->request->get('motifAnnulation');
+                // Si le user en session est l'administrateur
+                if ($this->secu->getUser()->getRoles()[0] === 'ROLE_ADMIN') {
+                    $motifAnnulation = 'Sortie annulée par l\'administrateur';
+                } else {
+                    // Sinon récupérer un motif par l'utilisateur (formulaire modale)
+                    $motifAnnulation = $request->request->get('motifAnnulation');
+                }
                 $etatAnnuleId = 6;
                 $etatAnnule = $this->entityManager->getRepository(Etat::class)->find($etatAnnuleId);
                 $sortie->setInfosSortie($motifAnnulation);
                 $sortie->setEtat($etatAnnule);
-                // Prévenir par mail les inscrits
+
                 $inscriptions = $this->entityManager->getRepository(Inscriptions::class)->findBy(['sortie' => $sortieId]);
+
+                /////// Feature d'envoi de mail désactivée temporairement (trop d'envoi de mail à la fois)
+                /*
                 $participants = $this->entityManager->getRepository(Inscriptions::class)->getParticipantsBySortieId($sortieId);
                 foreach ($participants as $participant) {
                     $context = compact('sortie', 'participant');
@@ -203,6 +211,8 @@ class SortiesService extends AbstractController
                         $context
                     );
                 }
+                */
+
                 foreach ($inscriptions as $inscription) {
                     $this->entityManager->remove($inscription);
                 };

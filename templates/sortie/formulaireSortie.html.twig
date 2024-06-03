@@ -61,7 +61,7 @@
                 {{ form_end(sortieForm) }}
             </div>
             {% if is_edit %}
-                <!-- Modale de confirmation spécifique à chaque participant -->
+                <!-- Modale de confirmation de suppression demandant un motif -->
             <div class="modal fade" id="confirmationModal{{ sortie.id }}" tabindex="-1"
                  aria-labelledby="confirmationModalLabel{{ sortie.id }}" aria-hidden="true">
                 <div class="modal-dialog">
@@ -73,22 +73,27 @@
                         </div>
                         <div class="modal-body">
                             <p>Êtes-vous sûr de vouloir supprimer la sortie {{ sortie.nom }} ?</p>
+                            {% if not is_granted(['ROLE_ADMIN']) %}
                             <div class="form-group">
                                 <label for="motifAnnulation">Motif d'annulation</label>
                                 <textarea id="motifAnnulation" class="form-control" name="motifAnnulation" required></textarea>
                             </div>
+                            {% endif %}
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
                             <!-- Formulaire de suppression spécifique à chaque participant -->
                             <form method="post" action="{{ path('sortie_delete', {'pseudo': organisateur.pseudo, 'sortieId':sortie.id}) }}">
+                                {% if not is_granted(['ROLE_ADMIN']) %}
                                 <input type="hidden" name="motifAnnulation" id="hiddenMotifAnnulation{{ sortie.id }}">
+                                {% endif %}
                                 <button type="submit" class="btn btn-danger">Confirmer</button>
                             </form>
                         </div>
                     </div>
                 </div>
-                </div>{% endif %}
+            </div>
+            {% endif %}
         </div>
 
     </div>

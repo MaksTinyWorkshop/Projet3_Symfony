@@ -16,6 +16,15 @@ class SortieRepository extends ServiceEntityRepository
         parent::__construct($registry, Sortie::class);
     }
 
+    public function sortiesOuvertes(): array
+    {
+        return $this->createQueryBuilder('s')
+            ->andWhere('s.etat = 2')
+            ->orderBy('s.dateHeureDebut', 'ASC')
+            ->getQuery()
+            ->getResult()
+        ;
+    }
     //    /**
     //     * @return Sortie[] Returns an array of Sortie objects
     //     */
