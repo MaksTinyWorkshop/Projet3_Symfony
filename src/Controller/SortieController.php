@@ -71,4 +71,22 @@ class SortieController extends AbstractController
         ]);
     }
 
+    ///////// route 4 : le changement d'état
+    #[Route('/state/{sortieId}/{state}', name: 'state')]
+    public function changeState(int $sortieId, int $state, SortiesService $SoSe): Response
+    {
+        $SoSe->changeState($sortieId, $state);         //affichage de la sortie selon le ID passé
+
+        return $this->redirectToRoute('sortie_main');
+    }
+
+    ///////// route 5 : la suppression
+    #[Route('/delete/{sortieId}', name: 'delete')]
+    public function delete(int $sortieId, SortiesService $SoSe): Response
+    {
+        $SoSe->delete($sortieId);         //affichage de la sortie selon le ID passé
+
+        return $this->redirectToRoute('sortie_main');
+    }
+
 }
