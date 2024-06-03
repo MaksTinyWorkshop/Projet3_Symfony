@@ -86,12 +86,19 @@
                         <td>{{ myInsc }}</td>
                         <td>{{ sortie.organisateur.pseudo }}</td>
                         <td><a href="{{ path('sortie_detail', {'id':sortie.id}) }}" title="détail de la sortie">Afficher</a></td>
-                        {% if sortie.etat.id == 2 %}
+                        {% if sortie.etat.id == 2 and sortie.organisateur.id != app.user.id %}
                             {% if myInsc =="X" %}
-                                <td><a href="#" title="se désister">Me retirer</a></td>
+                                <td><a href="{{ path('inscription_remove', {'sortieId':sortie.id}) }}" title="se désister" id="cut-link">Me retirer</a></td>
                             {% else %}
-                                <td><a href="#" title="s'inscrire">M'inscrire</a></td>
+                                <td><a href="{{ path('inscription_add', {'sortieId':sortie.id}) }}" title="s'inscrire" id="signup-link">M'inscrire</a></td>
                             {% endif %}
+                        {% endif %}
+                        {% if sortie.etat.id == 1 and sortie.organisateur.id == app.user.id %}
+                            <td><a href="{{ path('sortie_state', {'sortieId':sortie.id, 'state':2})}}" title="publier la sortie" id="publish-link">Publier</a></td>
+                            <td><a href="{{ path('sortie_delete', {'sortieId':sortie.id})}}" title="supprimer la sortie" id="delete-link">Supprimer</a></td>
+                        {% elseif sortie.etat.id == 2 and sortie.organisateur.id == app.user.id %}
+                            <td>Modifier</td>
+                            <td><a href="{{ path('sortie_state', {'sortieId':sortie.id, 'state':6})}}" title="annuler la sortie" id="cancel-link">Annuler</a></td>
                         {% endif %}
                         </tr>
                     {% endif %}
@@ -103,4 +110,58 @@
     {% endfor %}
     <br>
 </div>
+{% endblock %}
+{% block javascripts %}
+    <script>
+        // 1. confirmation d'inscription
+        document.getElementById('signup-link').addEventListener('click', function(event) {
+            // Afficher la popup de confirmation
+            var userConfirmed = confirm('Êtes-vous sûr de vouloir vous inscrire à cette sortie ?');
+
+            // Si l'utilisateur clique sur "Annuler", empêcher le comportement par défaut du lien
+            if (!userConfirmed) {
+                event.preventDefault();
+            }
+        %});
+        // 2. confirmation de désistement
+        document.getElementById('cut-link').addEventListener('click', function(event) {
+            // Afficher la popup de confirmation
+            var userConfirmed = confirm('Êtes-vous sûr de vouloir vous retirer de cette sortie ?');
+
+            // Si l'utilisateur clique sur "Annuler", empêcher le comportement par défaut du lien
+            if (!userConfirmed) {
+                event.preventDefault();
+            }
+        });
+        // 3. confirmation la publication
+        document.getElementById('publish-link').addEventListener('click', function(event) {
+            // Afficher la popup de confirmation
+            var userConfirmed = confirm('Êtes-vous sûr de vouloir publier cette sortie ?');
+
+            // Si l'utilisateur clique sur "Annuler", empêcher le comportement par défaut du lien
+            if (!userConfirmed) {
+                event.preventDefault();
+            }
+        });
+        // 4. confirmation l'annulation
+        document.getElementById('cancel-link').addEventListener('click', function(event) {
+            // Afficher la popup de confirmation
+            var userConfirmed = confirm('Êtes-vous sûr de vouloir annuler cette sortie ?');
+
+            // Si l'utilisateur clique sur "Annuler", empêcher le comportement par défaut du lien
+            if (!userConfirmed) {
+                event.preventDefault();
+            }
+        });
+        // 5. confirmation la suppression
+        document.getElementById('delete-link').addEventListener('click', function(event) {
+            // Afficher la popup de confirmation
+            var userConfirmed = confirm('Êtes-vous sûr de vouloir supprimer cette sortie ? Cette action est définitive');
+
+            // Si l'utilisateur clique sur "Annuler", empêcher le comportement par défaut du lien
+            if (!userConfirmed) {
+                event.preventDefault();
+            }
+        });
+    </script>
 {% endblock %}

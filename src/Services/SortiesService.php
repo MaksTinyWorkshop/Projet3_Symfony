@@ -9,19 +9,16 @@
 
 namespace App\Services;
 
-use App\Entity\Etat;
-use App\Entity\Sortie;
-use App\Form\CreaSortieFormType;
-use App\Repository\LieuRepository;
+use App\Entity\Inscriptions;
+use App\Form\SortieFilterForm;
 use App\Repository\SortieRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 
 class SortiesService extends AbstractController
 {
+
 
     ////////////////////////////////////// constructeur
     public function __construct(
@@ -30,9 +27,7 @@ class SortiesService extends AbstractController
         private LieuRepository         $lieuRepository,
         private EntityManagerInterface $entityManager,
     )
-    {
-
-    }
+    {}
 
     ////////////////////////////////////// les fonctions
 
@@ -44,18 +39,23 @@ class SortiesService extends AbstractController
 
 
     public function makeFilter($form)
-    {                                           /// I /// Recherche avec les filtres (ou pas)
-
+    {
+        /// I /// Recherche avec les filtres (ou pas)
         $baseFiltered = false;                                                          //défini si on est passé par le formulaire de filtres ou pas
+        $check4 = false;
 
         $user = $this->secu->getUser();
         if ($user) {
             $user = $user->getId();
         }
-
-        // construction de la requête
+        ///////////////////
+        // Première requête, pour les filtres
         $queryBuilder = $this->sortieRepository->createQueryBuilder('s');
+        ///////////////////
+        // Deuxième requête, pour les sorties dont le user est l'auteur
+        $queryBuilder2 = $this->sortieRepository->createQueryBuilder('ss');
 
+        //Application des filtres pour ajouter aux requêtes
         if ($form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
 
@@ -82,13 +82,13 @@ class SortiesService extends AbstractController
             if ($data['checkbox1']) {                                                   //par organisateur (soi-même)
                 $queryBuilder->join('s.organisateur', 'p');
                 $queryBuilder->andWhere('p.id = :userId')
-                    ->setParameter('userId', $user);
+                             ->setParameter('userId', $user);
             }
 
             if ($data['checkbox2']) {                                                   //par participation (soi-même)
                 $queryBuilder->leftJoin('App\Entity\Inscriptions', 'i', 'WITH', 'i.sortie = s.id');
                 $queryBuilder->andWhere('i.participant = :userId')
-                    ->setParameter('userId', $user);
+                             ->setParameter('userId', $user);
             }
 
             if ($data['checkbox3']) {                                                   //par non-participation (soi-même)
@@ -100,13 +100,19 @@ class SortiesService extends AbstractController
                     ->getDQL();
 
                 $queryBuilder->andWhere($queryBuilder->expr()->not($queryBuilder->expr()->exists($subQuery)))
-                    ->setParameter('userId', $user);
+                             ->setParameter('userId', $user);
             }
 
             if ($data['checkbox4']) {                                                   //pour consulter dans les archives
                 $queryBuilder->andWhere($queryBuilder->expr()->eq('s.etat', 5));
-            } else {
+                $check4 = true;
+            }else{
                 $queryBuilder->andWhere($queryBuilder->expr()->in('s.etat', [2, 3, 4, 6]));
+
+                $queryBuilder2 = $this->sortieRepository->createQueryBuilder('ss')
+                    ->andWhere('ss.organisateur = :userId')
+                    ->setParameter('userId', $user)
+                    ->andWhere($queryBuilder->expr()->in('ss.etat', 1));
             }
             $baseFiltered = true;
         }
@@ -114,9 +120,57 @@ class SortiesService extends AbstractController
         // si on a activé aucun filtre (au premier chargement par exemple) on joue le filtrage par défaut en fonction des états
         if (!$baseFiltered) {
             $queryBuilder->andWhere($queryBuilder->expr()->in('s.etat', [2, 3, 4, 6]));
+
+            $queryBuilder2->andWhere('ss.organisateur = :userId')
+                          ->setParameter('userId', $user)
+                          ->andWhere($queryBuilder->expr()->in('ss.etat', 1));
+
+            //résultat des requêtes
+            $Query1 = $queryBuilder->getQuery()->getResult();
+            $Query2 = $queryBuilder2->getQuery()->getResult();
+
+            //combinaison des deux requêtes
+            $allRequests = array_merge($Query1, $Query2);
+            return $allRequests;
+
+        }else if ($baseFiltered && $check4){
+            //résultat des requêtes
+            $Query1 = $queryBuilder->getQuery()->getResult();
+            return $Query1;
+
+        }else{
+            //résultat des requêtes
+            $Query1 = $queryBuilder->getQuery()->getResult();
+            $Query2 = $queryBuilder2->getQuery()->getResult();
+
+            //combinaison des deux requêtes
+            $allRequests = array_merge($Query1, $Query2);
+            return $allRequests;
+        }
+    }
+    public function changeState($sortieId, $state){
+        $sortie = $this->entityManager->getRepository(Sortie::class)->findOneBy([ 'id' => $sortieId ]);
+        $etat = $this->entityManager->getRepository(Etat::class)->findOneBy([ 'id' => $state ]);
+        if (!$sortie) {
+            throw new \Exception("La sortie n'existe pas");
+        }
+        $sortie->setEtat($etat);
+        $this->entityManager->persist($sortie);         // inscription dans la base
+        $this->entityManager->flush();                  // flush
+    }
+    public function delete($sortieId){
+        $sortie = $this->entityManager->getRepository(Sortie::class)->findOneBy([ 'id' => $sortieId ]);
+        if (!$sortie) {
+            throw new \Exception("La sortie n'existe pas");
         }
 
-        return $queryBuilder->getQuery()->getResult();
+        $inscriptions = $this->entityManager->getRepository(Inscriptions::class)->findBy([ 'sortie' => $sortieId ]);
+        foreach ($inscriptions as $inscription) {
+            $this->entityManager->remove($inscription);
+        }
+
+        $this->entityManager->remove($sortie);          // inscription dans la base
+        $this->entityManager->flush();                  // flush
     }
 
     public function creerSortie(Request $request): Response

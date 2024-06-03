@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use App\Repository\InscriptionsRepository;
+use App\Services\InscriptionsService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -9,11 +11,18 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/inscription', name: 'inscription_')]
 class InscriptionController extends AbstractController
 {
-    #[Route('/add/{id}', name: 'add')]
-    public function add(): Response
+    #[Route('/remove/{sortieId}', name: 'remove')]
+    public function remove(int $sortieId, InscriptionsService $inscServ): Response
     {
-        return $this->render('inscription/index.html.twig', [
-            'controller_name' => 'InscriptionController',
-        ]);
+        $inscServ->deleteOne($sortieId);
+
+        return $this->redirectToRoute('sortie_main');
+    }
+    #[Route('/add/{sortieId}', name: 'add')]
+    public function add(int $sortieId, InscriptionsService $inscServ): Response
+    {
+        $inscServ->addOne($sortieId);
+
+        return $this->redirectToRoute('sortie_main');
     }
 }
