@@ -8,12 +8,6 @@
         <div class="col-4">
             <a href="{{ path('sortie_creer') }}" role="button" class="btn btn-primary">Créer une sortie</a>
         </div>
-        <div class="col-4">
-            <a href="{{ path('sortie_mes_sorties', {'pseudo': app.user.pseudo}) }}" role="button" class="btn btn-primary">Mes Sorties crées (TODO)</a>
-        </div>
-        <div class="col-4">
-            <a href="#" role="button" class="btn btn-primary">Troisième bouton pour équilibrer</a>
-        </div>
     </div>
 
 {# I . Partie filtrage et recherche #}
@@ -97,7 +91,7 @@
                             <td><a href="{{ path('sortie_state', {'sortieId':sortie.id, 'state':2})}}" title="publier la sortie" id="publish-link">Publier</a></td>
                             <td><a href="{{ path('sortie_delete', {'sortieId':sortie.id})}}" title="supprimer la sortie" id="delete-link">Supprimer</a></td>
                         {% elseif sortie.etat.id == 2 and sortie.organisateur.id == app.user.id %}
-                            <td>Modifier</td>
+                            <td><a href="{{ path('sortie_modifier', {'pseudo': app.user.pseudo, 'sortieId':sortie.id})}}" title="modifier la sortie" id="cancel-link">Modifier</a></td>
                             <td><a href="{{ path('sortie_state', {'sortieId':sortie.id, 'state':6})}}" title="annuler la sortie" id="cancel-link">Annuler</a></td>
                         {% endif %}
                         </tr>
@@ -122,7 +116,7 @@
             if (!userConfirmed) {
                 event.preventDefault();
             }
-        %});
+        });
         // 2. confirmation de désistement
         document.getElementById('cut-link').addEventListener('click', function(event) {
             // Afficher la popup de confirmation

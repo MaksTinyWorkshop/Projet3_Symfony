@@ -9,12 +9,17 @@
 
 namespace App\Services;
 
+use App\Entity\Etat;
 use App\Entity\Inscriptions;
-use App\Form\SortieFilterForm;
+use App\Entity\Sortie;
+use App\Form\CreaSortieFormType;
+use App\Repository\LieuRepository;
 use App\Repository\SortieRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class SortiesService extends AbstractController
 {

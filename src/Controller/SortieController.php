@@ -9,7 +9,6 @@ use App\Services\SiteService;
 use App\Services\SortiesService;
 use DateTime;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -113,15 +112,13 @@ class SortieController extends AbstractController
     }
 
     /////// route 6 :modifier une sortie
-    #[Route('/{pseudo}/modifier/{id}', name: 'modifier')]
-    public function modifierUneSortie(Request $request,string $pseudo, string $id, SortiesService $sortiesService): Response
+    #[Route('/{pseudo}/modifier/{sortieId}', name: 'modifier')]
+    public function modifierUneSortie(Request $request,string $pseudo, string $sortieId, SortiesService $sortiesService): Response
     {
         $user = $this->getUser();
         if ($user && $user->getPseudo() === $pseudo) {
-            return $sortiesService->modifierUneSortie($request, $id);
+            return $sortiesService->modifierUneSortie($request, $sortieId);
         }
         return $this->redirectToRoute('sortie_main');
     }
-
-
 }
