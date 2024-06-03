@@ -97,14 +97,5 @@ class SortieController extends AbstractController
         return $this->redirectToRoute('sortie_main');
     }
 
-    /////// route 7 : supprimer une sortie
-    #[Route('/{pseudo}/supprimer/{id}', name: 'supprimer')]
-    public function supprimerUneSortie(Request $request, string $pseudo, string $id, SortiesService $sortiesService): Response
-    {
-        $user = $this->getUser();
-        if ($user && $user->getPseudo() === $pseudo) {
-            return $sortiesService->supprimerUneSortie($request, $id);
-        }
-        return $this->redirectToRoute('sortie_mes_sorties');
-    }
+
 }

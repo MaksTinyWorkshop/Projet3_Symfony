@@ -12,7 +12,6 @@ namespace App\Services;
 use App\Entity\Etat;
 use App\Entity\Sortie;
 use App\Form\CreaSortieFormType;
-use App\Form\SortieFilterForm;
 use App\Repository\LieuRepository;
 use App\Repository\SortieRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -23,8 +22,6 @@ use Symfony\Component\HttpFoundation\Response;
 
 class SortiesService extends AbstractController
 {
-    ////////////////////////////////////// les variables
-
 
     ////////////////////////////////////// constructeur
     public function __construct(
@@ -140,19 +137,6 @@ class SortiesService extends AbstractController
 
         return $this->creerOuModifierUneSortie($request, $form, $sortie, $organisateur, true);
     }
-
-    public function supprimerUneSortie(Request $request, string $id): Response
-    {
-        $sortie = $this->entityManager->getRepository(Sortie::class)->find($id);
-        $sortieEtat = $sortie->getEtat()->getId();
-        if($sortieEtat != 1 || $sortieEtat != 2) {
-            $this->addFlash('danger', 'Désolé, vous ne pouvez pas supprimer cette sortie, ');
-            return $this->redirectToRoute('sortie_mes_sorties');
-        }
-        //todo : Le reste + formulaire
-    }
-
-
 
     ///////////////////////////////// Fonctions privées
     /**

@@ -154,12 +154,10 @@ class AdminService extends AbstractController
     {
         $user = $this->participantsRepository->findOneBy(['pseudo' => $pseudo]);
         if ($user->isActif()){
-            $user->setRoles(['ROLE_INACTIF'])
-            ->setActif(false);
+            $user->setActif(false);
             $this->addFlash('success', 'Utilisateur '. $user->getPseudo() . ' désactivé');
         } else {
-            $user->setRoles(['ROLE_USER'])
-                ->setActif(true);
+            $user->setActif(true);
             $this->addFlash('success', 'Utilisateur '. $user->getPseudo() . ' activé');
         }
 

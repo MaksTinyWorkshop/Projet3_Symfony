@@ -77,7 +77,7 @@
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
                             <!-- Formulaire de suppression spécifique à chaque participant -->
-                            <form method="post" action="#">
+                            <form method="post" action="{{ path('sortie_supprimer', {'pseudo': organisateur.pseudo, 'id':sortie.id}) }}">
                                 <button type="submit" class="btn btn-danger">Confirmer</button>
                             </form>
                         </div>
