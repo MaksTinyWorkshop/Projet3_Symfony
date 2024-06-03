@@ -120,5 +120,6 @@ class SortieController extends AbstractController
             return $sortiesService->modifierUneSortie($request, $sortieId);
         }
         return $this->redirectToRoute('sortie_main');
+
     }
 }
