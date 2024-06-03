@@ -36,11 +36,10 @@ class Lieu
     #[Assert\NotBlank]
     private ?string $ville = null;
 
+
     #[ORM\Column(length: 10)]
     #[Assert\NotBlank]
     private ?string $codePostal = null;
-
-
 
     /**
      * @var Collection<int, Sortie>
@@ -124,18 +123,6 @@ class Lieu
     public function setCodePostal(string $codePostal): static
     {
         $this->codePostal = $codePostal;
-
-        return $this;
-    }
-
-    public function getVille(): ?string
-    {
-        return $this->ville;
-    }
-
-    public function setVille(string $ville): static
-    {
-        $this->ville = $ville;
 
         return $this;
     }
