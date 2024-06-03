@@ -73,11 +73,16 @@
                         </div>
                         <div class="modal-body">
                             <p>Êtes-vous sûr de vouloir supprimer la sortie {{ sortie.nom }} ?</p>
+                            <div class="form-group">
+                                <label for="motifAnnulation">Motif d'annulation</label>
+                                <textarea id="motifAnnulation" class="form-control" name="motifAnnulation" required></textarea>
+                            </div>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
                             <!-- Formulaire de suppression spécifique à chaque participant -->
                             <form method="post" action="{{ path('sortie_delete', {'pseudo': organisateur.pseudo, 'sortieId':sortie.id}) }}">
+                                <input type="hidden" name="motifAnnulation" id="hiddenMotifAnnulation{{ sortie.id }}">
                                 <button type="submit" class="btn btn-danger">Confirmer</button>
                             </form>
                         </div>

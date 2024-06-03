@@ -31,8 +31,10 @@ class SortiesService extends AbstractController
         private Security               $secu,
         private LieuRepository         $lieuRepository,
         private EntityManagerInterface $entityManager,
+        private SendMailService        $sendMailService,
     )
-    {}
+    {
+    }
 
     ////////////////////////////////////// les fonctions
 
@@ -87,13 +89,13 @@ class SortiesService extends AbstractController
             if ($data['checkbox1']) {                                                   //par organisateur (soi-même)
                 $queryBuilder->join('s.organisateur', 'p');
                 $queryBuilder->andWhere('p.id = :userId')
-                             ->setParameter('userId', $user);
+                    ->setParameter('userId', $user);
             }
 
             if ($data['checkbox2']) {                                                   //par participation (soi-même)
                 $queryBuilder->leftJoin('App\Entity\Inscriptions', 'i', 'WITH', 'i.sortie = s.id');
                 $queryBuilder->andWhere('i.participant = :userId')
-                             ->setParameter('userId', $user);
+                    ->setParameter('userId', $user);
             }
 
             if ($data['checkbox3']) {                                                   //par non-participation (soi-même)
@@ -105,13 +107,13 @@ class SortiesService extends AbstractController
                     ->getDQL();
 
                 $queryBuilder->andWhere($queryBuilder->expr()->not($queryBuilder->expr()->exists($subQuery)))
-                             ->setParameter('userId', $user);
+                    ->setParameter('userId', $user);
             }
 
             if ($data['checkbox4']) {                                                   //pour consulter dans les archives
                 $queryBuilder->andWhere($queryBuilder->expr()->eq('s.etat', 5));
                 $check4 = true;
-            }else{
+            } else {
                 $queryBuilder->andWhere($queryBuilder->expr()->in('s.etat', [2, 3, 4, 6]));
 
                 $queryBuilder2 = $this->sortieRepository->createQueryBuilder('ss')
@@ -127,8 +129,8 @@ class SortiesService extends AbstractController
             $queryBuilder->andWhere($queryBuilder->expr()->in('s.etat', [2, 3, 4, 6]));
 
             $queryBuilder2->andWhere('ss.organisateur = :userId')
-                          ->setParameter('userId', $user)
-                          ->andWhere($queryBuilder->expr()->in('ss.etat', 1));
+                ->setParameter('userId', $user)
+                ->andWhere($queryBuilder->expr()->in('ss.etat', 1));
 
             //résultat des requêtes
             $Query1 = $queryBuilder->getQuery()->getResult();
@@ -138,12 +140,12 @@ class SortiesService extends AbstractController
             $allRequests = array_merge($Query1, $Query2);
             return $allRequests;
 
-        }else if ($baseFiltered && $check4){
+        } else if ($baseFiltered && $check4) {
             //résultat des requêtes
             $Query1 = $queryBuilder->getQuery()->getResult();
             return $Query1;
 
-        }else{
+        } else {
             //résultat des requêtes
             $Query1 = $queryBuilder->getQuery()->getResult();
             $Query2 = $queryBuilder2->getQuery()->getResult();
@@ -153,9 +155,11 @@ class SortiesService extends AbstractController
             return $allRequests;
         }
     }
-    public function changeState($sortieId, $state){
-        $sortie = $this->entityManager->getRepository(Sortie::class)->findOneBy([ 'id' => $sortieId ]);
-        $etat = $this->entityManager->getRepository(Etat::class)->findOneBy([ 'id' => $state ]);
+
+    public function changeState($sortieId, $state): void
+    {
+        $sortie = $this->entityManager->getRepository(Sortie::class)->findOneBy(['id' => $sortieId]);
+        $etat = $this->entityManager->getRepository(Etat::class)->findOneBy(['id' => $state]);
         if (!$sortie) {
             throw new \Exception("La sortie n'existe pas");
         }
@@ -163,19 +167,54 @@ class SortiesService extends AbstractController
         $this->entityManager->persist($sortie);         // inscription dans la base
         $this->entityManager->flush();                  // flush
     }
-    public function delete($sortieId){
-        $sortie = $this->entityManager->getRepository(Sortie::class)->findOneBy([ 'id' => $sortieId ]);
+
+    public function delete(Request $request, $sortieId): void
+    {
+        $sortie = $this->entityManager->getRepository(Sortie::class)->findOneBy(['id' => $sortieId]);
         if (!$sortie) {
             throw new \Exception("La sortie n'existe pas");
         }
+        $etat = $sortie->getEtat()->getId();
 
-        $inscriptions = $this->entityManager->getRepository(Inscriptions::class)->findBy([ 'sortie' => $sortieId ]);
-        foreach ($inscriptions as $inscription) {
-            $this->entityManager->remove($inscription);
+        switch ($etat) {
+            // La sortie est crée mais non publiée
+            case 1:
+                $this->entityManager->remove($sortie);          // inscription dans la base
+                $this->entityManager->flush();
+                $this->addFlash('success', 'Sortie supprimée');// flush
+                break;
+            // La sortie est crée et publiée
+            case 2:
+                $motifAnnulation = $request->request->get('motifAnnulation');
+                $etatAnnuleId = 6;
+                $etatAnnule = $this->entityManager->getRepository(Etat::class)->find($etatAnnuleId);
+                $sortie->setInfosSortie($motifAnnulation);
+                $sortie->setEtat($etatAnnule);
+                // Prévenir par mail les inscrits
+                $inscriptions = $this->entityManager->getRepository(Inscriptions::class)->findBy(['sortie' => $sortieId]);
+                $participants = $this->entityManager->getRepository(Inscriptions::class)->getParticipantsBySortieId($sortieId);
+                foreach ($participants as $participant) {
+                    $context = compact('sortie', 'participant');
+                    $this->sendMailService->sendMail(
+                        'cancelledSortie@sortir.com',
+                        $participant['email'],
+                        'Annulation de sortie',
+                        'email/cancelled_sortie.html.twig',
+                        $context
+                    );
+                }
+                foreach ($inscriptions as $inscription) {
+                    $this->entityManager->remove($inscription);
+                };
+                $this->entityManager->persist($sortie);
+                $this->entityManager->flush();
+                $this->addFlash('success', 'Sortie '. $sortie->getNom().' correctement annulée, participants prévenus');
+                break;
+            default:
+                $this->addFlash('danger', 'Déso mon coco tu peux pas supprimer ça ');
+                break;
         }
 
-        $this->entityManager->remove($sortie);          // inscription dans la base
-        $this->entityManager->flush();                  // flush
     }
 
     public function creerSortie(Request $request): Response
@@ -198,6 +237,7 @@ class SortiesService extends AbstractController
     }
 
     ///////////////////////////////// Fonctions privées
+
     /**
      * Fonction privée qui évite la répétition et qui
      * transforme les données de lieux en JSON pour le remplissage

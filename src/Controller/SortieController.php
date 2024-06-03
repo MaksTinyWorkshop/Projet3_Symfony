@@ -16,7 +16,6 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/sortie', name: 'sortie_')]
 class SortieController extends AbstractController
 {
-
     ///////// route 1 : la partie filtre de la page des sorties
     #[Route('', name: 'main')]
     public function list(SiteService $SiSe, SortiesService $SoSe, InscriptionsService $insServ, Request $request)
@@ -82,13 +81,12 @@ class SortieController extends AbstractController
 
     ///////// route 5 : la suppression
     #[Route('/delete/{sortieId}', name: 'delete')]
-    public function delete(int $sortieId, SortiesService $SoSe): Response
+    public function delete(Request $request, $sortieId, SortiesService $SoSe): Response
     {
-        $SoSe->delete($sortieId);         //affichage de la sortie selon le ID passé
+        $SoSe->delete($request, $sortieId);         //affichage de la sortie selon le ID passé
 
         return $this->redirectToRoute('sortie_main');
     }
-
 
     /////// route 4 : création d'une sortie
     #[Route('/creer', name: 'creer')]
