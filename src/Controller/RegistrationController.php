@@ -9,15 +9,10 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Routing\Attribute\Route;
 
-/**
- * Controleur qui gère le routage des Enregistrements User
- * /register -> S'enregistrer
- * /verif/{token} -> Validation du compte via envoi d'email après inscription (Lien envoyé par mail)
- * /renvoiVerif -> Renvoi du mail de confirmation
- */
 
 class RegistrationController extends AbstractController
 {
+    /////// Route 1 : S'enregistrer
     /**
      * @throws TransportExceptionInterface
      */
@@ -28,6 +23,8 @@ class RegistrationController extends AbstractController
     }
 
     /* Routes désactivées (User automatiquement actif)
+
+    /////// Route 2 : vérifiaction du token d'activation de compte
     #[Route('/verif/{token}', name: 'verify')]
     public function verify($token,ParticipantsService $partService): Response
     {
@@ -43,6 +40,7 @@ class RegistrationController extends AbstractController
         return $this->redirectToRoute('main');
     }
 
+    /////// Route 3 : Renvoyer un email de verification
     #[Route('/renvoiVerif', name: 'resend_verif')]
     public function resendVerif(ParticipantsService $partService): Response
     {

@@ -21,9 +21,14 @@ use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
+/**
+ * Service des sorties et des inscriptions aux sorties permettant de :
+ * - Créer, modifier, annuler une sortie
+ * - Modifier ou annuler une sortie -> changer son Etat mais pas supprimer de la base, supprimer les
+ * inscriptions s'il y en a et appel au service d'envoi de mail "SendMailService" pour prévenir les eventuels inscrits
+ */
 class SortiesService extends AbstractController
 {
-
 
     ////////////////////////////////////// constructeur
     public function __construct(

@@ -12,6 +12,12 @@ use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Formulaire de creation et de mofification d'une sortie
+ * Contient des options en cas de modifiaction
+ * @param bool $is_edit
+ * et deux boutons : 'Enregistrer' et 'Publier' qui conditionnent l'Etat de la sortie au submit
+ */
 class CreaSortieFormType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void

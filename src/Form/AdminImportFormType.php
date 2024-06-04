@@ -12,6 +12,11 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Formulaire de création de compte par l'admin
+ * Un mot de passe est automatiquement généré et un lien de changement de mot de passe est envoyé
+ * systématiquement au nouvel utilisateur
+ */
 class AdminImportFormType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void

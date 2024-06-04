@@ -25,6 +25,13 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 use Symfony\Component\Security\Csrf\TokenGenerator\TokenGeneratorInterface;
 use Symfony\Component\String\Slugger\SluggerInterface;
 
+
+/**
+ * Service des participants, permettant de :
+ * - ajouter/modifier/supprimer son profil en tant qu'utilisateur
+ * - consulter le profil d'un autre participant (données restreintes)
+ * - reinitialiser son mot de passe
+ */
 class ParticipantsService extends AbstractController
 {
     ///////////////////////////////////////// Constructeur pour injection de dépendances nécessaires au service

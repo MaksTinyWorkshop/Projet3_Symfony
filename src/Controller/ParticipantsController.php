@@ -11,21 +11,10 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
-/**
- * Classe de routage qui gère les visibilités des users
- * A modifier dans le turFu
- * /participants/ -> Renvoie la liste de tout les participants
- *
- * /participants/{pseudo} -> Renvoi les infos du participant correspondant au pseudo -> Si c'est le User en session,
- * renvoi sur la page d'update de son profil
- *
- * /participants/{pseudo}/desinscription, bon ben voilà hein, on va pas épiloguer
- */
-
 #[Route('/participants', name: 'participants_')]
 class ParticipantsController extends AbstractController
 {
-
+    /////// Route 1 : renvoie la liste de tout les participants TODO : à voir si elle est conservée
     #[Route('/', name: 'list')]
     public function index(ParticipantsService $participantsService): Response
     {
@@ -33,6 +22,7 @@ class ParticipantsController extends AbstractController
         return $this->render('participants/list.html.twig', compact('list'));
     }
 
+    /////// Route 2 : renvoie les infos du participant correspondant au pseudo
     #[Route('/{pseudo}', name: 'details')]
     public function details(
         Request $request,
@@ -53,6 +43,7 @@ class ParticipantsController extends AbstractController
            return $participantsService->consultationProfil($pseudo); // Si non, simple consultation
     }
 
+    /////// Route 3 : suppression d'un participant
     #[Route('/{pseudo}/desinscription', name: 'delete')]
     public function delete(
         string $pseudo,
