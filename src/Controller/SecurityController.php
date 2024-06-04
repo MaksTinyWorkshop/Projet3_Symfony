@@ -10,33 +10,25 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
-/**
- * Classe de Routage qui gère la connexion/déconnexion et l'oubli du mot de passe
- * /login -> connexion
- * /logout -> déconnexion
- * /oubli-pass -> envoi de mail avec lien de réinitialisation
- * /oubli-pass/{token} -> check du token et réinitialisation mot de passe
- */
 class SecurityController extends AbstractController
 {
+    /////// Route 1 : connexion -> AppAuthenticator
     #[Route(path: '/login', name: 'app_login')]
     public function login(AuthenticationUtils $authenticationUtils): Response
     {
-
-        // get the login error if there is one
         $error = $authenticationUtils->getLastAuthenticationError();
-        // last username entered by the user
         $lastUsername = $authenticationUtils->getLastUsername();
-
         return $this->render('security/login.html.twig', ['last_username' => $lastUsername, 'error' => $error]);
     }
 
+    /////// Route 2 : deconnexion -> AppAuthenticator
     #[Route(path: '/logout', name: 'app_logout')]
     public function logout(): void
     {
         throw new \LogicException('This method can be blank - it will be intercepted by the logout key on your firewall.');
     }
 
+    /////// Route 3 : Envoi d'un mail en cas d'oubli de mot de passe
     #[Route('oubli-pass', name: 'forgot_password')]
     public function forgotPassword(Request $request, ParticipantsService $participantsService): Response
     {
@@ -56,6 +48,7 @@ class SecurityController extends AbstractController
         return $this->render('security/reset_password_request.html.twig', ['requestPassForm' => $form->createView()]);
     }
 
+    /////// Route 4 : Check du token et reinitialisation du mot de passe
     #[Route('/oubli-pass/{token}', name: 'reset_password')]
     public function resetPassword(string $token, Request $request, ParticipantsService $participantsService): Response
     {

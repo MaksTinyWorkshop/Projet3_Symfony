@@ -25,6 +25,17 @@ class SortieRepository extends ServiceEntityRepository
             ->getResult()
         ;
     }
+
+    public function sortiesOrganiseesParUserId($userId): array
+    {
+        return $this->createQueryBuilder('s')
+            ->andWhere('s.organisateur = :userId')
+            ->setParameter('userId', $userId)
+            ->orderBy('s.dateHeureDebut', 'ASC')
+            ->getQuery()
+            ->getResult()
+        ;
+    }
     //    /**
     //     * @return Sortie[] Returns an array of Sortie objects
     //     */

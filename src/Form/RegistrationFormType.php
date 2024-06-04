@@ -17,7 +17,11 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 
 /**
- * Formulaire de création de compte
+ * Formulaire de création ou de modification de compte pour un utilisateur
+ * avec des options dans le cas de la modification
+ * @param bool $is_edit
+ * Les contraintes de validation du mot de passe sont déplacées ici car en
+ * base on le stocke crypté, pas en clair (avec les contraintes imposées)
  */
 class RegistrationFormType extends AbstractType
 {
@@ -50,8 +54,7 @@ class RegistrationFormType extends AbstractType
                 'placeholder' => 'Mot de passe courant ou nouveau mot de passe',
             ];
         }
-
-
+        // Formulaire
         $builder
             ->add('email', EmailType::class, [
                 'attr' => [
@@ -121,9 +124,7 @@ class RegistrationFormType extends AbstractType
                     ]),
                 ],
             ]);
-        }
-
-        ;
+        };
     }
 
     public function configureOptions(OptionsResolver $resolver): void
