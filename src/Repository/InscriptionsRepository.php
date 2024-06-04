@@ -26,6 +26,17 @@ class InscriptionsRepository extends ServiceEntityRepository
 
         return $qb->getQuery()->getResult();
     }
+
+    public function getSortiesByParticipantId($participantId)
+    {
+        $qb = $this->createQueryBuilder('i')
+            ->select('s')
+            ->join('i.sortie', 's')
+            ->where('i.participant = :participantId')
+            ->setParameter('participantId', $participantId);
+
+        return $qb->getQuery()->getResult();
+    }
     //    /**
     //     * @return Inscriptions[] Returns an array of Inscriptions objects
     //     */

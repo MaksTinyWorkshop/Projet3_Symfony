@@ -198,7 +198,11 @@ class SortiesService extends AbstractController
 
                 $inscriptions = $this->entityManager->getRepository(Inscriptions::class)->findBy(['sortie' => $sortieId]);
 
-                /////// Feature d'envoi de mail désactivée temporairement (trop d'envoi de mail à la fois)
+                ////////////////////////////////////////////////////////////////////////////
+                ///////////// Feature d'envoi de mail désactivée temporairement ////////////
+                ///////////// (trop d'envoi de mail à la fois pour la version   ////////////
+                ///////////// gratuite de MailTrap)                             ////////////
+                /// ////////////////////////////////////////////////////////////////////////
                 /*
                 $participants = $this->entityManager->getRepository(Inscriptions::class)->getParticipantsBySortieId($sortieId);
                 foreach ($participants as $participant) {
