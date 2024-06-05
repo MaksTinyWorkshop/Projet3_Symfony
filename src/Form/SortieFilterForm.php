@@ -57,6 +57,7 @@ class SortieFilterForm extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
+            'is_logged' => false,
             // Configure your form options here
         ]);
     }

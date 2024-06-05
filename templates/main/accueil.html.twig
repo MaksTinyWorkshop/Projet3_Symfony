@@ -1,0 +1,94 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ parent() }} | liste des sorties{% endblock %}
+
+{% block body %}
+    <div class="container text-center">
+        <div class="row mt-5 mb-5">
+            <div class="col-2 d-flex justify-content-center align-items-center">
+                {# I . Partie filtrage et recherche #}
+                <div class="dropdown-center">
+                    <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
+                            aria-expanded="false" data-bs-auto-close="outside" data-bs-offset="0,20">
+                        Filtres
+                    </button>
+                    <div class="dropdown-menu p-3" style="width: 350px;">
+                        {{ form_start(form) }}
+                        {{ form_row(form.site) }}
+                        {{ form_row(form.name) }}
+                        {{ form_row(form.startDate) }}
+                        {{ form_row(form.endDate) }}
+                        {% if app.user %}
+                        <div style="display: block">
+                            {% else %}
+                            <div style="display: none">
+                                {% endif %}
+                                {{ form_row(form.checkbox1) }}
+                                {{ form_row(form.checkbox2) }}
+                                {{ form_row(form.checkbox3) }}
+                                {{ form_row(form.checkbox4) }}
+                            </div>
+
+                            <button class="btn btn-primary" type="submit">Filter</button>
+                            {{ form_end(form) }}
+                        </div>
+                    </div>
+                </div>
+                <div class="col-10">
+                    <h1>Bienvenue à toi sur Sortir.com</h1>
+                    <h2>La plateforme qui te fais bouger de chez toi !!</h2>
+                </div>
+            </div>
+        </div>
+
+
+        {# II . Partie affichage de la liste #}
+        <div class="container text-center">
+            {# affichage de la liste des events par site #}
+            {% for site in sitesList %}
+                {% set exist = 0 %}
+                {% for sortie in sortiesList %}
+                    {% if site.nom == sortie.site.nom %}
+                        {% set exist = exist +1 %}
+                    {% endif %}
+                {% endfor %}
+                {% if exist >= 1 %}
+                    <div class="card">
+                        <div class="card-body">
+                            <h3 class="mb-3">{{ site.nom }} : {{ exist }} Sortie{% if exist > 1 %}s{% endif %}</h3>
+                            <div class="row bg-dark-subtle d-flex align-items-center">
+                                <div class="col-3">Quand ?</div>
+                                <div class="col-2">Quoi ?</div>
+                                <div class="col-2">Fin des inscriptions</div>
+                                <div class="col-3">Descriptif</div>
+                                <div class="col-1">Places prises</div>
+                            </div>
+                        </div>
+                        <div class="row mb-4">
+                            {% for sortie in sortiesList %}
+                                {% if sortie.site.id == site.id
+                                    and (sortie.dateHeureDebut) >= dateActuelle %}
+                                    <div class="col-3 mb-4">{{ sortie.dateHeureDebut|date("d/m/Y - h:i") }}</div>
+                                    <div class="col-2 mb-4">{{ sortie.nom }} </div>
+                                    <div class="col-2 mb-4">{{ sortie.dateLimiteInscription|date("d/m/Y") }}</div>
+                                    <div class="col-3 overflow-y-scroll mb-4"
+                                         style="height: 3rem;">{{ sortie.infosSortie }}</div>
+                                    {% set inscCount = 0 %}
+                                    {% for inscription in inscriptionsList %}
+                                        {% if inscription.sortie.id == sortie.id %}
+                                            {% set inscCount = inscCount + 1 %}
+                                        {% endif %}
+                                    {% endfor %}
+                                    <div class="col-1 mb-4">{{ inscCount }} / {{ sortie.nbInscriptionsMax }}</div>
+                                    <div class="col-1 mb-4"><a href="{{ path('sortie_main') }}"
+                                                               title="Vers les sorties"
+                                        role="button" class="btn btn-success">+</a></div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

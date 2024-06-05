@@ -1,12 +1,150 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ parent()}} | détail de la sortie {{ sortie.nom }}{% endblock %}
+{% block title %}{{ parent() }} | détail de la sortie {{ sortie.nom }}{% endblock %}
 
 {% block body %}
 
-<div >
-    <h1>{{ sortie.nom }}</h1>
-    <h3>{{ sortie.dateHeureDebut | date() }}</h3>
-    <p>{{ sortie.infosSortie }}</p>
-</div>
+    {# Initialisation des variables #}
+    {% set orgaMatch = false %}
+    {% set isInscrit = false %}
+    {% set places = sortie.nbInscriptionsMax %}
+    {% for inscrit in inscrits %}
+        {% set places = places - 1 %}
+        {% if app.user.pseudo == sortie.organisateur.pseudo %}
+            {% set orgaMatch = true %}
+        {% endif %}
+        {% if inscrit.participant.pseudo == app.user.pseudo %}
+            {% set isInscrit = true %}
+        {% endif %}
+    {% endfor %}
+
+    {# I. Partie En-tête #}
+    <div class="row mt-5 mb-5 d-flex justify-content-between align-items-center">
+        <div class="col-auto">Organisateur : {{ sortie.organisateur.pseudo }} | Campus de {{ sortie.site.nom }}</div>
+        <div class="col-auto">
+            {# Si la sortie est publiée #}
+            {% if sortie.etat.id == 2 %}
+                {# Le user en session est l'orga #}
+                {% if orgaMatch %}
+                    <a href="{{ path('sortie_modifier', {'pseudo': app.user.pseudo, 'sortieId':sortie.id}) }}"
+                       title="modifier la sortie"
+                       role="button"
+                       class="btn btn-warning">Modifier cette sortie</a>
+                    <a href="#" data-bs-toggle="modal" data-bs-target="#confirmationModal{{ sortie.id }} "
+                       role="button"
+                       title="annuler la sortie"
+                       class="btn btn-danger">Annuler
+                    </a>
+                    <!-- Modale de confirmation pour la suppression -->
+                    {% include '_partials/_modal_suppression.html.twig' %}
+                    {# Le user en session n'est pas l'orga #}
+                {% else %}
+                    {% if isInscrit %}
+                        <a href="{{ path('inscription_remove', {'sortieId':sortie.id}) }}"
+                           title="se désister"
+                           role="button"
+                           class="btn btn-danger">Se désister</a>
+                    {% else %}
+                        <a href="{{ path('inscription_add', {'sortieId':sortie.id}) }}"
+                           title="s'inscrire"
+                           role="button"
+                           class="btn btn-success">S'inscrire</a>
+                    {% endif %}
+                {% endif %}
+            {% endif %}
+            {# Si la sortie n'est pas encore publiée et user en session est l'orga #}
+            {% if sortie.etat.id == 1 and orgaMatch %}
+                <a href="{{ path('sortie_state', {'sortieId':sortie.id, 'state':2}) }}"
+                   title="publier la sortie"
+                   role="button"
+                   class="btn btn-success">Publier</a>
+
+                <a href="{{ path('sortie_modifier', {'pseudo': app.user.pseudo, 'sortieId':sortie.id}) }}"
+                   title="modifier la sortie"
+                   role="button"
+                   class="btn btn-warning">Modifier cette sortie</a>
+                <a href="{{ path('sortie_delete', {'sortieId':sortie.id}) }}"
+                   title="supprimer la sortie"
+                   class="btn btn-danger">Annuler</a>
+            {% endif %}
+        </div>
+        <div class="col-auto">Il reste {{ places }} place{% if places > 1 %}s{% endif %}.</div>
+    </div>
+
+    {# II. Descriptif de la sortie #}
+    <div class="container">
+        {# 1. Sortie et infos générales #}
+        <h1 class="text-center mb-3">Sortie : {{ sortie.nom }}</h1>
+        <div class="row text-center mb-3">
+            <h3>Sortie prévue le {{ sortie.dateHeureDebut | date("d M") }}
+                à {{ sortie.dateHeureDebut | date("h:i") }}</h3>
+        </div>
+        <div class="row mb-3">
+            On fait quoi ?
+        </div>
+        <div class="row mb-5">
+            {{ sortie.infosSortie }}
+        </div>
+
+        {# 2. Participants et Lieu #}
+        <div class="row mb-3 d-flex justify-content-around text-center">
+            <div class="col-9">
+                Y'aura qui ?
+            </div>
+            <div class="col-3">
+                C'est où ?
+            </div>
+        </div>
+
+        <div class="row mb-3 d-flex justify-content-around align-items-center text-center">
+            {# 2.1 Participants #}
+            <div class="col-9">
+                <div class="row bg-gradient d-flex justify-content-around text-center">
+                    <div class="col-auto">Pseudo</div>
+                    <div class="col-auto">Nom</div>
+                </div>
+                <div class="row" style="overflow-y: scroll; max-height: 200px;">
+                <table class="table table-hover">
+                    <tbody>
+                    {% for inscrit in inscrits %}
+                        <tr>
+                            <td>
+                                <a href="{{ path('participants_details', {'pseudo' : inscrit.participant.pseudo}) }}">{{ inscrit.participant.pseudo }}</a>
+                            </td>
+                            <td>{{ inscrit.participant.prenom }} {{ inscrit.participant.nom | upper }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+            {# 2.2 Lieu #}
+        <div class="col-3">
+            <div class="dropstart">
+                <button type="button"
+                        class="btn btn-primary dropdown-toggle"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false"
+                        data-bs-auto-close="outside"
+                        data-bs-offset="0,20">
+                    {{ sortie.lieu.nom }}
+                </button>
+                <div class="dropdown-menu p-3" style="width: 250px">
+                    <p> Adresse :</p>
+                    <p class="text-center"> {{ sortie.lieu.rue }}</p>
+                    <p class="text-center"> {{ sortie.lieu.codePostal }} {{ sortie.lieu.ville }}</p>
+                    <hr class="dropdown-divider">
+                    <p>Coordonnées :</p>
+                    <p class="text-center">Lat : {{ sortie.lieu.latitude }}</p>
+                    <p class="text-center">Long : {{ sortie.lieu.longitude }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script src="{{ asset('js/modal.js') }}"></script>
 {% endblock %}

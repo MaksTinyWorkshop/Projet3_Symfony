@@ -172,7 +172,7 @@ class SortiesService extends AbstractController
         $this->entityManager->flush();                  // flush
     }
 
-    public function delete(Request $request, $sortieId): void
+    public function delete(Request $request, $sortieId)
     {
         $sortie = $this->entityManager->getRepository(Sortie::class)->findOneBy(['id' => $sortieId]);
         if (!$sortie) {
@@ -195,6 +195,14 @@ class SortiesService extends AbstractController
                 } else {
                     // Sinon récupérer un motif par l'utilisateur (formulaire modale)
                     $motifAnnulation = $request->request->get('motifAnnulation');
+                    // Vérifiez si le motif d'annulation est vide
+                    if (empty($request->request->get('motifAnnulation'))) {
+                        // Ajoutez un message d'erreur
+                        $this->addFlash('danger', 'Veuillez saisir un motif d\'annulation.');
+                        // Redirigez l'utilisateur vers la page de modification de la sortie
+                        return $this->redirectToRoute('sortie_modifier', ['pseudo' => $this->secu->getUser()->getPseudo(), 'sortieId' => $sortieId]);
+                    }
+
                 }
                 $etatAnnuleId = 6;
                 $etatAnnule = $this->entityManager->getRepository(Etat::class)->find($etatAnnuleId);
@@ -288,6 +296,10 @@ class SortiesService extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             if ($form->get('enregistrer')->isClicked()) {
                 $etat = $this->entityManager->getRepository(Etat::class)->findOneBy(['id' => '1']);
+                if ($sortie->getEtat() && $sortie->getEtat()->getId() == 2) {
+                    $this->addFlash('warning', 'La sortie est déjà publiée, cliquez sur "publier"!');
+                    return $this->redirectToRoute('sortie_modifier', ['pseudo' => $organisateur->getPseudo(),'sortieId' => $sortie->getId()]);
+                }
             } elseif ($form->get('publier')->isClicked()) {
                 $etat = $this->entityManager->getRepository(Etat::class)->findOneBy(['id' => '2']);
             }

@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Form\SortieFilterForm;
+use App\Repository\InscriptionsRepository;
 use App\Repository\SortieRepository;
 use App\Services\InscriptionsService;
 use App\Services\SiteService;
@@ -20,6 +21,8 @@ class SortieController extends AbstractController
     #[Route('', name: 'main')]
     public function list(SiteService $SiSe, SortiesService $SoSe, InscriptionsService $insServ, Request $request)
     {
+        $this->denyAccessUnlessGranted('ROLE_USER');
+        //découpage de la requête : on reprend le filtre
         //To Do : faire une vérification à l'ouverture de cette route : checker les dates et les status des events
         // faire les bascules en conséquence
         $form = $this->createForm(SortieFilterForm::class);
@@ -41,36 +44,16 @@ class SortieController extends AbstractController
 
     ///////// route 2 : la page détail d'une sortie
     #[Route('/detail/{id}', name: 'detail')]
-    public function sortieDetail(int $id, SortieRepository $SoRep): Response
+    public function sortieDetail(int $id, SortieRepository $SoRep, InscriptionsRepository $InRep): Response
     {
-       $sortie = $SoRep->find($id);         //affichage de la sortie selon le ID passé
+       $sortie = $SoRep->find($id);//affichage de la sortie selon le ID passé
+        $inscrits =  $InRep->findBy(['sortie' => $id]);
 
-       return $this->render('sortie/detail.html.twig', ['sortie' => $sortie ]);
+       return $this->render('sortie/detail.html.twig', ['sortie' => $sortie, 'inscrits' => $inscrits ]);
     }
 
-    ///////// route 3 : les archives de sorties
-    #[Route('/public', name: 'public')]
-    public function sortieArchives(SiteService $SiSe, SortiesService $SoSe, InscriptionsService $insServ, Request $request): Response
-    {
-        $form = $this->createForm(SortieFilterForm::class);
-        $form->handleRequest($request);
 
-        $sortieList = $SoSe->makeFilter($form);
-        $sitesList = $SiSe->showAll();        //délégation de la recherche au SiteService
-        $inscritsList = $insServ->showAll();  //délégation de la recherche au InscriptionService
-        $dateActuelle = new DateTime();
-
-
-        return $this->render('sortie/public.html.twig', [
-            'form' => $form->createView(),
-            'sortiesList' => $sortieList,
-            'sitesList' => $sitesList,
-            'inscriptionsList' => $inscritsList,
-            'dateActuelle' => $dateActuelle,
-        ]);
-    }
-
-    ///////// route 4 : le changement d'état
+    ///////// route 3 : le changement d'état
     #[Route('/state/{sortieId}/{state}', name: 'state')]
     public function changeState(int $sortieId, int $state, SortiesService $SoSe): Response
     {
@@ -79,7 +62,7 @@ class SortieController extends AbstractController
         return $this->redirectToRoute('sortie_main');
     }
 
-    ///////// route 5 : la suppression
+    ///////// route 4 : la suppression
     #[Route('/delete/{sortieId}', name: 'delete')]
     public function delete(Request $request, $sortieId, SortiesService $SoSe): Response
     {
@@ -88,14 +71,14 @@ class SortieController extends AbstractController
         return $this->redirectToRoute('sortie_main');
     }
 
-    /////// route 4 : création d'une sortie
+    /////// route 5 : création d'une sortie
     #[Route('/creer', name: 'creer')]
     public function creerUneSortie(Request $request, SortiesService $sortiesService): Response
     {
         return $sortiesService->creerSortie($request);
     }
 
-    /////// route 5 : sorties du user en session
+    /////// route 6 : sorties du user en session
     #[Route('/{pseudo}', name: 'mes_sorties')]
     public function mesSortiesList(string $pseudo, SortieRepository $sortieRepository): Response
     {
@@ -109,7 +92,7 @@ class SortieController extends AbstractController
         return $this->redirectToRoute('sortie_main');
     }
 
-    /////// route 6 :modifier une sortie
+    /////// route 7 :modifier une sortie
     #[Route('/{pseudo}/modifier/{sortieId}', name: 'modifier')]
     public function modifierUneSortie(Request $request,string $pseudo, string $sortieId, SortiesService $sortiesService): Response
     {
