@@ -246,5 +246,6 @@ class Participants implements UserInterface, PasswordAuthenticatedUserInterface
         $this->photo = $photo;
         return $this;
     }
+
 }
 

@@ -1,63 +1,205 @@
+/* Import CopperBlack font */
+@import url('https://fonts.googleapis.com/css2?family=Copperplate:wght@400;700&display=swap');
+
 /* assets/styles/style.css */
 
 /* Couleurs personnalisées */
 body {
-    background-color: #07013c; /* Fond sombre */
-    color: #e0e0e0; /* Texte clair */
+    position: relative;
+    margin: 0;
+    padding: 0;
+    color: #ffffff;
+    font-family: 'Bogart', sans-serif; /* thème Bogart, sans-serif */
+    display: flex;
+    justify-content: center; /* Centre horizontalement */
+    align-items: center; /* Centre verticalement */
+    min-height: 120vh; /* s'assure que le contenu ne soit pas trop haut */
 }
 
+body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('https://www.my-loire-valley.com/wp-content/uploads/2017/12/Les-Machines-de-lile-Nantes-%C2%A9-Romain-Peneau-_-LVAN.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    filter: brightness(0.3); /* réduit luminosité du fond d'écran */
+    z-index: -1;
+}
+
+/* Ajoute ombre à la navbar */
+.navbar {
+    box-shadow: 0 5px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* CStyle de la navbar */
 .navbar-custom {
-    background-color: #0f0f2e; /* Fond sombre pour la navbar */
+    background-color: rgba(3, 3, 94, 0.26);
+    padding: 0.5rem 1rem;
+    box-shadow: 0 5px 8px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    border-radius: 15px; /* coins arrondis */
+    position: fixed; /* fixe la navbar */
+    top: 0; /* reste en haut  */
+    left: 0; /* reste à gauche */
+    right: 0; /* reste à droite */
+    z-index: 1000; /* s'assure que la navbar reste au dessus du contenu */
 }
 
-.navbar-custom .navbar-brand,
-.navbar-custom .navbar-nav .nav-link {
-    color: #ecebeb; /* Texte clair pour la navbar */
+.main-content {
+    padding-top: 170px; /* gère le padding au dessus du contenu */
+    width: 100%;
+    max-width: 800px; /* Limite la largeur du contenu */
+    margin: 0 auto; /* Centre le contenu */
 }
 
-.navbar-custom .navbar-nav .nav-link:hover {
-    color: #ffffff; /* Texte plus clair au survol */
+/* Custom styles pour les éléments clickables */
+a, .btn-custom, .navbar-nav .nav-link {
+    color: #ffffff; /* couleur de texte des boutons */
+    text-decoration: none; /* Remove underline */
+    transition: color 0.3s ease;
+}
+
+a:hover, .btn-custom:hover, .navbar-nav .nav-link:hover {
+    color: rgba(68, 68, 68, 0.63); /* couleur de texte des boutons au survol */
+}
+
+.navbar-custom:hover {
+    background-color: rgba(169, 169, 239, 0.35); /* la couleur de fond au survol */
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
+}
+
+.navbar-custom .navbar-brand {
+    display: flex;
+}
+
+.navbar-custom .navbar-logo {
+    width: 90px; /* gère la taille du logo */
+    height: auto;
+}
+
+.navbar-custom .navbar-brand-text {
+    font-family: 'Copperplate', sans-serif;
+    font-size: 3rem; /* Ajuste la taille du texte */
+    color: #ecebeb !important;
+    margin-left: 30px; /* ajoute de l'espace entre le logo et le texte */
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); /* ajoute de l'ombre aux textes */
+    text-decoration: none; /* Retire le soulignement */
+}
+
+.navbar-custom .navbar-nav .nav-item {
+    list-style: none; /* enlève les points */
+}
+
+.navbar-custom .navbar-nav .nav-item .nav-link {
+    color: #fbf9f9 !important;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); /* ajoute de l'ombre aux textes */
+    margin-right: 10px;
+    padding: 10px 20px;
+    border: none;
+    display: inline-block;
+}
+
+.navbar-custom .navbar-nav .nav-item .nav-link:hover {
+    background-color: #555; /* Change background color on hover */
+}
+
+.navbar-toggler {
+    border: none; /* Enleve la bordure des Toggleers */
+}
+
+.navbar-toggler-icon {
+    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgba%2888, 88, 88, 0.7%29' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
+    filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.2)); /* Ajoute ombres aux icones */
+}
+
+.navbar-welcome-links {
+    display: flex;
+    flex-direction: column; /* Ensure vertical alignment */
+    align-items: flex-start; /* Align to the start */
+    width: 100%;
+}
+
+.navbar-welcome {
+    margin-bottom: 10px; /* Add some space below the welcome message */
 }
 
 /* Styles de formulaire */
 .form-custom {
-    background-color: #2c2c2c; /* Fond sombre pour les formulaires */
-    border: 1px solid #444; /* Bordure plus claire */
-    border-radius: 5px;
+    background-color: #1f1f3d;
     padding: 20px;
+    margin-bottom: 20px;
+    width: 100%;
+    max-width: 800px; /* Limite la largeur du formulaire */
+    margin: 0 auto; /* Centre le formulaire */
+}
+
+.form-custom h2 {
+    color: #ffffff; /* couleur de titre */
+    margin-bottom: 20px; /* espace sous le titre */
+    text-align: center; /* centre le titre */
+}
+
+.form-custom .form-group {
+    margin-bottom: 15px; /* espace entre les champs */
+    display: flex;
+    flex-direction: column;
 }
 
 .form-custom .form-control {
-    background-color: #333; /* Fond sombre pour les champs de formulaire */
-    color: #e0e0e0; /* Texte clair */
-    border: 1px solid #555; /* Bordure */
+    background-color: #8e8c8c; /* gris clair */
+    color: #000000; /* couleurs des champs */
+    border: 1px solid #555; /* couleur des bordures des champs */
+    border-radius: 10px; /* coins arrondis */
+    padding: 10px;
+    width: 100%;
+    font-size: 1rem;
 }
 
 .form-custom .form-control::placeholder {
-    color: #888; /* Placeholder clair */
+    color: #888; /* couleur du placeholder */
 }
 
 .form-custom .form-control:focus {
-    background-color: #444; /* Fond plus clair au focus */
-    border-color: #666; /* Bordure plus claire au focus */
+    background-color: #c0c0c0; /* Slightly lighter grey on focus */
+    box-shadow: 0 0 8px rgba(0, 123, 255, 0.5); /* Add blue shadow on focus */
+}
+
+.form-custom label {
+    margin-bottom: 5px;
+    color: #ffffff; /* couleur du texte des labels */
 }
 
 .btn-custom {
     background-color: #444; /* Bouton sombre */
     color: #e0e0e0; /* Texte clair */
-    border: 1px solid #555; /* Bordure */
+    border-radius: 5px; /* coins arrondis */
+    padding: 10px 20px; /* Padding */
+    transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Ajoute ombre */
+    display: block; /* Block display */
+    width: 100%; /* largeur maximum */
+    margin-top: 20px; /* esp */
+    font-family: 'Bogart', sans-serif; /* définir la police */
+    font-weight: bold; /* mettre en gras */
+    font-size: 1.2rem;
 }
 
 .btn-custom:hover {
     background-color: #555; /* Bouton plus clair au survol */
     color: #ffffff; /* Texte plus clair au survol */
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2); /* Ajoute plus d'ombre */
 }
 
 /* Styles de tableau */
 .table-custom {
     background-color: #2c2c2c; /* Fond sombre pour les tables */
     color: #e0e0e0; /* Texte clair */
-    border: 1px solid #444; /* Bordure */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Ajoute ombre */
 }
 
 .table-custom th,
@@ -75,6 +217,7 @@ body {
 
 .table-custom tbody tr:hover {
     background-color: #444; /* Fond au survol */
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1); /* Ajoute ombre intérieur */
 }
 
 /* Autres éléments */
@@ -82,12 +225,14 @@ body {
     background-color: #2c2c2c; /* Fond sombre pour les cartes */
     border: 1px solid #444; /* Bordure */
     color: #e0e0e0; /* Texte clair */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Ajoute ombre */
 }
 
 .alert-custom {
     background-color: #444; /* Fond sombre pour les alertes */
     border: 1px solid #555; /* Bordure */
     color: #e0e0e0; /* Texte clair */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Ajoute ombre */
 }
 
 .footer-custom {
@@ -96,6 +241,7 @@ body {
     padding: 10px;
     text-align: center;
     border-top: 1px solid #444; /* Bordure supérieure */
+    box-shadow: 0 -4px 6px rgba(0, 0, 0, 0.1); /* ajoute ombre supérieure */
 }
 
 /* Marges et espacements */
@@ -109,4 +255,34 @@ body {
 
 .p-5 {
     padding: 3rem !important;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .navbar-custom .navbar-brand-text,
+    .form-custom h2,
+    .btn-custom {
+        font-size: 1.2rem; /* Adjust font size for smaller screens */
+    }
+    .form-custom .form-control {
+        font-size: 1rem; /* Adjust input text size for smaller screens */
+    }
+    .navbar-welcome-links {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .navbar-welcome {
+        margin-left: 0; /* Remove left margin on smaller screens */
+    }
+}
+
+@media (max-width: 480px) {
+    .navbar-custom .navbar-brand-text,
+    .form-custom h2,
+    .btn-custom {
+        font-size: 1rem; /* Adjust font size for smaller screens */
+    }
+    .form-custom .form-control {
+        font-size: 0.9rem; /* Adjust input text size for smaller screens */
+    }
 }

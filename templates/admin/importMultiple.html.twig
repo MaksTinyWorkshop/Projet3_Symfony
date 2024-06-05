@@ -1,26 +1,25 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Register{% endblock %}
+{% block title %}Import Multiple Profiles{% endblock %}
 
 {% block body %}
-    <section class="container">
+    <section class="container mt-5">
         <div class="row">
-            <div class="col">
-                    <h1>Importer des profils</h1>
+            <div class="col-md-8 offset-md-2">
+                <h1 class="mb-4">Importer des profils</h1>
 
-                    {{ form_errors(registrationForm) }}
+                {{ form_errors(registrationForm) }}
 
-                    {{ form_start(registrationForm) }}
-                    <fieldset class="mb-3">
-                        <legend>Le fichier</legend>
-                        {{ form_row(registrationForm.csvFile) }}
-                    </fieldset>
+                {{ form_start(registrationForm) }}
+                <fieldset class="mb-3">
+                    <legend>Le fichier</legend>
+                    {{ form_row(registrationForm.csvFile, {'attr': {'class': 'form-control'}}) }}
+                </fieldset>
 
-                    <button type="submit" class="btn btn-primary">Enregistrer les profils</button>
-                    {{ form_end(registrationForm) }}
+                <button type="submit" class="btn btn-primary">Enregistrer les profils</button>
+                {{ form_end(registrationForm) }}
 
             </div>
         </div>
     </section>
-
 {% endblock %}

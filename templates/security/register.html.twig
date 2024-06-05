@@ -3,96 +3,71 @@
 {% block title %}S'enregistrer{% endblock %}
 
 {% block body %}
+    <div class="container my-5">
+        <h1 class="text-center mb-4">S'enregistrer</h1>
+
+        {{ form_errors(registrationForm) }}
     <div class="container mt-5">
         <h1 class="text-center">S'enregistrer</h1>
 
         {{ form_start(registrationForm) }}
-        <div class="row mt-5 d-flex justify-content-around">
-            <div class="col-4 m-2">
-                <fieldset class="mb-3">
-                    <legend class="text-center mb-3">Mes coordonnées</legend>
-                    <div class="form-floating mb-2">
-                        <input type="text"
-                               name="{{ field_name(registrationForm.nom) }}"
-                               class="form-control"
-                               id="{{ registrationForm.nom.vars.id }}"
-                               placeholder="L'éponge"
-                               value="{{ field_value(registrationForm.nom) }}">
-                        <label for="{{ registrationForm.nom.vars.id }}">{{ field_label(registrationForm.nom) }}</label>
-                        {{ form_errors(registrationForm.nom) }}
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <fieldset class="mb-3">
+                                    <legend>Mes coordonnées</legend>
+                                    <div class="mb-3">
+                                        {{ form_label(registrationForm.nom) }}
+                                        {{ form_widget(registrationForm.nom, {'attr': {'class': 'form-control'}}) }}
+                                    </div>
+                                    <div class="mb-3">
+                                        {{ form_label(registrationForm.prenom) }}
+                                        {{ form_widget(registrationForm.prenom, {'attr': {'class': 'form-control'}}) }}
+                                    </div>
+                                    <div class="mb-3">
+                                        {{ form_label(registrationForm.telephone) }}
+                                        {{ form_widget(registrationForm.telephone, {'attr': {'class': 'form-control'}}) }}
+                                    </div>
+                                    <div class="mb-3">
+                                        {{ form_label(registrationForm.pseudo) }}
+                                        {{ form_widget(registrationForm.pseudo, {'attr': {'class': 'form-control'}}) }}
+                                    </div>
+                                    <div class="mb-3">
+                                        {{ form_label(registrationForm.site) }}
+                                        {{ form_widget(registrationForm.site, {'attr': {'class': 'form-select'}}) }}
+                                    </div>
+                                    <div class="mb-3">
+                                        {{ form_label(registrationForm.photo) }}
+                                        {{ form_widget(registrationForm.photo, {'attr': {'class': 'form-control'}}) }}
+                                    </div>
+                                </fieldset>
+                            </div>
+                            <div class="col-md-6">
+                                <fieldset class="mb-3">
+                                    <legend>Mes Identifiants de connexion</legend>
+                                    <div class="mb-3">
+                                        {{ form_label(registrationForm.email) }}
+                                        {{ form_widget(registrationForm.email, {'attr': {'class': 'form-control'}}) }}
+                                    </div>
+                                    <div class="mb-3">
+                                        {{ form_label(registrationForm.plainPassword) }}
+                                        {{ form_widget(registrationForm.plainPassword, {'attr': {'class': 'form-control'}}) }}
+                                    </div>
+                                    <div class="mb-3 form-check">
+                                        {{ form_widget(registrationForm.RGPD, {'attr': {'class': 'form-check-input'}}) }}
+                                        {{ form_label(registrationForm.RGPD) }}
+                                    </div>
+                                </fieldset>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn-primary btn-block">S'enregistrer</button>
                     </div>
-                    <div class="form-floating mb-2">
-                        <input type="text"
-                               name="{{ field_name(registrationForm.prenom) }}"
-                               class="form-control"
-                               id="{{ registrationForm.prenom.vars.id }}"
-                               placeholder="Bob"
-                               value="{{ field_value(registrationForm.prenom) }}">
-                        <label for="{{ registrationForm.prenom.vars.id }}">{{ field_label(registrationForm.prenom) }}</label>
-                        {{ form_errors(registrationForm.prenom) }}
-                    </div>
-                    <div class="form-floating mb-2">
-                        <input type="text"
-                               name="{{ field_name(registrationForm.telephone) }}"
-                               class="form-control"
-                               id="{{ registrationForm.telephone.vars.id }}"
-                               placeholder="0123456789"
-                               value="{{ field_value(registrationForm.telephone) }}">
-                        <label for="{{ registrationForm.telephone.vars.id }}">{{ field_label(registrationForm.telephone) }}</label>
-                        {{ form_errors(registrationForm.telephone) }}
-                    </div>
-                    <div class="form-floating mb-2">
-                        <input type="text"
-                               name="{{ field_name(registrationForm.pseudo) }}"
-                               class="form-control"
-                               id="{{ registrationForm.pseudo.vars.id }}"
-                               placeholder="Bob_L_eponge"
-                               value="{{ field_value(registrationForm.pseudo) }}">
-                        <label for="{{ registrationForm.pseudo.vars.id }}">{{ field_label(registrationForm.pseudo) }}</label>
-                        {{ form_errors(registrationForm.pseudo) }}
-                    </div>
-                    {{ form_row(registrationForm.site) }}
-                </fieldset>
-            </div>
-            <div class="col-4 m-2">
-                <fieldset class="mb-3">
-                    <legend class="text-center mb-3">Mes Identifiants de connexion</legend>
-                    {{ form_row(registrationForm.photo) }}
-                    <div class="form-floating mb-2">
-                        <input type="email"
-                               name="{{ field_name(registrationForm.email) }}"
-                               class="form-control"
-                               id="{{ registrationForm.email.vars.id }}"
-                               placeholder="bobleponge@gmail.so"
-                               value="{{ field_value(registrationForm.email) }}">
-                        <label for="{{ registrationForm.email.vars.id }}">Email</label>
-                        {{ form_errors(registrationForm.email) }}
-                    </div>
-                    <div class="form-floating mb-2">
-                        <input type="password"
-                               name="{{ field_name(registrationForm.plainPassword) }}"
-                               class="form-control"
-                               id="{{ registrationForm.plainPassword.vars.id }}"
-                               placeholder="Mon Mot De Passe"
-                               value="{{ field_value(registrationForm.plainPassword) }}">
-                        <label for="{{ registrationForm.plainPassword.vars.id }}">{{ field_label(registrationForm.plainPassword) }}</label>
-                        {{ form_errors(registrationForm.plainPassword) }}
-                    </div>
-                    <div class="row mt-4">
-                        {{ form_row(registrationForm.RGPD) }}
-                    </div>
-
-                </fieldset>
-                <div class="row m-2">
-                    <button type="submit" class="btn btn-primary">S'enregistrer</button>
                 </div>
-
             </div>
         </div>
-
-
-
-
         {{ form_end(registrationForm) }}
     </div>
 {% endblock %}
