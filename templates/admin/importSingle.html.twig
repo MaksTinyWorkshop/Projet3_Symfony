@@ -1,33 +1,32 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Register{% endblock %}
+{% block title %}Import Single Profile{% endblock %}
 
 {% block body %}
-    <section class="container">
+    <section class="container mt-5">
         <div class="row">
-            <div class="col">
-                <h1>Importer un profil</h1>
+            <div class="col-md-8 offset-md-2">
+                <h1 class="mb-4">Importer un profil</h1>
 
                 {{ form_errors(registrationForm) }}
 
                 {{ form_start(registrationForm) }}
                 <fieldset class="mb-3">
                     <legend>Ses coordonnées</legend>
-                    {{ form_row(registrationForm.nom) }}
-                    {{ form_row(registrationForm.prenom) }}
-                    {{ form_row(registrationForm.telephone) }}
-                    {{ form_row(registrationForm.pseudo) }}
-                    {{ form_row(registrationForm.site) }}
+                    {{ form_row(registrationForm.nom, {'attr': {'class': 'form-control'}}) }}
+                    {{ form_row(registrationForm.prenom, {'attr': {'class': 'form-control'}}) }}
+                    {{ form_row(registrationForm.telephone, {'attr': {'class': 'form-control'}}) }}
+                    {{ form_row(registrationForm.pseudo, {'attr': {'class': 'form-control'}}) }}
+                    {{ form_row(registrationForm.site, {'attr': {'class': 'form-control'}}) }}
                 </fieldset>
                 <fieldset class="mb-3">
                     <legend>Son mail de connexion</legend>
-                    {{ form_row(registrationForm.email) }}
+                    {{ form_row(registrationForm.email, {'attr': {'class': 'form-control'}}) }}
                 </fieldset>
 
-                        <button type="submit" class="btn btn-primary">Enregistrer le profil</button>
+                <button type="submit" class="btn btn-primary">Enregistrer le profil</button>
                 {{ form_end(registrationForm) }}
             </div>
         </div>
     </section>
-
 {% endblock %}

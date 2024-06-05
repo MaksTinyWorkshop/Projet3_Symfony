@@ -17,7 +17,11 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 
 /**
- * Formulaire de création de compte
+ * Formulaire de création ou de modification de compte pour un utilisateur
+ * avec des options dans le cas de la modification
+ * @param bool $is_edit
+ * Les contraintes de validation du mot de passe sont déplacées ici car en
+ * base on le stocke crypté, pas en clair (avec les contraintes imposées)
  */
 class RegistrationFormType extends AbstractType
 {
@@ -46,41 +50,23 @@ class RegistrationFormType extends AbstractType
         ];
         // Si on est déjà inscrit, ajout d'un placeholder dans le champ MDP
         if($options['is_edit']) {
-            $passwordOptions['attr'] = [
-                'placeholder' => 'Mot de passe courant ou nouveau mot de passe',
-            ];
+            $passwordOptions['label'] = 'Mot de passe courant ou nouveau mot de passe';
         }
-
-
+        // Formulaire
         $builder
             ->add('email', EmailType::class, [
-                'attr' => [
-                    'class' => 'form-control'
-                ],
                 'label' => 'Email',
             ])
             ->add('nom', TextType::class, [
-                'attr' => [
-                    'class' => 'form-control'
-                ],
                 'label' => 'Nom',
             ])
             ->add('prenom', TextType::class, [
-                'attr' => [
-                    'class' => 'form-control'
-                ],
                 'label' => 'Prénom',
             ])
             ->add('telephone', TextType::class, [
-                'attr' => [
-                    'class' => 'form-control'
-                ],
                 'label' => 'Téléphone',
             ])
             ->add('pseudo', TextType::class, [
-                'attr' => [
-                    'class' => 'form-control'
-                ],
                 'label' => 'Pseudo',
             ])
             ->add('site', EntityType::class, [
@@ -89,15 +75,14 @@ class RegistrationFormType extends AbstractType
                 'placeholder' => 'Choisissez un site',
             ])
             ->add('plainPassword', PasswordType::class, $passwordOptions)
+
             ->add('photo', FileType::class, [
                 'label' => 'Photo de profil (JPEG, PNG, GIF)',
 
                 // unmapped pour qu'il ne soit pas associé à une  entity property
                 'mapped' => false,
-
                 // pour le rendre optionnel
                 'required' => false,
-
                 // Contraintes de validations de fichier
                 'constraints' => [
                     new Assert\File([
@@ -121,9 +106,7 @@ class RegistrationFormType extends AbstractType
                     ]),
                 ],
             ]);
-        }
-
-        ;
+        };
     }
 
     public function configureOptions(OptionsResolver $resolver): void

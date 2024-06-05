@@ -18,8 +18,11 @@ use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
 
 /**
- * Service d'administration qui permet d'ajouter un profil via un CSV en tant qu'admin avec envoi de
+ * Service d'administration qui permet :
+ * - d'ajouter un profil utilisateur en tant qu'admin via formulaire avec envoi de
  * lien de changement de mot de passe au nouvel utilisateur
+ * - d'importer des utilisateurs via un fichier CSV (envoi de mail aussi)
+ * - changer le statut d'un utilisateur (actif/inactif)
  */
 class AdminService extends AbstractController
 {
@@ -86,7 +89,6 @@ class AdminService extends AbstractController
                 $newParticipants = [];
                 $normalizers = [new ObjectNormalizer()];
                 $encoders = [new CsvEncoder([CsvEncoder::DELIMITER_KEY => ';'])];
-
                 $serializer = new Serializer($normalizers, $encoders);
                 $fileString = file_get_contents($csvFilePath);
                 $data = $serializer->decode($fileString, 'csv');
@@ -121,6 +123,7 @@ class AdminService extends AbstractController
                         }
 
                         $this->entityManager->persist($participant);
+                        // On ajoute le participant à la liste
                         $newParticipants[] = $participant;
                     } else {
                         $this->addFlash('warning', 'L\'email ' . $email . ' existe déjà en base.');
@@ -128,7 +131,7 @@ class AdminService extends AbstractController
                 }
                 $this->entityManager->flush();
 
-                // Envoi de lien de reset du MDP à chaque user nouvellement crée
+                // Envoi de lien de reset du MDP à chaque user nouvellement crée, en se servant de la liste des nouveaux participants
                 foreach ($newParticipants as $participant) {
                     $this->participantsService->forgotPassword($participant->getEmail(), 'email/import_by_admin.html.twig');
                 }
@@ -137,7 +140,6 @@ class AdminService extends AbstractController
 
 
                 return $this->redirectToRoute('admin_index');
-
 
             } else {
                 $this->addFlash('warning', 'Veuillez sélectionner un fichier CSV.');
@@ -164,4 +166,5 @@ class AdminService extends AbstractController
         $this->entityManager->persist($user);
         $this->entityManager->flush();
     }
+
 }

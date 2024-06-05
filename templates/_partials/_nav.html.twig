@@ -1,52 +1,58 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+<nav class="navbar navbar-expand-lg navbar-custom">
     <div class="container-fluid">
-        <a class="navbar-brand" href="{{ path('main') }}">
-            <img src="{{ asset('img/logo/logo.png') }}" alt="Logo" width="100" height="100" class="d-inline-block align-text-top"> Sortir.com
+        <a class="navbar-brand d-flex align-items-center" href="{{ path('main') }}">
+            <img src="{{ asset('img/logo/logo.png') }}" alt="Logo" class="navbar-logo">
+            <span class="navbar-brand-text">SORTIR.COM</span>
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
                 aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
-
-            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+            <div class="d-flex flex-column w-100">
                 {% if app.user %}
-                    {% if is_granted('ROLE_ADMIN') %}
+                    <div class="navbar-welcome">
+                        Bienvenue, {{ app.user.pseudo }}!
+                    </div>
+                {% endif %}
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0 d-flex flex-row">
+                    {% if app.user %}
+                        {% if is_granted('ROLE_ADMIN') %}
+                            <li class="nav-item me-2">
+                                <a href="{{ path('admin_index') }}" class="nav-link">
+                                    DashBoard
+                                </a>
+                            </li>
+                        {% endif %}
+                        <li class="nav-item me-2">
+                            <a href="{{ path('sortie_main') }}" class="nav-link">
+                                Sorties
+                            </a>
+                        </li>
+                        <li class="nav-item me-2">
+                            <a href="{{ path('participants_details', {'pseudo': app.user.pseudo }) }}" class="nav-link" title="Profil">
+                                <i class="fas fa-user"></i> Profil
+                            </a>
+                        </li>
                         <li class="nav-item">
-                            <a href="{{ path('admin_index') }}" class="nav-link">
-                                {{ source('@svg_path/settings.svg') }} DashBoard
+                            <a href="{{ path('app_logout') }}" class="nav-link" title="Se déconnecter">
+                                <i class="fas fa-sign-out-alt"></i> Se déconnecter
+                            </a>
+                        </li>
+                    {% else %}
+                        <li class="nav-item me-2">
+                            <a href="{{ path('app_login') }}" class="nav-link">
+                                <i class="fas fa-sign-in-alt"></i> Me Connecter
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ path('app_register') }}" class="nav-link">
+                                <i class="fas fa-user-plus"></i> M'inscrire
                             </a>
                         </li>
                     {% endif %}
-                    <li class="nav-item">
-                        <a href="{{ path('sortie_main') }}" class="nav-link" >
-                            {{ source('@svg_path/sortie.svg') }}Sorties
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{{ path('participants_details', {'pseudo': app.user.pseudo }) }}" class="nav-link" title="Profil">
-                            <i class="fas fa-user"></i> Profil
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{{ path('app_logout') }}" class="nav-link" title="Se déconnecter">
-                            <i class="fas fa-sign-out-alt"></i> Se déconnecter
-                        </a>
-                    </li>
-                {% else %}
-                    <li class="nav-item">
-                        <a href="{{ path('app_login') }}" class="nav-link">
-                            <i class="fas fa-sign-in-alt"></i> Me Connecter
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{{ path('app_register') }}" class="nav-link">
-                            <i class="fas fa-user-plus"></i> M'inscrire
-                        </a>
-                    </li>
-                {% endif %}
-
-            </ul>
+                </ul>
+            </div>
         </div>
     </div>
 </nav>

@@ -10,4 +10,5 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('lieuRue').textContent = 'Rue : ' + selectedLieu.rue;
         document.getElementById('lieuCodePostal').textContent = 'Code Postal : ' + selectedLieu.codePostal;
     });
+
 });

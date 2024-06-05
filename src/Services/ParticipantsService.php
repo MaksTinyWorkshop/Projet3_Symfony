@@ -2,10 +2,14 @@
 
 namespace App\Services;
 
+use App\Entity\Etat;
+use App\Entity\Inscriptions;
 use App\Entity\Participants;
 use App\Form\RegistrationFormType;
 use App\Form\ResetPasswordFormType;
+use App\Repository\InscriptionsRepository;
 use App\Repository\ParticipantsRepository;
+use App\Repository\SortieRepository;
 use App\Security\AppAuthenticator;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -21,11 +25,20 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 use Symfony\Component\Security\Csrf\TokenGenerator\TokenGeneratorInterface;
 use Symfony\Component\String\Slugger\SluggerInterface;
 
+
+/**
+ * Service des participants, permettant de :
+ * - ajouter/modifier/supprimer son profil en tant qu'utilisateur
+ * - consulter le profil d'un autre participant (données restreintes)
+ * - reinitialiser son mot de passe
+ */
 class ParticipantsService extends AbstractController
 {
     ///////////////////////////////////////// Constructeur pour injection de dépendances nécessaires au service
     public function __construct(
         private ParticipantsRepository      $participantsRepository,
+        private SortieRepository            $sortieRepository,
+        private InscriptionsRepository      $inscriptionsRepository,
         private UserPasswordHasherInterface $passwordHasher,
         private EntityManagerInterface      $entityManager,
         private Security                    $security,
@@ -35,7 +48,9 @@ class ParticipantsService extends AbstractController
         private FormFactoryInterface        $formFactory,
         private SluggerInterface            $slugger,
         private string                      $photosDirectory
-    ){}
+    )
+    {
+    }
 
 
     ///////////////////////////////////////////// Méthodes d'enregistrement du User
@@ -107,7 +122,7 @@ class ParticipantsService extends AbstractController
                     'participant',
                 // 'token')
                 ));
-            $this->addFlash('success', 'Bienvenue '. $participant->getPseudo() .' sur Sortir.com ');
+            $this->addFlash('success', 'Bienvenue ' . $participant->getPseudo() . ' sur Sortir.com ');
             return $this->security->login($participant, AppAuthenticator::class, 'main');
         }
         return $this->render('security/register.html.twig', [
@@ -225,6 +240,25 @@ class ParticipantsService extends AbstractController
                     $participant,
                     $form->get('plainPassword')->getData()
                 ));
+            //Gestion de l'image
+            $photoFile = $form->get('photo')->getData();
+            if ($photoFile) {
+                $originalFilename = pathinfo($photoFile->getClientOriginalName(), PATHINFO_FILENAME);
+                $safeFilename = $this->slugger->slug($originalFilename);
+                $newFilename = $safeFilename . '-' . uniqid() . '.' . $photoFile->guessExtension();
+
+                try {
+                    $photoFile->move(
+                        $this->photosDirectory,
+                        $newFilename
+                    );
+                } catch (FileException $e) {
+                    // gère les exceptions si quequechose se passe pendant l'upload
+                }
+
+                $participant->setPhoto($newFilename);
+            }
+
             $this->entityManager->persist($participant);
             $this->entityManager->flush();
 
@@ -232,6 +266,10 @@ class ParticipantsService extends AbstractController
 
             return $this->redirectToRoute('participants_details', ['pseudo' => $participant->getPseudo()]);
         }
+        if ($form->isSubmitted() && !$form->isValid()) {
+            dd($form->getErrors(true));
+        }
+
         return $this->render('participants/details.html.twig', compact('participant', 'form'));
     }
 
@@ -246,20 +284,83 @@ class ParticipantsService extends AbstractController
         $tokenStorage?->setToken(null);
         $participant = $this->participantsRepository->findOneBy(['pseudo' => $pseudo]);
         if ($participant) {
+            // Annuler les sorties organisées par le participant
+            $sortiesOrgaParParticipant = $this->sortieRepository->sortiesOrganiseesParUserId($participant->getId());
+            if ($sortiesOrgaParParticipant) {
+                foreach ($sortiesOrgaParParticipant as $sortie) {
+                    $etat = $sortie->getEtat()->getId();
+                    // Traitement des cas en fonction des sorties
+                    switch ($etat) {
+                        // La sortie est crée mais non publiée
+                        case 1:
+                            $this->entityManager->remove($sortie);          // inscription dans la base
+                            $this->entityManager->flush();
+                            break;
+                        // La sortie est crée et publiée
+                        case 2:
+                            $sortieId = $sortie->getId();
+                            $motifAnnulation = 'L\'organisateur est désinscrit de la plateforme';
+                            $etatAnnuleId = 6;
+                            $etatAnnule = $this->entityManager->getRepository(Etat::class)->find($etatAnnuleId);
+                            $sortie->setInfosSortie($motifAnnulation)
+                                ->setEtat($etatAnnule)
+                                ->setOrganisateur(null);
+                            // Annuler les inscriptions eventuelles et prévenir les participants
+                            $inscriptions = $this->entityManager->getRepository(Inscriptions::class)->findBy(['sortie' => $sortieId]);
+
+                            ////////////////////////////////////////////////////////////////////////////
+                            ///////////// Feature d'envoi de mail désactivée temporairement ////////////
+                            ///////////// (trop d'envoi de mail à la fois pour la version   ////////////
+                            ///////////// gratuite de MailTrap)                             ////////////
+                            /// ////////////////////////////////////////////////////////////////////////
+                            /*
+                            $participants = $this->entityManager->getRepository(Inscriptions::class)->getParticipantsBySortieId($sortieId);
+                            foreach ($participants as $participant) {
+                                $context = compact('sortie', 'participant');
+                                $this->sendMailService->sendMail(
+                                    'cancelledSortie@sortir.com',
+                                    $participant['email'],
+                                    'Annulation de sortie',
+                                    'email/cancelled_sortie.html.twig',
+                                    $context
+                                );
+                            }
+                            */
+                            foreach ($inscriptions as $inscription) {
+                                $this->entityManager->remove($inscription);
+                            };
+                            $this->entityManager->persist($sortie);
+                            $this->entityManager->flush();
+                            break;
+                        default:
+                            $sortie->setOrganisateur(null);
+                            $this->entityManager->persist($sortie);
+                            $this->entityManager->flush();
+                            break;
+                    }
+                }
+            }
+            //  Supprimer les inscriptions aux sorties du participant
+            $inscriptionsParticipant = $this->inscriptionsRepository->findBy(['participant' => $participant->getId()]);
+            if ($inscriptionsParticipant) {
+                foreach ($inscriptionsParticipant as $inscription) {
+                    $this->entityManager->remove($inscription);
+                }
+            }
+            // Supprimer le participant
             $this->entityManager->remove($participant);
             $this->entityManager->flush();
 
-            $this->addFlash('success', 'Utilisateur'. $participant->getPseudo(). ' supprimé avec succès');
+            $this->addFlash('success', 'Profil correctement supprimé');
         } else {
             $this->addFlash('danger', 'Une erreur s\'est produite, veuillez recommencer');
-
         }
-
     }
 
 
-    ///////////////////////////////////////////// Méthodes de recherche en base (utile ??)
-    public function getAll(): array
+///////////////////////////////////////////// Méthodes de recherche en base (utile ??)
+    public
+    function getAll(): array
     {
         return $this->participantsRepository->findAll();
     }

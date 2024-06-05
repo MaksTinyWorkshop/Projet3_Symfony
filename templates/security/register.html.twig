@@ -3,29 +3,71 @@
 {% block title %}S'enregistrer{% endblock %}
 
 {% block body %}
-    <div class="container mt-5">
-        <h1>S'enregistrer</h1>
+    <div class="container my-5">
+        <h1 class="text-center mb-4">S'enregistrer</h1>
 
         {{ form_errors(registrationForm) }}
+    <div class="container mt-5">
+        <h1 class="text-center">S'enregistrer</h1>
 
         {{ form_start(registrationForm) }}
-        <fieldset class="mb-3">
-            <legend>Mes coordonnées</legend>
-            {{ form_row(registrationForm.nom, {'attr': {'class': 'form-control'}}) }}
-            {{ form_row(registrationForm.prenom, {'attr': {'class': 'form-control'}}) }}
-            {{ form_row(registrationForm.telephone, {'attr': {'class': 'form-control'}}) }}
-            {{ form_row(registrationForm.pseudo, {'attr': {'class': 'form-control'}}) }}
-            {{ form_row(registrationForm.site, {'attr': {'class': 'form-control'}}) }}
-            {{ form_row(registrationForm.photo) }}
-        </fieldset>
-        <fieldset class="mb-3">
-            <legend>Mes Identifiants de connexion</legend>
-            {{ form_row(registrationForm.email, {'attr': {'class': 'form-control'}}) }}
-            {{ form_row(registrationForm.plainPassword, {'attr': {'class': 'form-control'}}) }}
-            {{ form_row(registrationForm.RGPD, {'attr': {'class': 'form-check-input'}}) }}
-        </fieldset>
-
-        <button type="submit" class="btn btn-primary">S'enregistrer</button>
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <fieldset class="mb-3">
+                                    <legend>Mes coordonnées</legend>
+                                    <div class="mb-3">
+                                        {{ form_label(registrationForm.nom) }}
+                                        {{ form_widget(registrationForm.nom, {'attr': {'class': 'form-control'}}) }}
+                                    </div>
+                                    <div class="mb-3">
+                                        {{ form_label(registrationForm.prenom) }}
+                                        {{ form_widget(registrationForm.prenom, {'attr': {'class': 'form-control'}}) }}
+                                    </div>
+                                    <div class="mb-3">
+                                        {{ form_label(registrationForm.telephone) }}
+                                        {{ form_widget(registrationForm.telephone, {'attr': {'class': 'form-control'}}) }}
+                                    </div>
+                                    <div class="mb-3">
+                                        {{ form_label(registrationForm.pseudo) }}
+                                        {{ form_widget(registrationForm.pseudo, {'attr': {'class': 'form-control'}}) }}
+                                    </div>
+                                    <div class="mb-3">
+                                        {{ form_label(registrationForm.site) }}
+                                        {{ form_widget(registrationForm.site, {'attr': {'class': 'form-select'}}) }}
+                                    </div>
+                                    <div class="mb-3">
+                                        {{ form_label(registrationForm.photo) }}
+                                        {{ form_widget(registrationForm.photo, {'attr': {'class': 'form-control'}}) }}
+                                    </div>
+                                </fieldset>
+                            </div>
+                            <div class="col-md-6">
+                                <fieldset class="mb-3">
+                                    <legend>Mes Identifiants de connexion</legend>
+                                    <div class="mb-3">
+                                        {{ form_label(registrationForm.email) }}
+                                        {{ form_widget(registrationForm.email, {'attr': {'class': 'form-control'}}) }}
+                                    </div>
+                                    <div class="mb-3">
+                                        {{ form_label(registrationForm.plainPassword) }}
+                                        {{ form_widget(registrationForm.plainPassword, {'attr': {'class': 'form-control'}}) }}
+                                    </div>
+                                    <div class="mb-3 form-check">
+                                        {{ form_widget(registrationForm.RGPD, {'attr': {'class': 'form-check-input'}}) }}
+                                        {{ form_label(registrationForm.RGPD) }}
+                                    </div>
+                                </fieldset>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn-primary btn-block">S'enregistrer</button>
+                    </div>
+                </div>
+            </div>
+        </div>
         {{ form_end(registrationForm) }}
     </div>
 {% endblock %}

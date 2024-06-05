@@ -6,13 +6,15 @@
     <div class="container-fluid">
         <h1 class="text-center m-3">Salut à toi, bel administrateur</h1>
 
-        <p class="text-center m-5">Ici tu peux ajouter des utilisateurs</p>
+        <p class="text-center m-5">Ici tu peux ajouter des utilisateurs et les sorties</p>
         <div class="col-12 d-flex justify-content-around">
 
             <a href="{{ path('admin_addSingleUser') }}" role="button" class="btn btn-primary">Ajout d'un utilisateur
                 manuellement</a>
             <a href="{{ path('admin_addUsersByFile') }}" role="button" class="btn btn-primary">Ajout de multiples
                 utilisateurs par fichier CSV</a>
+            <a href="{{ path('admin_listeSorties') }}" role="button" class="btn btn-dark">Supprimer une sortie</a>
+
         </div>
         <p class="text-center m-5">Ici tu peux les désactiver, ou même les foutre à la porte</p>
         <div class="container text-center">

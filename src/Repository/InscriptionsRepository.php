@@ -16,6 +16,27 @@ class InscriptionsRepository extends ServiceEntityRepository
         parent::__construct($registry, Inscriptions::class);
     }
 
+    public function getParticipantsBySortieId($sortieId)
+    {
+        $qb = $this->createQueryBuilder('i')
+            ->select('p.email, p.pseudo, p.prenom')
+            ->join('i.participant', 'p')
+            ->where('i.sortie = :sortieId')
+            ->setParameter('sortieId', $sortieId);
+
+        return $qb->getQuery()->getResult();
+    }
+
+    public function getSortiesByParticipantId($participantId)
+    {
+        $qb = $this->createQueryBuilder('i')
+            ->select('s')
+            ->join('i.sortie', 's')
+            ->where('i.participant = :participantId')
+            ->setParameter('participantId', $participantId);
+
+        return $qb->getQuery()->getResult();
+    }
     //    /**
     //     * @return Inscriptions[] Returns an array of Inscriptions objects
     //     */

@@ -61,29 +61,9 @@
                 {{ form_end(sortieForm) }}
             </div>
             {% if is_edit %}
-                <!-- Modale de confirmation spécifique à chaque participant -->
-            <div class="modal fade" id="confirmationModal{{ sortie.id }}" tabindex="-1"
-                 aria-labelledby="confirmationModalLabel{{ sortie.id }}" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="confirmationModalLabel{{ sortie.id }}">Confirmation de
-                                Suppression</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <p>Êtes-vous sûr de vouloir supprimer la sortie {{ sortie.nom }} ?</p>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                            <!-- Formulaire de suppression spécifique à chaque participant -->
-                            <form method="post" action="{{ path('sortie_delete', {'pseudo': organisateur.pseudo, 'sortieId':sortie.id}) }}">
-                                <button type="submit" class="btn btn-danger">Confirmer</button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-                </div>{% endif %}
+                <!-- Modale de confirmation de suppression demandant un motif -->
+                {% include '_partials/_modal_suppression.html.twig' %}
+            {% endif %}
         </div>
 
     </div>
