@@ -240,6 +240,25 @@ class ParticipantsService extends AbstractController
                     $participant,
                     $form->get('plainPassword')->getData()
                 ));
+            //Gestion de l'image
+            $photoFile = $form->get('photo')->getData();
+            if ($photoFile) {
+                $originalFilename = pathinfo($photoFile->getClientOriginalName(), PATHINFO_FILENAME);
+                $safeFilename = $this->slugger->slug($originalFilename);
+                $newFilename = $safeFilename . '-' . uniqid() . '.' . $photoFile->guessExtension();
+
+                try {
+                    $photoFile->move(
+                        $this->photosDirectory,
+                        $newFilename
+                    );
+                } catch (FileException $e) {
+                    // gère les exceptions si quequechose se passe pendant l'upload
+                }
+
+                $participant->setPhoto($newFilename);
+            }
+
             $this->entityManager->persist($participant);
             $this->entityManager->flush();
 
@@ -247,6 +266,10 @@ class ParticipantsService extends AbstractController
 
             return $this->redirectToRoute('participants_details', ['pseudo' => $participant->getPseudo()]);
         }
+        if ($form->isSubmitted() && !$form->isValid()) {
+            dd($form->getErrors(true));
+        }
+
         return $this->render('participants/details.html.twig', compact('participant', 'form'));
     }
 

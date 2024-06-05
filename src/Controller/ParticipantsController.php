@@ -14,7 +14,7 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 #[Route('/participants', name: 'participants_')]
 class ParticipantsController extends AbstractController
 {
-    /////// Route 1 : renvoie la liste de tout les participants TODO : à voir si elle est conservée
+    /////// Route 1 : renvoie la liste de tout les participants
     #[Route('/', name: 'list')]
     public function index(ParticipantsService $participantsService): Response
     {

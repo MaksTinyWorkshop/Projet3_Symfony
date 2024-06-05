@@ -1,55 +1,121 @@
 {% extends 'base.html.twig' %}
 
-{% block title %} {{ parent()}} | Profil {{ participant.pseudo }} {% endblock %}
+{% block title %} {{ parent() }} | Profil de {{ participant.pseudo }} {% endblock %}
 
 {% block body %}
-    <div class="container mt-5">
-        <h1>Profil de {{ participant.pseudo }}</h1>
-
+<div class="container mt-5">
+    <div class="row d-flex justify-content-around align-items-center">
         {% if participant.photo %}
-            <img src="{{ asset('uploads/photos/' ~ participant.photo) }}" alt="{{ participant.pseudo }}" class="img-thumbnail" style="max-width: 200px;">
-        {% else %}
-            <p>Aucune photo de profil</p>
+            <div class="col-6">
+                <img src="{{ asset('uploads/photos/' ~ participant.photo) }}" alt="{{ participant.pseudo }}"
+                     class="img-thumbnail" style="max-width: 200px;">
+            </div>
         {% endif %}
+        <div class="col-6">
+            <h1>{{ participant.pseudo }}</h1>
+        </div>
+    </div>
 
-        {% if app.user and app.user.pseudo == participant.pseudo %}
-            <h2>C'est moi</h2>
-            <section class="container">
-                <div class="row">
-                    <div class="col">
-                        <h3>Update de mon profil</h3>
+    {% if app.user and app.user.pseudo == participant.pseudo %}
+        <div class="container mt-5">
+            <h3 class="text-center">Update de mon profil</h3>
+            {{ form_start(form, {'attr': {'enctype': 'multipart/form-data'}}) }}
+            <div class="row mt-5 d-flex justify-content-around">
+                <div class="col-4 m-2">
+                    <fieldset class="mb-3">
+                        <legend class="text-center mb-3">Mes coordonnées</legend>
+                        <div class="form-floating mb-2">
+                            <input type="text"
+                                   name="{{ field_name(form.nom) }}"
+                                   class="form-control"
+                                   id="{{ form.nom.vars.id }}"
+                                   placeholder="Platini"
+                                   value="{{ field_value(form.nom) }}">
+                            <label for="{{ form.nom.vars.id }}">{{ field_label(form.nom) }}</label>
+                            {{ form_errors(form.nom) }}
+                        </div>
+                        <div class="form-floating mb-2">
+                            <input type="text"
+                                   name="{{ field_name(form.prenom) }}"
+                                   class="form-control"
+                                   id="{{ form.prenom.vars.id }}"
+                                   placeholder="Michel"
+                                   value="{{ field_value(form.prenom) }}">
+                            <label for="{{ form.prenom.vars.id }}">{{ field_label(form.prenom) }}</label>
+                            {{ form_errors(form.prenom) }}
+                        </div>
+                        <div class="form-floating mb-2">
+                            <input type="text"
+                                   name="{{ field_name(form.telephone) }}"
+                                   class="form-control"
+                                   id="{{ form.telephone.vars.id }}"
+                                   placeholder="0142398745"
+                                   value="{{ field_value(form.telephone) }}">
+                            <label for="{{ form.telephone.vars.id }}">{{ field_label(form.telephone) }}</label>
+                            {{ form_errors(form.telephone) }}
+                        </div>
+                        <div class="form-floating mb-2">
+                            <input type="text"
+                                   name="{{ field_name(form.pseudo) }}"
+                                   class="form-control"
+                                   id="{{ form.pseudo.vars.id }}"
+                                   placeholder="Ballon_Platine"
+                                   value="{{ field_value(form.pseudo) }}">
+                            <label for="{{ form.pseudo.vars.id }}">{{ field_label(form.pseudo) }}</label>
+                            {{ form_errors(form.pseudo) }}
+                        </div>
+                        {{ form_row(form.site) }}
+                    </fieldset>
+                </div>
+                <div class="col-4 m-2">
+                    <fieldset class="mb-3">
+                        <legend class="text-center mb-3">Mes Identifiants de connexion</legend>
+                        {{ form_row(form.photo) }}
+                        <div class="form-floating mb-2">
+                            <input type="email"
+                                   name="{{ field_name(form.email) }}"
+                                   class="form-control"
+                                   id="{{ form.email.vars.id }}"
+                                   placeholder="michou10@platini.com"
+                                   value="{{ field_value(form.email) }}">
+                            <label for="{{ form.email.vars.id }}">{{ field_label(form.email) }}</label>
+                            {{ form_errors(form.email) }}
+                        </div>
+                        <div class="form-floating mb-2">
+                            <input type="password"
+                                   name="{{ field_name(form.plainPassword) }}"
+                                   class="form-control"
+                                   id="{{ form.plainPassword.vars.id }}"
+                                   placeholder="MotDePasse"
+                                   value="{{ field_value(form.plainPassword) }}">
+                            <label for="{{ form.plainPassword.vars.id }}">{{ field_label(form.plainPassword) }}</label>
+                            {{ form_errors(form.plainPassword) }}
+                        </div>
 
-                    {{ form_errors(form) }}
+                    </fieldset>
+                    <div class="row m-2">
+                        <button type="submit" class="btn btn-success mb-3">Update</button>
 
-                        {{ form_start(form) }}
-                        <fieldset class="mb-3">
-                            <legend>Mes coordonnées</legend>
-                            {{ form_row(form.nom, {'attr': {'class': 'form-control'}}) }}
-                            {{ form_row(form.prenom, {'attr': {'class': 'form-control'}}) }}
-                            {{ form_row(form.telephone, {'attr': {'class': 'form-control'}}) }}
-                            {{ form_row(form.pseudo, {'attr': {'class': 'form-control'}}) }}
-                            {{ form_row(form.site, {'attr': {'class': 'form-control'}}) }}
-                        </fieldset>
-                        <fieldset class="mb-3">
-                            <legend>Mes Identifiants de connexion</legend>
-                            {{ form_row(form.email, {'attr': {'class': 'form-control'}}) }}
-                            {{ form_row(form.plainPassword, {'attr': {'class': 'form-control'}}) }}
-                        </fieldset>
-
-                    <button type="submit" class="btn btn-primary">Update</button>
-                    {{ form_end(form) }}
-                    <a href="{{ path('participants_delete', {'pseudo': app.user.pseudo}) }}" role="button" class="btn btn-danger">Se désinscrire</a>
+                        {{ form_end(form) }}
+                        <a href="{{ path('participants_delete', {'pseudo': app.user.pseudo}) }}" role="button"
+                           class="btn btn-danger">Se désinscrire</a>
+                    </div>
                 </div>
             </div>
-        </section>
+        </div>
+
+
     {% else %}
-        <h2>C'est pas moi</h2>
-        <p>Pseudo : {{ participant.pseudo }}</p>
+        <div class="container ">
+
+        </div>
+
         <p>Nom : {{ participant.nom }}</p>
         <p>Prénom : {{ participant.prenom }}</p>
         <p>Téléphone : {{ participant.telephone }}</p>
         <p>Site de rattachement : {{ participant.site.nom }}</p>
     {% endif %}
 
-{% endblock %}
 
+</div>
+{% endblock %}

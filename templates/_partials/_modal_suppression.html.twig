@@ -1,0 +1,31 @@
+<div class="modal fade" id="confirmationModal{{ sortie.id }}" tabindex="-1"
+     aria-labelledby="confirmationModalLabel{{ sortie.id }}" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmationModalLabel{{ sortie.id }}">Confirmation de
+                    Suppression</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Êtes-vous sûr de vouloir supprimer la sortie {{ sortie.nom }} ?</p>
+                {% if not is_granted(['ROLE_ADMIN']) %}
+                    <div class="form-group">
+                        <label for="motifAnnulation">Motif d'annulation</label>
+                        <textarea id="motifAnnulation" class="form-control" name="motifAnnulation" ></textarea>
+                    </div>
+                {% endif %}
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+
+                <form method="post" action="{{ path('sortie_delete', {'sortieId':sortie.id}) }}">
+                    {% if not is_granted(['ROLE_ADMIN']) %}
+                        <input type="hidden" name="motifAnnulation" id="hiddenMotifAnnulation{{ sortie.id }}">
+                    {% endif %}
+                    <button type="submit" class="btn btn-danger">Confirmer</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
