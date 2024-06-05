@@ -8,6 +8,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 #[ORM\Entity(repositoryClass: ParticipantsRepository::class)]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
@@ -64,11 +65,6 @@ class Participants implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $resetToken;
 
     #[ORM\Column(type: "string", length: 255, nullable: true)]
-    #[Assert\File(
-        maxSize: "1024k",
-        mimeTypes: ["image/jpeg", "image/png", "image/gif"],
-        mimeTypesMessage: "Please upload a valid image"
-    )]
     private ?string $photo = null;
 
 
@@ -246,5 +242,6 @@ class Participants implements UserInterface, PasswordAuthenticatedUserInterface
         $this->photo = $photo;
         return $this;
     }
+
 }
 

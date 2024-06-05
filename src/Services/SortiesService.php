@@ -15,6 +15,7 @@ use App\Entity\Sortie;
 use App\Form\CreaSortieFormType;
 use App\Repository\LieuRepository;
 use App\Repository\SortieRepository;
+use DateInterval;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -261,6 +262,56 @@ class SortiesService extends AbstractController
         $form = $this->createForm(CreaSortieFormType::class, $sortie, ['is_edit' => true]);
 
         return $this->creerOuModifierUneSortie($request, $form, $sortie, $organisateur, true);
+    }
+
+    public function checkStatus(\DateTime $dateTime): void
+    {
+        //echo $dateTime->format('d m Y, H:i:s');
+        // I. // check pour la date de début de l'event, bascule en "Activité en cours, 4"
+        $sorties = $this->sortieRepository->createQueryBuilder('s')
+            ->where('s.dateHeureDebut <= :dateTime')
+            ->andWhere('s.etat = 3')
+            ->setParameter('dateTime', $dateTime)
+            ->getQuery()
+            ->getResult();
+
+        foreach ($sorties as $sortie) {
+            $sortie->setEtat($this->entityManager->getRepository(Etat::class)->findOneBy(['id' => '4']));
+            $this->entityManager->persist($sortie);
+        }
+
+        // II. // check pour la date limite d'inscription à l'event, bascule en "Cloturé 3"
+        $sortieInscr = $this->sortieRepository->createQueryBuilder('si')
+            ->where('si.dateLimiteInscription <= :dateTime')
+            ->andWhere('si.etat = 2')
+            ->setParameter('dateTime', $dateTime)
+            ->getQuery()
+            ->getResult();
+
+        foreach ($sortieInscr as $sortieIn) {
+            $sortieIn->setEtat($this->entityManager->getRepository(Etat::class)->findOneBy(['id' => '3']));
+            $this->entityManager->persist($sortieIn);
+        }
+        $this->entityManager->flush();
+
+        // III. // check pour la date de fin de l'event, bascule en "Passé 5"
+        $sortieFin = $this->sortieRepository->createQueryBuilder('sf')
+            ->Where('sf.etat = 4')
+            ->getQuery()
+            ->getResult();
+        foreach ($sortieFin as $sortieF) {
+            $soustrHeures = $sortieF->getDuree();
+            $soustrSecondes = $soustrHeures * 3600; //Conversion heures en secondes (à cause de Maxime !!!!!)
+
+            $dateCompare = clone $dateTime;
+            $dateCompare->sub(new DateInterval('PT' . $soustrSecondes . 'S')); //soustraction de la durée à l'heure de démarrage de l'event
+
+            if ($sortieF->getDateHeureDebut() < $dateCompare) {
+                $sortieF->setEtat($this->entityManager->getRepository(Etat::class)->findOneBy(['id' => '5']));
+                $this->entityManager->persist($sortieF);
+            }
+        }
+        $this->entityManager->flush();
     }
 
     ///////////////////////////////// Fonctions privées

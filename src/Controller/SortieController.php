@@ -23,8 +23,9 @@ class SortieController extends AbstractController
     {
         $this->denyAccessUnlessGranted('ROLE_USER');
         //découpage de la requête : on reprend le filtre
-        //To Do : faire une vérification à l'ouverture de cette route : checker les dates et les status des events
-        // faire les bascules en conséquence
+        $dateTime = new DateTime();
+        $SoSe->checkStatus($dateTime);
+        //faire les bascules en conséquence
         $form = $this->createForm(SortieFilterForm::class);
         $form->handleRequest($request);
 

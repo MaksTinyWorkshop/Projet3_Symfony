@@ -241,8 +241,17 @@ class ParticipantsService extends AbstractController
                     $form->get('plainPassword')->getData()
                 ));
             //Gestion de l'image
+
             $photoFile = $form->get('photo')->getData();
             if ($photoFile) {
+                // Suppression de l'ancienne photo si elle existe
+                if ($participant->getPhoto()) {
+                    $oldPhotoPath = $this->photosDirectory . '/' . $participant->getPhoto();
+                    if (file_exists($oldPhotoPath)) {
+                        unlink($oldPhotoPath);
+                    }
+                }
+
                 $originalFilename = pathinfo($photoFile->getClientOriginalName(), PATHINFO_FILENAME);
                 $safeFilename = $this->slugger->slug($originalFilename);
                 $newFilename = $safeFilename . '-' . uniqid() . '.' . $photoFile->guessExtension();
@@ -266,9 +275,8 @@ class ParticipantsService extends AbstractController
 
             return $this->redirectToRoute('participants_details', ['pseudo' => $participant->getPseudo()]);
         }
-        if ($form->isSubmitted() && !$form->isValid()) {
-            dd($form->getErrors(true));
-        }
+
+
 
         return $this->render('participants/details.html.twig', compact('participant', 'form'));
     }

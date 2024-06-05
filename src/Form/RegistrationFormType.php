@@ -78,7 +78,6 @@ class RegistrationFormType extends AbstractType
 
             ->add('photo', FileType::class, [
                 'label' => 'Photo de profil (JPEG, PNG, GIF)',
-
                 // unmapped pour qu'il ne soit pas associé à une  entity property
                 'mapped' => false,
                 // pour le rendre optionnel
