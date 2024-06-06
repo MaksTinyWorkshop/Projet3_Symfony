@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}S'enregistrer{% endblock %}
+{% block title %}{{ parent() }} | S'enregistrer{% endblock %}
 
 {% block body %}
     <div class="container mt-5">
@@ -8,7 +8,7 @@
 
         {{ form_start(registrationForm,{'attr': {'class': 'form-custom'}}) }}
         <div class="row mt-5 d-flex justify-content-around">
-            <div class="col-4 m-2">
+            <div class="col-12 col-lg-4 m-2 ps-0">
                 <fieldset class="mb-3">
                     <legend class="text-center mb-3">Mes coordonnées</legend>
                     <div class="form-floating mb-2">
@@ -54,7 +54,7 @@
                     {{ form_row(registrationForm.site) }}
                 </fieldset>
             </div>
-            <div class="col-4 m-2">
+            <div class="col-12 col-lg-4 m-2 ps-0">
                 <fieldset class="mb-3">
                     <legend class="text-center mb-3">Mes Identifiants de connexion</legend>
                     {{ form_row(registrationForm.photo) }}

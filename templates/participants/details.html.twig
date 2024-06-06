@@ -21,7 +21,7 @@
             <h3 class="text-center">Update de mon profil</h3>
             {{ form_start(form, {'attr': {'enctype': 'multipart/form-data', 'class': 'form-custom'}}) }}
             <div class="row mt-3 d-flex flex-wrap justify-content-around">
-                <div class="col-4 m-2">
+                <div class="col-12 col-lg-4 m-2 ps-0">
                     <fieldset class="mb-3">
                         <legend class="text-center mb-3">Mes coordonnées</legend>
                         <div class="form-floating mb-2">
@@ -67,7 +67,7 @@
                         {{ form_row(form.site) }}
                     </fieldset>
                 </div>
-                <div class="col-4 m-2">
+                <div class="col-12 col-lg-4 m-2 ps-0">
                     <fieldset class="mb-3">
                         <legend class="text-center mb-3">Mes Identifiants de connexion</legend>
                         {{ form_row(form.photo) }}

@@ -68,7 +68,14 @@
                    class="btn btn-danger">Annuler</a>
             {% endif %}
         </div>
-        <div class="col-auto">Il reste {{ places }} place{% if places > 1 %}s{% endif %}.</div>
+        {% if places > 10 %}
+            <div class="col-auto text-bg-success rounded">Il reste {{ places }} places.</div>
+        {% elseif places > 5 %}
+            <div class="col-auto text-bg-warning rounded">Il reste {{ places }} places.</div>
+        {% else %}
+            <div class="col-auto text-bg-danger rounded">Il reste {{ places }} place{% if places > 1 %}s{% endif %}.</div>
+        {% endif %}
+
     </div>
 
     {# II. Descriptif de la sortie #}
@@ -98,10 +105,10 @@
 
         <div class="row mb-3 d-flex justify-content-around align-items-center text-center">
             {# 2.1 Participants #}
-            <div class="col-9">
+            <div class="col-9" >
                 <div class="row bg-gradient d-flex justify-content-around text-center">
                     <div class="col-auto">Pseudo</div>
-                    <div class="col-auto">Nom</div>
+                    <div class="col-auto d-none d-sm-block">Nom</div>
                 </div>
                 <div class="row" style="overflow-y: scroll; max-height: 200px;">
                 <table class="table table-hover">
@@ -111,7 +118,7 @@
                             <td>
                                 <a href="{{ path('participants_details', {'pseudo' : inscrit.participant.pseudo}) }}">{{ inscrit.participant.pseudo }}</a>
                             </td>
-                            <td>{{ inscrit.participant.prenom }} {{ inscrit.participant.nom | upper }}</td>
+                            <td class="d-none d-sm-block">{{ inscrit.participant.prenom }} {{ inscrit.participant.nom | upper }}</td>
                         </tr>
                     {% endfor %}
                     </tbody>

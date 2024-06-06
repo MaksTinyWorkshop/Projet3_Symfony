@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ parent() }} | Dashboard Admin{% endblock %}
+{% block title %}{{ parent() }} | Admin DashBoard{% endblock %}
 
 {% block body %}
     <div class="container-fluid">
@@ -13,7 +13,7 @@
                 manuellement</a>
             <a href="{{ path('admin_addUsersByFile') }}" role="button" class="btn btn-primary mb-2">Ajout de multiples
                 utilisateurs par fichier CSV</a>
-            <a href="{{ path('admin_listeSorties') }}" role="button" class="btn btn-dark">Supprimer une sortie</a>
+            <a href="{{ path('admin_listeSorties') }}" role="button" class="btn btn-danger mb-2">Supprimer une sortie</a>
 
         </div>
         <p class="text-center m-5">Ici tu peux les désactiver, ou même les foutre à la porte</p>

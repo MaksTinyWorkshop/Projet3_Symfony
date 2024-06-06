@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ parent() }} | liste des sorties{% endblock %}
+{% block title %}{{ parent() }} | Accueil {% endblock %}
 
 {% block body %}
     <div class="container text-center">
@@ -29,7 +29,7 @@
                                 {{ form_row(form.checkbox4) }}
                             </div>
 
-                            <button class="btn btn-primary" type="submit">Filter</button>
+                            <button class="btn btn-outline-success" type="submit">Filter</button>
                             {{ form_end(form) }}
                         </div>
                     </div>
@@ -80,9 +80,9 @@
                                         {% endif %}
                                     {% endfor %}
                                     <div class="col-1 mb-4">{{ inscCount }} / {{ sortie.nbInscriptionsMax }}</div>
-                                    <div class="col-1 mb-4"><a href="{{ path('sortie_main') }}"
+                                    <div class="col-1 mb-4"><a href="{{ path('sortie_detail', {'id': sortie.id}) }}"
                                                                title="Vers les sorties"
-                                        role="button" class="btn btn-success">+</a></div>
+                                        role="button" class="btn btn-outline-success">+</a></div>
                                 {% endif %}
                             {% endfor %}
                         </div>

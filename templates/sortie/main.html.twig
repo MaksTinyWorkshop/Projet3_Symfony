@@ -1,33 +1,31 @@
 {% extends 'base.html.twig' %}
 {% block title %}{{ parent() }} | liste des sorties{% endblock %}
 
-{% block body %} {# 0 . Inscruste de Max #}
-    <div class="row mt-5 mb-5 d-flex justify-content-center align-items-center">
-        <div class="col-2">
-            <div class="dropdown-center">
-                <button
-                        type="button"
-                        class="btn btn-primary dropdown-toggle"
-                        data-bs-toggle="dropdown"
-                        aria-expanded="false"
-                        data-bs-auto-close="outside"
-                        data-bs-offset="0,20"
-                >
-                    Filtres
-                </button>
-                {# I . Partie filtrage et recherche #}
-                <div class="dropdown-menu p-3" style="width: 350px">
-                    {{ form_start(form) }} {{ form_row(form.site) }} {{ form_row(form.name) }} {{ form_row(form.startDate) }} {{ form_row(form.endDate) }} {{ form_row(form.checkbox1) }} {{ form_row(form.checkbox2) }} {{ form_row(form.checkbox3) }} {{ form_row(form.checkbox4) }}
-                    <button class="btn btn-primary" type="submit">Filter</button>
-                    {{ form_end(form) }}
-                </div>
+{% block body %}
+    <div class="col-12 mt-5 mb-5 d-flex flex-wrap justify-content-around">
+        {# I . Partie boutons #}
+        <div class="dropdown-center">
+            <button
+                    type="button"
+                    class="btn btn-primary dropdown-toggle"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                    data-bs-auto-close="outside"
+                    data-bs-offset="0,20">Filtres
+            </button>
+            <div class="dropdown-menu p-3" style="width: 350px">
+                {{ form_start(form) }} {{ form_row(form.site) }} {{ form_row(form.name) }} {{ form_row(form.startDate) }} {{ form_row(form.endDate) }} {{ form_row(form.checkbox1) }} {{ form_row(form.checkbox2) }} {{ form_row(form.checkbox3) }} {{ form_row(form.checkbox4) }}
+                <button class="btn btn-outline-success" type="submit">Filter</button>
+                {{ form_end(form) }}
             </div>
         </div>
-        <div class="col-10">
-            <a href="{{ path('sortie_creer') }}" role="button" class="btn btn-primary"
-            >Créer une sortie</a>
-        </div>
+        <a href="{{ path('sortie_creer') }}" role="button" class="btn btn-outline-success"
+        >Créer une sortie</a>
+
+        <a href="{{ path('sortie_mes_sorties', {'pseudo': app.user.pseudo}) }}" role="button"
+           class="btn btn-outline-info">Mes sorties</a>
     </div>
+
 
     {# II . Partie affichage de la liste #}
     <div class="container">
@@ -35,7 +33,7 @@
         {% if form.vars.value %}
             {% set data = form.vars.value %}
             {% if data.checkbox4 %}
-                <h1>Liste des sorties archivées</h1>
+                <h1 >Liste des sorties archivées</h1>
             {% else %}
                 <h1>Liste des sorties prévues</h1>
             {% endif %}

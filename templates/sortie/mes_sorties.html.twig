@@ -6,39 +6,47 @@
     <div class="row m-5 text-center">
         <h1>Mes sorties crées</h1>
     </div>
+    <div class="card text-center bg-body card-custom">
+        <div class="card-header">
+            <div class="row">
+                <div class="col">
+                    <div class="row justify-content-around">
+                        <div class="col">Sortie</div>
+                        <div class="col">Etat</div>
+                        <div class="col d-none d-sm-block">Lieu</div>
+                    </div>
+                </div>
 
-
-    <div class="row bg-gradient mb-3 text-center">
-        <div class="col-4">Sortie</div>
-        <div class="col-3">Etat</div>
-        <div class="col-3">Lieu</div>
-        <div class="col-1">Modifier</div>
-        <div class="col-1">Supprimer</div>
-    </div>
-    {% for sortie in sortiesList %}
-
-        <div class="row mb-3 ">
-            <div class="col-4">
-                {{ sortie.nom }}
+                <div class="col-auto"></div>
             </div>
-            <div class="col-3">
-                {{ sortie.etat.libelle }}
-            </div>
-            <div class="col-3">
-                {{ sortie.lieu.nom }}
-            </div>
-            <div class="col-1">
-                <a href="{{ path('sortie_modifier', {'pseudo': app.user.pseudo, 'id': sortie.id}) }}">
-                    {{ source('@svg_path/edit.svg') }}
-                </a>
-            </div>
-            <div class="col-1">
-                <a href="#">{{ source('@svg_path/delete.svg') }}</a>
-            </div>
-
         </div>
 
-    {% endfor %}
+        <div class="card-body">
+            <ul class="list-group list-group-flush">
+                {% for sortie in sortiesList %}
+                    <li class="list-group-item">
+                        <div class="row">
+                            <div class="col">
+                                <div class="row justify-content-around">
+                                    <div class="col">{{ sortie.nom }}</div>
+                                    <div class="col">{{ sortie.etat.libelle }}</div>
+                                    <div class="col d-none d-sm-block">{{ sortie.lieu.nom }}</div>
+                                </div>
+                            </div>
+                            <div class="col-auto ps-0">
+                                {% if sortie.etat.id == 1 or sortie.etat.id == 2 %}
+                                <a href="{{ path('sortie_modifier', {'pseudo': app.user.pseudo, 'sortieId': sortie.id}) }}">
+                                    {{ source('@svg_path/settings.svg') }}
+                                </a>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
 {% endblock %}
 
 
