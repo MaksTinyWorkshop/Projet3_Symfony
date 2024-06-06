@@ -50,7 +50,7 @@ class RegistrationFormType extends AbstractType
         ];
         // Si on est déjà inscrit, ajout d'un placeholder dans le champ MDP
         if($options['is_edit']) {
-            $passwordOptions['label'] = 'Mot de passe courant ou nouveau mot de passe';
+            $passwordOptions['label'] = 'MDP courant ou nouveau';
         }
         // Formulaire
         $builder

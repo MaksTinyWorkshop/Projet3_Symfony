@@ -6,7 +6,7 @@
     <div class="container mt-5">
         <h1 class="text-center">S'enregistrer</h1>
 
-        {{ form_start(registrationForm) }}
+        {{ form_start(registrationForm,{'attr': {'class': 'form-custom'}}) }}
         <div class="row mt-5 d-flex justify-content-around">
             <div class="col-4 m-2">
                 <fieldset class="mb-3">
@@ -16,7 +16,7 @@
                                name="{{ field_name(registrationForm.nom) }}"
                                class="form-control"
                                id="{{ registrationForm.nom.vars.id }}"
-                               placeholder="L'éponge"
+                               placeholder=""
                                value="{{ field_value(registrationForm.nom) }}">
                         <label for="{{ registrationForm.nom.vars.id }}">{{ field_label(registrationForm.nom) }}</label>
                         {{ form_errors(registrationForm.nom) }}
@@ -26,7 +26,7 @@
                                name="{{ field_name(registrationForm.prenom) }}"
                                class="form-control"
                                id="{{ registrationForm.prenom.vars.id }}"
-                               placeholder="Bob"
+                               placeholder=""
                                value="{{ field_value(registrationForm.prenom) }}">
                         <label for="{{ registrationForm.prenom.vars.id }}">{{ field_label(registrationForm.prenom) }}</label>
                         {{ form_errors(registrationForm.prenom) }}
@@ -36,7 +36,7 @@
                                name="{{ field_name(registrationForm.telephone) }}"
                                class="form-control"
                                id="{{ registrationForm.telephone.vars.id }}"
-                               placeholder="0123456789"
+                               placeholder=""
                                value="{{ field_value(registrationForm.telephone) }}">
                         <label for="{{ registrationForm.telephone.vars.id }}">{{ field_label(registrationForm.telephone) }}</label>
                         {{ form_errors(registrationForm.telephone) }}
@@ -46,7 +46,7 @@
                                name="{{ field_name(registrationForm.pseudo) }}"
                                class="form-control"
                                id="{{ registrationForm.pseudo.vars.id }}"
-                               placeholder="Bob_L_eponge"
+                               placeholder=""
                                value="{{ field_value(registrationForm.pseudo) }}">
                         <label for="{{ registrationForm.pseudo.vars.id }}">{{ field_label(registrationForm.pseudo) }}</label>
                         {{ form_errors(registrationForm.pseudo) }}
@@ -63,7 +63,7 @@
                                name="{{ field_name(registrationForm.email) }}"
                                class="form-control"
                                id="{{ registrationForm.email.vars.id }}"
-                               placeholder="bobleponge@gmail.so"
+                               placeholder=""
                                value="{{ field_value(registrationForm.email) }}">
                         <label for="{{ registrationForm.email.vars.id }}">Email</label>
                         {{ form_errors(registrationForm.email) }}
@@ -73,7 +73,7 @@
                                name="{{ field_name(registrationForm.plainPassword) }}"
                                class="form-control"
                                id="{{ registrationForm.plainPassword.vars.id }}"
-                               placeholder="Mon Mot De Passe"
+                               placeholder=""
                                value="{{ field_value(registrationForm.plainPassword) }}">
                         <label for="{{ registrationForm.plainPassword.vars.id }}">{{ field_label(registrationForm.plainPassword) }}</label>
                         {{ form_errors(registrationForm.plainPassword) }}

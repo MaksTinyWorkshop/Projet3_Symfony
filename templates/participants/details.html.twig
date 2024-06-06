@@ -19,8 +19,8 @@
     {% if app.user and app.user.pseudo == participant.pseudo %}
         <div class="container mt-5">
             <h3 class="text-center">Update de mon profil</h3>
-            {{ form_start(form, {'attr': {'enctype': 'multipart/form-data'}}) }}
-            <div class="row mt-5 d-flex justify-content-around">
+            {{ form_start(form, {'attr': {'enctype': 'multipart/form-data', 'class': 'form-custom'}}) }}
+            <div class="row mt-3 d-flex justify-content-around">
                 <div class="col-4 m-2">
                     <fieldset class="mb-3">
                         <legend class="text-center mb-3">Mes coordonnées</legend>
@@ -29,7 +29,7 @@
                                    name="{{ field_name(form.nom) }}"
                                    class="form-control"
                                    id="{{ form.nom.vars.id }}"
-                                   placeholder="Platini"
+                                   placeholder=""
                                    value="{{ field_value(form.nom) }}">
                             <label for="{{ form.nom.vars.id }}">{{ field_label(form.nom) }}</label>
                             {{ form_errors(form.nom) }}
@@ -39,7 +39,7 @@
                                    name="{{ field_name(form.prenom) }}"
                                    class="form-control"
                                    id="{{ form.prenom.vars.id }}"
-                                   placeholder="Michel"
+                                   placeholder=""
                                    value="{{ field_value(form.prenom) }}">
                             <label for="{{ form.prenom.vars.id }}">{{ field_label(form.prenom) }}</label>
                             {{ form_errors(form.prenom) }}
@@ -49,7 +49,7 @@
                                    name="{{ field_name(form.telephone) }}"
                                    class="form-control"
                                    id="{{ form.telephone.vars.id }}"
-                                   placeholder="0142398745"
+                                   placeholder=""
                                    value="{{ field_value(form.telephone) }}">
                             <label for="{{ form.telephone.vars.id }}">{{ field_label(form.telephone) }}</label>
                             {{ form_errors(form.telephone) }}
@@ -59,7 +59,7 @@
                                    name="{{ field_name(form.pseudo) }}"
                                    class="form-control"
                                    id="{{ form.pseudo.vars.id }}"
-                                   placeholder="Ballon_Platine"
+                                   placeholder=""
                                    value="{{ field_value(form.pseudo) }}">
                             <label for="{{ form.pseudo.vars.id }}">{{ field_label(form.pseudo) }}</label>
                             {{ form_errors(form.pseudo) }}
@@ -76,7 +76,7 @@
                                    name="{{ field_name(form.email) }}"
                                    class="form-control"
                                    id="{{ form.email.vars.id }}"
-                                   placeholder="michou10@platini.com"
+                                   placeholder=""
                                    value="{{ field_value(form.email) }}">
                             <label for="{{ form.email.vars.id }}">{{ field_label(form.email) }}</label>
                             {{ form_errors(form.email) }}
@@ -86,7 +86,7 @@
                                    name="{{ field_name(form.plainPassword) }}"
                                    class="form-control"
                                    id="{{ form.plainPassword.vars.id }}"
-                                   placeholder="MotDePasse"
+                                   placeholder=""
                                    value="{{ field_value(form.plainPassword) }}">
                             <label for="{{ form.plainPassword.vars.id }}">{{ field_label(form.plainPassword) }}</label>
                             {{ form_errors(form.plainPassword) }}

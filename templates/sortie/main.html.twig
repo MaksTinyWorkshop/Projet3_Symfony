@@ -51,7 +51,7 @@
                 {% endif %}
             {% endfor %}
             {% if exist >= 1 %}
-                <div class="card">
+                <div class="card mb-3">
                     <div class="card-body">
                         <h3 class="mb-3">
                             {{ site.nom }} : {{ exist }} Sortie{% if exist > 1 %}s{% endif %}
@@ -84,46 +84,51 @@
                                     <div class="col">{{ sortie.dateHeureDebut|date("d/m - h:i") }}</div>
                                     <div class="col">
                                         <a href="{{ path('sortie_detail', {'id': sortie.id}) }}">{{ sortie.nom }}</a>
-                                        </div>
+                                    </div>
                                     <div class="col">{{ sortie.dateLimiteInscription|date("d/m") }}</div>
                                     <div class="col">
-                                    {% if sortie.etat.id == 2 and sortie.organisateur.id != app.user.id %}
-                                        {% if myInsc == 1 %}
-                                            <a href="{{ path('inscription_remove', {'sortieId':sortie.id}) }}"
-                                               title="se désister"
-                                               id="cut-link">{{ source('@svg_path/toggle-on.svg') }}</a>
-                                        {% elseif myInsc == 0 %}
-                                            <a href="{{ path('inscription_add', {'sortieId':sortie.id}) }}"
-                                               title="s'inscrire"
-                                               id="signup-link">{{ source('@svg_path/toggle-off.svg') }}</a>
+                                        {% if sortie.etat.id == 2 and sortie.organisateur.id != app.user.id %}
+                                            {% if myInsc == 1 %}
+                                                <a href="{{ path('inscription_remove', {'sortieId':sortie.id}) }}"
+                                                   title="se désister"
+                                                   id="cut-link"
+                                                   class="custom-a">{{ source('@svg_path/toggle-on.svg') }}</a>
+                                            {% elseif myInsc == 0 %}
+                                                <a href="{{ path('inscription_add', {'sortieId':sortie.id}) }}"
+                                                   title="s'inscrire"
+                                                   id="signup-link"
+                                                   class="custom-a">{{ source('@svg_path/toggle-off.svg') }}</a>
+                                            {% endif %}
                                         {% endif %}
-                                    {% endif %}
                                     </div>
                                     <div class="col">{{ inscCount }} / {{ sortie.nbInscriptionsMax }}</div>
                                     <div class="col">{{ sortie.etat.libelle }}</div>
                                     {% if not sortie.organisateur == null %}
-                                    <div class="col">{{ sortie.organisateur.pseudo }}</div>
-                                     {% else %}
-                                         <div class="col">N/A</div>
-                                      {% endif%}
+                                        <div class="col">{{ sortie.organisateur.pseudo }}</div>
+                                    {% else %}
+                                        <div class="col">N/A</div>
+                                    {% endif %}
                                     <div class="col">
                                         {% if sortie.etat.id == 1 and sortie.organisateur.id == app.user.id %}
                                             <a href="{{ path('sortie_state', {'sortieId':sortie.id, 'state':2}) }}"
                                                title="publier la sortie"
-                                               id="publish-link">Publier</a>
+                                               id="publish-link"
+                                               class="custom-a">Publier</a>
                                             <a href="{{ path('sortie_delete', {'sortieId':sortie.id}) }}"
                                                title="supprimer la sortie"
-                                               id="delete-link">{{ source('@svg_path/delete.svg') }}</a>
+                                               id="delete-link"
+                                               class="custom-a">{{ source('@svg_path/delete.svg') }}</a>
                                         {% elseif sortie.etat.id == 2 and sortie.organisateur.id == app.user.id %}
                                             <a href="{{ path('sortie_modifier', {'pseudo': app.user.pseudo, 'sortieId':sortie.id}) }}"
                                                title="modifier la sortie"
-                                               id="cancel-link">{{ source('@svg_path/settings.svg') }}</a>
-                                            <a href="#" data-bs-toggle="modal" data-bs-target="#confirmationModal{{ sortie.id }} "
+                                               id="cancel-link"
+                                               class="custom-a">{{ source('@svg_path/settings.svg') }}</a>
+                                            <a href="#" data-bs-toggle="modal"
+                                               data-bs-target="#confirmationModal{{ sortie.id }} "
                                                role="button"
                                                title="annuler la sortie"
-                                               id="cancel-link">
-                                                {{ source('@svg_path/delete.svg') }}
-                                            </a>
+                                               id="cancel-link"
+                                               class="custom-a">{{ source('@svg_path/delete.svg') }}</a>
                                             <!-- Modale de confirmation pour la suppression -->
                                             {% include '_partials/_modal_suppression.html.twig' %}
                                         {% endif %}
