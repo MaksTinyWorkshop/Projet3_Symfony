@@ -32,10 +32,9 @@ class Lieu
     #[ORM\Column]
     private ?float $longitude = null;
 
-    #[ORM\Column(length:100)]
+    #[ORM\Column(length: 100)]
     #[Assert\NotBlank]
     private ?string $ville = null;
-
 
     #[ORM\Column(length: 10)]
     #[Assert\NotBlank]
