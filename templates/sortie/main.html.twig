@@ -68,7 +68,7 @@
                         </div>
 
                         {% for sortie in sortiesList %}
-                            {% if sortie.site.id == site.id and (sortie.dateHeureDebut) >= dateActuelle %}
+                            {% if sortie.site.id == site.id %}
                                 {% set inscCount = 0 %}
                                 {% set myInsc = 0 %}
                                 {% for inscription in inscriptionsList %}

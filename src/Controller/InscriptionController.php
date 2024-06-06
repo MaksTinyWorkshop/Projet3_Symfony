@@ -21,6 +21,7 @@ class InscriptionController extends AbstractController
     #[Route('/add/{sortieId}', name: 'add')]
     public function add(int $sortieId, InscriptionsService $inscServ): Response
     {
+        //To Do ajouter le service de vérification
         $inscServ->addOne($sortieId);
 
         return $this->redirectToRoute('sortie_main');
