@@ -1,62 +1,78 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-<h1 class="text-center">Liste des Sorties Ouvertes</h1>
-<div class="container text-center">
-    <div class="row bg-gradient m-5">
-        <div class="col-2">Nom</div>
-        <div class="col-2">Lieu</div>
-        <div class="col-2">Campus</div>
-        <div class="col-2">Organisateur</div>
-        <div class="col-2"></div>
-        <div class="col-2">Supprimer</div>
-    </div>
-
-
-    {% for sortie in sortiesOuvertes %}
-    <div class="row">
-        <div class="col-2">{{ sortie.nom }}</div>
-        <div class="col-2">{{ sortie.lieu.nom }}</div>
-        <div class="col-2">{{ sortie.site.nom }}</div>
-        <div class="col-2">{{ sortie.organisateur.pseudo }}</div>
-        <div class="col-2"></div>
-        <div class="col-2">
-            <a href="#" data-bs-toggle="modal" data-bs-target="#confirmationModal{{ sortie.id }} "
-               role="button">
-                {{ source('@svg_path/delete.svg') }}
-            </a>
-        </div>
-
-
-        <!-- Modale de confirmation de suppression  -->
-        <div class="modal fade" id="confirmationModal{{ sortie.id }}" tabindex="-1"
-             aria-labelledby="confirmationModalLabel{{ sortie.id }}" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="confirmationModalLabel{{ sortie.id }}">Confirmation de
-                            Suppression</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <p>Êtes-vous sûr de vouloir supprimer la sortie {{ sortie.nom }} ?</p>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                        <!-- Formulaire de suppression spécifique à chaque participant -->
-                        <form method="post"
-                              action="{{ path('admin_cancelSortie', { 'sortieId':sortie.id}) }}">
-                            <button type="submit" class="btn btn-danger">Confirmer</button>
-                        </form>
+    <h1 class="text-center m-5">Liste des Sorties Ouvertes</h1>
+    <div class="card text-center bg-body card-custom">
+        <div class="card-header">
+            <div class="row">
+                <div class="col">
+                    <div class="row justify-content-around">
+                        <div class="col">Nom</div>
+                        <div class="col d-none d-md-block">Lieu</div>
+                        <div class="col d-none d-lg-block">Campus</div>
+                        <div class="col">Organisateur</div>
                     </div>
                 </div>
+                <div class="col-auto">Supprimer</div>
             </div>
         </div>
+        <div class="card-body">
+            <ul class="list-group list-group-flush">
+                {% for sortie in sortiesOuvertes %}
+                    <li class="list-group-item">
+                        <div class="row">
+                            <div class="col">
+                                <div class="row justify-content-around">
+                                    <div class="col">{{ sortie.nom }}</div>
+                                    <div class="col d-none d-md-block">{{ sortie.lieu.nom }}</div>
+                                    <div class="col d-none d-lg-block">{{ sortie.site.nom }}</div>
+                                    <div class="col">{{ sortie.organisateur.pseudo }}</div>
+                                </div>
+                            </div>
 
-        {% endfor %}
+                            <div class="col-auto">
+                                <a href="#" data-bs-toggle="modal" data-bs-target="#confirmationModal{{ sortie.id }} "
+                                   role="button">
+                                    {{ source('@svg_path/delete.svg') }}
+                                </a>
+                            </div>
+
+                            <!-- Modale de confirmation de suppression  -->
+                            <div class="modal fade" id="confirmationModal{{ sortie.id }}" tabindex="-1"
+                                 aria-labelledby="confirmationModalLabel{{ sortie.id }}" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="confirmationModalLabel{{ sortie.id }}">
+                                                Confirmation de
+                                                Suppression</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                    aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <p>Êtes-vous sûr de vouloir supprimer la sortie {{ sortie.nom }} ?</p>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                                Annuler
+                                            </button>
+                                            <!-- Formulaire de suppression spécifique à chaque participant -->
+                                            <form method="post"
+                                                  action="{{ path('admin_cancelSortie', { 'sortieId':sortie.id}) }}">
+                                                <button type="submit" class="btn btn-danger">Confirmer</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
     </div>
-</div>
-    {% endblock %}
+
+{% endblock %}
 
     {% block title %}
 

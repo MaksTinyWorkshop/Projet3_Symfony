@@ -151,7 +151,7 @@ body::before {
 }
 
 .custom-a {
-    display: inline-block;
+   display: inline-block;
    transition: transform 0.3s ease-in-out;
 }
 
@@ -159,3 +159,23 @@ body::before {
     transform: scale(1.2);
 }
 
+.card-custom {
+    max-height: 50vh;
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+
+.card-custom::-webkit-scrollbar {
+    width: 5px;
+}
+.card-custom::-webkit-scrollbar-track {
+    background: #2c2c2c;
+    border-radius: 10px;
+}
+.card-custom::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 6px;
+}
+.card-custom::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}

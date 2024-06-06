@@ -1,0 +1,23 @@
+<!-- Modale de confirmation spécifique à chaque participant -->
+<div class="modal fade" id="confirmationModal{{ participant.id }}" tabindex="-1"
+     aria-labelledby="confirmationModalLabel{{ participant.id }}" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmationModalLabel{{ participant.id }}">Confirmation de
+                    Suppression</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Êtes-vous sûr de vouloir supprimer l'utilisateur {{ participant.pseudo }} ?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                <!-- Formulaire de suppression spécifique à chaque participant -->
+                <form method="post" action="{{ path('admin_deleteUser', {'pseudo': participant.pseudo}) }}">
+                    <button type="submit" class="btn btn-danger">Confirmer</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
