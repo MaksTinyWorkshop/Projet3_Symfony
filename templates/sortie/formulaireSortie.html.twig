@@ -3,19 +3,11 @@
 {% block title %}{{ parent() }} | Créer une sortie {% endblock %}
 
 {% block body %}
-    <h1>{% if is_edit %}Momifier une sortie LOL  {% else %}Créer une Sortie {% endif %}</h1>
+    <h1>{% if is_edit %}Modifier une sortie  {% else %}Créer une Sortie {% endif %}</h1>
     <div class="container">
         {{ form_errors(sortieForm) }}
         {{ form_start(sortieForm) }}
         <div class="row">
-            <div class="col-6">
-                {{ form_row(sortieForm.nom) }}
-                {{ form_row(sortieForm.dateHeureDebut) }}
-                {{ form_row(sortieForm.dateLimiteInscription) }}
-                {{ form_row(sortieForm.duree) }}
-                {{ form_row(sortieForm.nbInscriptionsMax) }}
-                {{ form_row(sortieForm.infosSortie) }}
-            </div>
             <div class="col-6">
                 {% if is_edit %}
                     {{ form_row(sortieForm.site) }}
@@ -27,6 +19,23 @@
                 <p id="lieuVille">Ville : </p>
                 <p id="lieuRue">Rue : </p>
                 <p id="lieuCodePostal">Code Postal : </p>
+                {% if is_edit %}
+                    <a href="{{ path('lieu_addToModif', {'sortieId': sortie.id, 'pseudo': app.user.pseudo}) }}" role="button" class="btn btn-primary">
+                        Nouveau lieu
+                    </a>
+                {% else %}
+                    <a href="{{ path('lieu_add') }}" role="button" class="btn btn-primary">
+                        Nouveau lieu
+                    </a>
+                {%  endif %}
+            </div>
+            <div class="col-6">
+                {{ form_row(sortieForm.nom) }}
+                {{ form_row(sortieForm.dateHeureDebut) }}
+                {{ form_row(sortieForm.dateLimiteInscription) }}
+                {{ form_row(sortieForm.duree) }}
+                {{ form_row(sortieForm.nbInscriptionsMax) }}
+                {{ form_row(sortieForm.infosSortie) }}
             </div>
             <div class="row text-center">
                 {% if is_edit %}
