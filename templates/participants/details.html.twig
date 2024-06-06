@@ -4,7 +4,7 @@
 
 {% block body %}
 <div class="container mt-5">
-    <div class="row d-flex justify-content-around align-items-center">
+    <div class="row d-flex justify-content-around align-items-center text-center">
         {% if participant.photo %}
             <div class="col-6">
                 <img src="{{ asset('uploads/photos/' ~ participant.photo) }}" alt="{{ participant.pseudo }}"
@@ -21,7 +21,7 @@
             <h3 class="text-center">Update de mon profil</h3>
             {{ form_start(form, {'attr': {'enctype': 'multipart/form-data', 'class': 'form-custom'}}) }}
             <div class="row mt-3 d-flex flex-wrap justify-content-around">
-                <div class="col-4 m-2">
+                <div class="col-12 col-lg-4 m-2 ps-0">
                     <fieldset class="mb-3">
                         <legend class="text-center mb-3">Mes coordonnées</legend>
                         <div class="form-floating mb-2">
@@ -67,7 +67,7 @@
                         {{ form_row(form.site) }}
                     </fieldset>
                 </div>
-                <div class="col-4 m-2">
+                <div class="col-12 col-lg-4 m-2 ps-0">
                     <fieldset class="mb-3">
                         <legend class="text-center mb-3">Mes Identifiants de connexion</legend>
                         {{ form_row(form.photo) }}
@@ -106,14 +106,30 @@
 
 
     {% else %}
-        <div class="container ">
-
+        <div class="container d-flex justify-content-center">
+            <div class="card text-center mt-5 bg-body">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col">Nom : </div>
+                        <div class="col">{{ participant.nom }}</div>
+                    </div>
+                    <div class="row">
+                        <div class="col">Prénom : </div>
+                        <div class="col">{{ participant.prenom }}</div>
+                    </div>
+                    <div class="row">
+                        <div class="col">Téléphone :</div>
+                        <div class="col">{{ participant.telephone }}</div>
+                    </div>
+                    <div class="row">
+                        <div class="col">Campus</div>
+                        <div class="col">{{ participant.site.nom }}</div>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <p>Nom : {{ participant.nom }}</p>
-        <p>Prénom : {{ participant.prenom }}</p>
-        <p>Téléphone : {{ participant.telephone }}</p>
-        <p>Site de rattachement : {{ participant.site.nom }}</p>
+
     {% endif %}
 
 

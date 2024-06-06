@@ -87,7 +87,7 @@ class SortiesService extends AbstractController
             }
 
             if ($data['endDate']) {                                                     //par date de fin
-                $queryBuilder->andWhere('s.dateLimiteInscription <= :endDate')
+                $queryBuilder->andWhere('s.dateHeureDebut <= :endDate')
                     ->setParameter('endDate', $data['endDate']);
             }
 

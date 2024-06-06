@@ -20,7 +20,14 @@
 
     {# I. Partie En-tête #}
     <div class="row mt-5 mb-5 d-flex justify-content-between align-items-center">
-        <div class="col-auto">Organisateur : {{ sortie.organisateur.pseudo }} | Campus de {{ sortie.site.nom }}</div>
+        <div class="col-auto">
+            Organisateur :
+            {% if sortie.organisateur %}
+                {{ sortie.organisateur.pseudo }}
+            {% else %}
+                N/A
+            {% endif %}
+            | Campus de {{ sortie.site.nom }}</div>
         <div class="col-auto">
             {# Si la sortie est publiée #}
             {% if sortie.etat.id == 2 %}
@@ -68,7 +75,14 @@
                    class="btn btn-danger">Annuler</a>
             {% endif %}
         </div>
-        <div class="col-auto">Il reste {{ places }} place{% if places > 1 %}s{% endif %}.</div>
+        {% if places > 10 %}
+            <div class="col-auto text-bg-success rounded">Il reste {{ places }} places.</div>
+        {% elseif places > 5 %}
+            <div class="col-auto text-bg-warning rounded">Il reste {{ places }} places.</div>
+        {% else %}
+            <div class="col-auto text-bg-danger rounded">Il reste {{ places }} place{% if places > 1 %}s{% endif %}.</div>
+        {% endif %}
+
     </div>
 
     {# II. Descriptif de la sortie #}
@@ -76,8 +90,9 @@
         {# 1. Sortie et infos générales #}
         <h1 class="text-center mb-3">Sortie : {{ sortie.nom }}</h1>
         <div class="row text-center mb-3">
-            <h3>Sortie prévue le {{ sortie.dateHeureDebut | date("d M") }}
+            <h3>Sortie prévue le {{ sortie.dateHeureDebut | date("d/m") }}
                 à {{ sortie.dateHeureDebut | date("h:i") }}</h3>
+            <h4 class="text-warning">Clôture des inscriptions le {{ sortie.dateLimiteInscription  | date ("d/m")}}</h4>
         </div>
         <div class="row mb-3">
             On fait quoi ?
@@ -98,10 +113,10 @@
 
         <div class="row mb-3 d-flex justify-content-around align-items-center text-center">
             {# 2.1 Participants #}
-            <div class="col-9">
+            <div class="col-9" >
                 <div class="row bg-gradient d-flex justify-content-around text-center">
                     <div class="col-auto">Pseudo</div>
-                    <div class="col-auto">Nom</div>
+                    <div class="col-auto d-none d-sm-block">Nom</div>
                 </div>
                 <div class="row" style="overflow-y: scroll; max-height: 200px;">
                 <table class="table table-hover">
@@ -111,7 +126,7 @@
                             <td>
                                 <a href="{{ path('participants_details', {'pseudo' : inscrit.participant.pseudo}) }}">{{ inscrit.participant.pseudo }}</a>
                             </td>
-                            <td>{{ inscrit.participant.prenom }} {{ inscrit.participant.nom | upper }}</td>
+                            <td class="d-none d-sm-block">{{ inscrit.participant.prenom }} {{ inscrit.participant.nom | upper }}</td>
                         </tr>
                     {% endfor %}
                     </tbody>

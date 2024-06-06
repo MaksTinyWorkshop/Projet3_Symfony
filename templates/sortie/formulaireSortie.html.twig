@@ -3,69 +3,128 @@
 {% block title %}{{ parent() }} | Créer une sortie {% endblock %}
 
 {% block body %}
-    <h1>{% if is_edit %}Momifier une sortie LOL  {% else %}Créer une Sortie {% endif %}</h1>
+    <h1 class="mt-5 mb-5 text-center">{% if is_edit %}Momifier une sortie LOL  {% else %}Créer une Sortie {% endif %}</h1>
     <div class="container">
         {{ form_errors(sortieForm) }}
-        {{ form_start(sortieForm) }}
-        <div class="row">
-            <div class="col-6">
-                {{ form_row(sortieForm.nom) }}
-                {{ form_row(sortieForm.dateHeureDebut) }}
-                {{ form_row(sortieForm.dateLimiteInscription) }}
-                {{ form_row(sortieForm.duree) }}
-                {{ form_row(sortieForm.nbInscriptionsMax) }}
+        {{ form_start(sortieForm, {'attr': {'class': 'form-custom'}}) }}
+        <div class="row d-flex justify-content-around">
+            <div class="col-12 col-lg-4 m-2 ps-0">
+                <div class="form-floating mb-2">
+                    <input type="text"
+                           name="{{ field_name(sortieForm.nom) }}"
+                           class="form-control"
+                           id="{{ sortieForm.nom.vars.id }}"
+                           placeholder=""
+                           value="{{ field_value(sortieForm.nom) }}">
+                    <label for="{{ sortieForm.nom.vars.id }}">{{ field_label(sortieForm.nom) }}</label>
+                    {{ form_errors(sortieForm.nom) }}
+                </div>
+                <div class="form-floating mb-2">
+                    <input type="datetime-local"
+                           name="{{ field_name(sortieForm.dateHeureDebut) }}"
+                           class="form-control"
+                           id="{{ sortieForm.dateHeureDebut.vars.id }}"
+                           placeholder=""
+                           value="{{ field_value(sortieForm.dateHeureDebut) }}">
+                    <label for="{{ sortieForm.dateHeureDebut.vars.id }}">{{ field_label(sortieForm.dateHeureDebut) }}</label>
+                    {{ form_errors(sortieForm.dateHeureDebut) }}
+                </div>
+                <div class="form-floating mb-2">
+                    <input type="datetime-local"
+                           name="{{ field_name(sortieForm.dateLimiteInscription) }}"
+                           class="form-control"
+                           id="{{ sortieForm.dateLimiteInscription.vars.id }}"
+                           placeholder=""
+                           value="{{ field_value(sortieForm.dateLimiteInscription) }}">
+                    <label for="{{ sortieForm.dateLimiteInscription.vars.id }}">{{ field_label(sortieForm.dateLimiteInscription) }}</label>
+                    {{ form_errors(sortieForm.dateLimiteInscription) }}
+                </div>
+                <div class="form-floating mb-2">
+                    <input type="number"
+                           min="1"
+                           max="300"
+                           name="{{ field_name(sortieForm.duree) }}"
+                           class="form-control"
+                           id="{{ sortieForm.duree.vars.id }}"
+                           placeholder=""
+                           value="{{ field_value(sortieForm.duree) }}">
+                    <label for="{{ sortieForm.duree.vars.id }}">{{ field_label(sortieForm.duree) }}</label>
+                    {{ form_errors(sortieForm.duree) }}
+                </div>
+                <div class="form-floating mb-2">
+                    <input type="number"
+                           name="{{ field_name(sortieForm.nbInscriptionsMax) }}"
+                           class="form-control"
+                           id="{{ sortieForm.nbInscriptionsMax.vars.id }}"
+                           placeholder=""
+                           value="{{ field_value(sortieForm.nbInscriptionsMax) }}">
+                    <label for="{{ sortieForm.nbInscriptionsMax.vars.id }}">{{ field_label(sortieForm.nbInscriptionsMax) }}</label>
+                    {{ form_errors(sortieForm.nbInscriptionsMax) }}
+                </div>
                 {{ form_row(sortieForm.infosSortie) }}
             </div>
-            <div class="col-6">
+            <div class="col-12 col-lg-4 m-2 ps-0">
+                <div class="form-floating mb-2">
+                    {% if is_edit %}
+                        {{ form_row(sortieForm.site) }}
+                    {% else %}
+                        <p>Campus Organisateur : {{ organisateur.site.nom }}</p>
+                    {% endif %}
+                </div>
+                <div class="form-floating mb-2">
+                    {{ form_row(sortieForm.lieu) }}
+                </div>
+                <div class="form-floating mb-2">
+                    <p id="lieuVille">Ville : </p>
+                    <p id="lieuRue">Rue : </p>
+                    <p id="lieuCodePostal">Code Postal : </p>
+                </div>
                 {% if is_edit %}
-                    {{ form_row(sortieForm.site) }}
+                    <a href="{{ path('lieu_addToModif', {'sortieId': sortie.id, 'pseudo': app.user.pseudo}) }}" role="button" class="btn btn-primary">
+                        Nouveau lieu
+                    </a>
                 {% else %}
-                    <p>Campus Organisateur : {{ organisateur.site.nom }}</p>
-                {% endif %}
-
-                {{ form_row(sortieForm.lieu) }}
-                <p id="lieuVille">Ville : </p>
-                <p id="lieuRue">Rue : </p>
-                <p id="lieuCodePostal">Code Postal : </p>
+                    <a href="{{ path('lieu_add') }}" role="button" class="btn btn-primary">
+                        Nouveau lieu
+                    </a>
+                {%  endif %}
             </div>
-            <div class="row text-center">
-                {% if is_edit %}
-                    <div class="col-3">
-                        {{ form_row(sortieForm.enregistrer) }}
-                    </div>
-                    <div class="col-3">
-                        {{ form_row(sortieForm.publier) }}
-                    </div>
-                    <div class="col-3">
-                        <a href="#" data-bs-toggle="modal" data-bs-target="#confirmationModal{{ sortie.id }} "
-                           class="btn btn-primary" role="button">
-                            Supprimer
-                        </a>
-                    </div>
-
-                    <div class="col-3">
-                        <a href="{{ path('sortie_main') }}" role="button" class="btn btn-primary">Annuler</a>
-                    </div>
-                {% else %}
-                    <div class="col-4">
-                        {{ form_row(sortieForm.enregistrer) }}
-                    </div>
-                    <div class="col-4">
-                        {{ form_row(sortieForm.publier) }}
-                    </div>
-                    <div class="col-4">
-                        <a href="{{ path('sortie_main') }}" role="button" class="btn btn-primary">Annuler</a>
-                    </div>
-                {% endif %}
-
-                {{ form_end(sortieForm) }}
-            </div>
-            {% if is_edit %}
-                <!-- Modale de confirmation de suppression demandant un motif -->
-                {% include '_partials/_modal_suppression.html.twig' %}
-            {% endif %}
         </div>
+        <div class="row text-center">
+            {% if is_edit %}
+                <div class="col">
+                    {{ form_row(sortieForm.enregistrer) }}
+                </div>
+                <div class="col">
+                    {{ form_row(sortieForm.publier) }}
+                </div>
+                <div class="col">
+                    <a href="#" data-bs-toggle="modal" data-bs-target="#confirmationModal{{ sortie.id }} "
+                       class="btn btn-danger" role="button">
+                        Supprimer
+                    </a>
+                </div>
 
+                <div class="col">
+                    <a href="{{ path('sortie_main') }}" role="button" class="btn btn-secondary">Annuler</a>
+                </div>
+            {% else %}
+                <div class="col">
+                    {{ form_row(sortieForm.enregistrer) }}
+                </div>
+                <div class="col">
+                    {{ form_row(sortieForm.publier) }}
+                </div>
+                <div class="col">
+                    <a href="{{ path('sortie_main') }}" role="button" class="btn btn-secondary">Annuler</a>
+                </div>
+            {% endif %}
+            {{ form_end(sortieForm) }}
+        </div>
+        {% if is_edit %}
+            <!-- Modale de confirmation de suppression demandant un motif -->
+            {% include '_partials/_modal_suppression.html.twig' %}
+        {% endif %}
     </div>
 
 

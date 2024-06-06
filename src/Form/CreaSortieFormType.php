@@ -36,13 +36,14 @@ class CreaSortieFormType extends AbstractType
             ->add('lieu', EntityType::class, [
                 'class' => Lieu::class,
                 'choice_label' => 'nom',
-                'placeholder' => 'Choisissez une lieu',
             ])
             ->add('enregistrer', SubmitType::class,[
                 'label' => 'Enregistrer',
+                'attr' => ['class' => 'btn btn-warning'],
             ])
             ->add('publier', SubmitType::class,[
                 'label' => 'Publier',
+                'attr' => ['class' => 'btn btn-success'],
             ]);
         if ($options['is_edit']) {
             $builder->add('site', EntityType::class, [
