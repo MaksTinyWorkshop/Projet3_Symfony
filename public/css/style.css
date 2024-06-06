@@ -2,12 +2,16 @@
 
 /* Couleurs personnalisées */
 body {
-    background-color: #07013c; /* Fond sombre */
     color: #e0e0e0; /* Texte clair */
+    background: url("../img/background.jpg") no-repeat fixed;
+    background-size: cover;
 }
 
 .navbar-custom {
-    background-color: #0f0f2e; /* Fond sombre pour la navbar */
+    background-color: rgba(7, 1, 60, 0.7); /* Fond sombre pour la navbar */
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid #444; /* Bordure plus claire */
+    border-radius: 0 0 5px 5px;
 }
 
 .navbar-custom .navbar-brand,
@@ -18,6 +22,7 @@ body {
 .navbar-custom .navbar-nav .nav-link:hover {
     color: #ffffff; /* Texte plus clair au survol */
 }
+
 
 /* Styles de formulaire */
 .form-custom {
