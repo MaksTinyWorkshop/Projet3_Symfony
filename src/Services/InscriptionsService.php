@@ -14,9 +14,11 @@ use App\Entity\Participants;
 use App\Entity\Sortie;
 use App\Repository\InscriptionsRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use phpDocumentor\Reflection\Types\AbstractList;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
 
-class InscriptionsService
+class InscriptionsService extends AbstractController
 {
     ////////////////////////////////////// les variables
     private $inscriptionRepository;
@@ -77,11 +79,30 @@ class InscriptionsService
             throw new \Exception("L'utilisateur n'existe pas");
         }
 
-        // nouvelle inscription
+        //vérification d'insciption à la même date pour un autre event
+        $ListeDesInscriptions = $this->inscriptionRepository->createQueryBuilder('ir')
+            ->andWhere('ir.sortie != :sortieId')
+            ->setParameter(':sortieId', $sortieId)
+            ->andWhere('ir.participant = :userId')
+            ->setParameter('userId', $userId)
+            ->getQuery()
+            ->getResult();
+
+        // Boucle de vérification sur toutes les inscriptions de l'utilisateur
+        foreach ($ListeDesInscriptions as $item) {
+            $dateEventCourant = $item->getSortie()->getDateHeureDebut()->format('Y-m-d'); // Conversion de format pour avoir juste la date
+            $dateEventToCheck = $sortie->getDateHeureDebut()->format('Y-m-d'); // Conversion de format pour avoir juste la date
+
+            if ($dateEventCourant == $dateEventToCheck) { // Si les dates coïncident
+                $this->addFlash('danger', "Pour cette date, vous êtes déjà inscrit à un autre événement."); // Message d'erreur
+                return; // on dégage de la fonction
+            }
+        }
+        // Sinon ça passe, on ajoute l'inscription
         $inscription = new Inscriptions();
         $inscription->setSortie($sortie);
         $inscription->setParticipant($participant);
-        $this->entityManager->persist($inscription);    // inscription dans la base
-        $this->entityManager->flush();                  // flush
+        $this->entityManager->persist($inscription); // Inscription dans la base (sans déc !)
+        $this->entityManager->flush();               // Flush (pas l'oublier ce connard !!!)
     }
 }

@@ -266,7 +266,6 @@ class SortiesService extends AbstractController
 
     public function checkStatus(\DateTime $dateTime): void
     {
-        //echo $dateTime->format('d m Y, H:i:s');
         // I. // check pour la date de début de l'event, bascule en "Activité en cours, 4"
         $sorties = $this->sortieRepository->createQueryBuilder('s')
             ->where('s.dateHeureDebut <= :dateTime')
@@ -290,7 +289,7 @@ class SortiesService extends AbstractController
 
         foreach ($sortieInscr as $sortieIn) {
             $sortieIn->setEtat($this->entityManager->getRepository(Etat::class)->findOneBy(['id' => '3']));
-            $this->entityManager->persist($sortieIn);
+            //$this->entityManager->persist($sortieIn);
         }
         $this->entityManager->flush();
 
@@ -308,7 +307,7 @@ class SortiesService extends AbstractController
 
             if ($sortieF->getDateHeureDebut() < $dateCompare) {
                 $sortieF->setEtat($this->entityManager->getRepository(Etat::class)->findOneBy(['id' => '5']));
-                $this->entityManager->persist($sortieF);
+                //$this->entityManager->persist($sortieF);
             }
         }
         $this->entityManager->flush();
