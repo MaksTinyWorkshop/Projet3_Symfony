@@ -20,7 +20,14 @@
 
     {# I. Partie En-tête #}
     <div class="row mt-5 mb-5 d-flex justify-content-between align-items-center">
-        <div class="col-auto">Organisateur : {{ sortie.organisateur.pseudo }} | Campus de {{ sortie.site.nom }}</div>
+        <div class="col-auto">
+            Organisateur :
+            {% if sortie.organisateur %}
+                {{ sortie.organisateur.pseudo }}
+            {% else %}
+                N/A
+            {% endif %}
+            | Campus de {{ sortie.site.nom }}</div>
         <div class="col-auto">
             {# Si la sortie est publiée #}
             {% if sortie.etat.id == 2 %}
@@ -83,8 +90,9 @@
         {# 1. Sortie et infos générales #}
         <h1 class="text-center mb-3">Sortie : {{ sortie.nom }}</h1>
         <div class="row text-center mb-3">
-            <h3>Sortie prévue le {{ sortie.dateHeureDebut | date("d M") }}
+            <h3>Sortie prévue le {{ sortie.dateHeureDebut | date("d/m") }}
                 à {{ sortie.dateHeureDebut | date("h:i") }}</h3>
+            <h4 class="text-warning">Clôture des inscriptions le {{ sortie.dateLimiteInscription  | date ("d/m")}}</h4>
         </div>
         <div class="row mb-3">
             On fait quoi ?

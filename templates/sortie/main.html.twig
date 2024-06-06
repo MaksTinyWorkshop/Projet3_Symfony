@@ -2,7 +2,7 @@
 {% block title %}{{ parent() }} | liste des sorties{% endblock %}
 
 {% block body %}
-    <div class="col-12 mt-5 mb-5 d-flex flex-wrap justify-content-around">
+    <div class="col-12 mt-5 mb-3 d-flex flex-wrap justify-content-around">
         {# I . Partie boutons #}
         <div class="dropdown-center">
             <button
@@ -30,16 +30,20 @@
     {# II . Partie affichage de la liste #}
     <div class="container">
         {# modification du titre en fonction de archive ou pas archive #}
-        {% if form.vars.value %}
-            {% set data = form.vars.value %}
-            {% if data.checkbox4 %}
-                <h1 >Liste des sorties archivées</h1>
+        <h1 class="text-center mb-3">
+            {% if form.vars.value %}
+                {% set data = form.vars.value %}
+                Liste des sorties
+                {% if data.checkbox4 %}
+                    archivées
+                {% else %}
+                    prévues
+                {% endif %}
             {% else %}
-                <h1>Liste des sorties prévues</h1>
+                Liste des sorties prévues
             {% endif %}
-        {% else %}
-            <h1>Liste des sorties prévues</h1>
-        {% endif %}
+        </h1>
+
         {# affichage de la liste des events par site #}
         {% for site in sitesList %}
             {% set exist = 0 %}
@@ -49,91 +53,117 @@
                 {% endif %}
             {% endfor %}
             {% if exist >= 1 %}
-                <div class="card mb-3">
-                    <div class="card-body">
+                <div class="card text-center mb-3 bg-body card-custom">
+                    <div class="card-header sticky-top bg-body-tertiary z-0">
                         <h3 class="mb-3">
                             {{ site.nom }} : {{ exist }} Sortie{% if exist > 1 %}s{% endif %}
                         </h3>
-                        <div class="row bg-dark-subtle d-flex align-items-center mb-4">
+                        <div class="row d-flex align-items-center">
                             <div class="col">Date</div>
                             <div class="col">Sortie</div>
-                            <div class="col">Fin d'inscription</div>
-                            <div class="col">Inscrit ?</div>
-                            <div class="col">Participants</div>
+                            <div class="col d-none d-md-block">Fin d'inscription</div>
+                            <div class="col d-none d-md-block">Inscrit ?</div>
+                            <div class="col d-none d-sm-block">Participants</div>
                             <div class="col">Etat</div>
-                            <div class="col">Organisateur</div>
-                            <div class="col"></div>
+                            <div class="col d-none d-lg-block">Organisateur</div>
+                            <div class="col d-none d-lg-block"></div>
                         </div>
-
-                        {% for sortie in sortiesList %}
-                            {% if sortie.site.id == site.id and (sortie.dateHeureDebut) >= dateActuelle %}
-                                {% set inscCount = 0 %}
-                                {% set myInsc = 0 %}
-                                {% for inscription in inscriptionsList %}
-                                    {% if inscription.sortie.id == sortie.id %}
-                                        {% set inscCount = inscCount + 1 %}
-                                        {% if inscription.participant.id == app.user.id %}
-                                            {% set myInsc = 1 %}
-                                        {% endif %}
-                                    {% endif %}
-                                {% endfor %}
-
-                                <div class="row mb-4">
-                                    <div class="col">{{ sortie.dateHeureDebut|date("d/m - h:i") }}</div>
-                                    <div class="col">
-                                        <a href="{{ path('sortie_detail', {'id': sortie.id}) }}">{{ sortie.nom }}</a>
-                                    </div>
-                                    <div class="col">{{ sortie.dateLimiteInscription|date("d/m") }}</div>
-                                    <div class="col">
-                                        {% if sortie.etat.id == 2 and sortie.organisateur.id != app.user.id %}
-                                            {% if myInsc == 1 %}
-                                                <a href="{{ path('inscription_remove', {'sortieId':sortie.id}) }}"
-                                                   title="se désister"
-                                                   id="cut-link"
-                                                   class="custom-a">{{ source('@svg_path/toggle-on.svg') }}</a>
-                                            {% elseif myInsc == 0 %}
-                                                <a href="{{ path('inscription_add', {'sortieId':sortie.id}) }}"
-                                                   title="s'inscrire"
-                                                   id="signup-link"
-                                                   class="custom-a">{{ source('@svg_path/toggle-off.svg') }}</a>
+                    </div>
+                    <div class="card-body pt-0 pb-0">
+                        <ul class="list-group list-group-flush">
+                            {% for sortie in sortiesList %}
+                                {% if sortie.site.id == site.id and (sortie.dateHeureDebut) >= dateActuelle %}
+                                    {% set inscCount = 0 %}
+                                    {% set myInsc = 0 %}
+                                    {% for inscription in inscriptionsList %}
+                                        {% if inscription.sortie.id == sortie.id %}
+                                            {% set inscCount = inscCount + 1 %}
+                                            {% if inscription.participant.id == app.user.id %}
+                                                {% set myInsc = 1 %}
                                             {% endif %}
                                         {% endif %}
-                                    </div>
-                                    <div class="col">{{ inscCount }} / {{ sortie.nbInscriptionsMax }}</div>
-                                    <div class="col">{{ sortie.etat.libelle }}</div>
-                                    {% if not sortie.organisateur == null %}
-                                        <div class="col">{{ sortie.organisateur.pseudo }}</div>
-                                    {% else %}
-                                        <div class="col">N/A</div>
-                                    {% endif %}
-                                    <div class="col">
-                                        {% if sortie.etat.id == 1 and sortie.organisateur.id == app.user.id %}
-                                            <a href="{{ path('sortie_state', {'sortieId':sortie.id, 'state':2}) }}"
-                                               title="publier la sortie"
-                                               id="publish-link"
-                                               class="custom-a">Publier</a>
-                                            <a href="{{ path('sortie_delete', {'sortieId':sortie.id}) }}"
-                                               title="supprimer la sortie"
-                                               id="delete-link"
-                                               class="custom-a">{{ source('@svg_path/delete.svg') }}</a>
-                                        {% elseif sortie.etat.id == 2 and sortie.organisateur.id == app.user.id %}
-                                            <a href="{{ path('sortie_modifier', {'pseudo': app.user.pseudo, 'sortieId':sortie.id}) }}"
-                                               title="modifier la sortie"
-                                               id="cancel-link"
-                                               class="custom-a">{{ source('@svg_path/settings.svg') }}</a>
-                                            <a href="#" data-bs-toggle="modal"
-                                               data-bs-target="#confirmationModal{{ sortie.id }} "
-                                               role="button"
-                                               title="annuler la sortie"
-                                               id="cancel-link"
-                                               class="custom-a">{{ source('@svg_path/delete.svg') }}</a>
-                                            <!-- Modale de confirmation pour la suppression -->
-                                            {% include '_partials/_modal_suppression.html.twig' %}
-                                        {% endif %}
-                                    </div>
-                                </div>
-                            {% endif %}
-                        {% endfor %}
+                                    {% endfor %}
+                                    <li class="list-group-item">
+                                        <div class="row">
+                                            {# Affichage en fonction de taille de screen #}
+
+                                            <div class="col">
+                                                <div class="d-block d-lg-none">{{ sortie.dateHeureDebut|date("d/m") }}</div>
+                                                <div class="d-none d-lg-block">{{ sortie.dateHeureDebut|date("d/m - h:i") }}</div>
+                                            </div>
+                                            <div class="col text-truncate">
+                                                {% if not sortie.organisateur == null %}
+                                                    {% if sortie.etat.id == 1 or sortie.etat.id == 2 %}
+                                                        {% if app.user.pseudo == sortie.organisateur.pseudo %}
+                                                            <a href="{{ path('sortie_modifier', {'pseudo': app.user.pseudo, 'sortieId':sortie.id}) }}">{{ sortie.nom }}</a>
+                                                        {% else %}
+                                                            <a href="{{ path('sortie_detail', {'id': sortie.id}) }}">{{ sortie.nom }}</a>
+                                                        {% endif %}
+                                                    {% else %}
+                                                        <a href="{{ path('sortie_detail', {'id': sortie.id}) }}">{{ sortie.nom }}</a>
+                                                    {% endif %}
+                                                {% else %}
+                                                    <a href="{{ path('sortie_detail', {'id': sortie.id}) }}">{{ sortie.nom }}</a>
+                                                {% endif %}
+                                            </div>
+                                            <div class="col d-none d-md-block">{{ sortie.dateLimiteInscription|date("d/m") }}</div>
+                                            <div class="col d-none d-md-block">
+                                                {% if sortie.etat.id == 2 and sortie.organisateur.id != app.user.id %}
+                                                    {% if myInsc == 1 %}
+                                                        <a href="{{ path('inscription_remove', {'sortieId':sortie.id}) }}"
+                                                           title="se désister"
+                                                           id="cut-link"
+                                                           class="custom-a">{{ source('@svg_path/toggle-on.svg') }}</a>
+                                                    {% elseif myInsc == 0 %}
+                                                        <a href="{{ path('inscription_add', {'sortieId':sortie.id}) }}"
+                                                           title="s'inscrire"
+                                                           id="signup-link"
+                                                           class="custom-a">{{ source('@svg_path/toggle-off.svg') }}</a>
+                                                    {% endif %}
+                                                {% endif %}
+                                            </div>
+                                            <div class="col d-none d-sm-block">{{ inscCount }} / {{ sortie.nbInscriptionsMax }}</div>
+                                            <div class="col">{{ sortie.etat.libelle }}</div>
+                                            <div class="col d-none d-lg-block">
+                                                {% if not sortie.organisateur == null %}
+                                                    {{ sortie.organisateur.pseudo }}
+                                                {% else %}
+                                                    N/A
+                                                {% endif %}
+                                            </div>
+
+                                            <div class="col d-none d-lg-block">
+                                                {% if sortie.etat.id == 1 and sortie.organisateur.id == app.user.id %}
+                                                    <a href="{{ path('sortie_state', {'sortieId':sortie.id, 'state':2}) }}"
+                                                       title="publier la sortie"
+                                                       id="publish-link"
+                                                       class="custom-a">Publier</a>
+                                                    <a href="{{ path('sortie_delete', {'sortieId':sortie.id}) }}"
+                                                       title="supprimer la sortie"
+                                                       id="delete-link"
+                                                       class="custom-a">{{ source('@svg_path/delete.svg') }}</a>
+                                                {% elseif sortie.etat.id == 2 and sortie.organisateur.id == app.user.id %}
+                                                    <a href="{{ path('sortie_modifier', {'pseudo': app.user.pseudo, 'sortieId':sortie.id}) }}"
+                                                       title="modifier la sortie"
+                                                       id="cancel-link"
+                                                       class="custom-a">{{ source('@svg_path/settings.svg') }}</a>
+                                                    <a href="#" data-bs-toggle="modal"
+                                                       data-bs-target="#confirmationModal{{ sortie.id }} "
+                                                       role="button"
+                                                       title="annuler la sortie"
+                                                       id="cancel-link"
+                                                       class="custom-a">{{ source('@svg_path/delete.svg') }}</a>
+                                                    <!-- Modale de confirmation pour la suppression -->
+                                                    {% include '_partials/_modal_suppression.html.twig' %}
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </li>
+
+                                {% endif %}
+                            {% endfor %}
+                        </ul>
+
                     </div>
                 </div>
             {% endif %}
