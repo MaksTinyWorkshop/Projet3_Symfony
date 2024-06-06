@@ -62,6 +62,10 @@ class Sortie
     #[ORM\JoinColumn(nullable: true)]
     private ?Participants $organisateur = null;
 
+    #[ORM\ManyToOne(targetEntity: GroupePrive::class)]
+    #[ORM\JoinColumn(nullable: true)]
+    private ?GroupePrive $groupePrive = null;
+
 
     public function getId(): ?int
     {
@@ -186,6 +190,18 @@ class Sortie
     public function setOrganisateur(?Participants $organisateur): static
     {
         $this->organisateur = $organisateur;
+
+        return $this;
+    }
+
+    public function getGroupePrive(): ?GroupePrive
+    {
+        return $this->groupePrive;
+    }
+
+    public function setGroupePrive(?GroupePrive $groupePrive): self
+    {
+        $this->groupePrive = $groupePrive;
 
         return $this;
     }

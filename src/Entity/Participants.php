@@ -3,12 +3,13 @@
 namespace App\Entity;
 
 use App\Repository\ParticipantsRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 #[ORM\Entity(repositoryClass: ParticipantsRepository::class)]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
@@ -25,15 +26,9 @@ class Participants implements UserInterface, PasswordAuthenticatedUserInterface
     #[Assert\Email]
     private ?string $email = null;
 
-    /**
-     * @var list<string> The user roles
-     */
     #[ORM\Column]
     private array $roles = [];
 
-    /**
-     * @var string The hashed password
-     */
     #[ORM\Column]
     private ?string $password = null;
 
@@ -62,16 +57,23 @@ class Participants implements UserInterface, PasswordAuthenticatedUserInterface
     private ?Site $site = null;
 
     #[ORM\Column(length: 100, nullable: true)]
-    private ?string $resetToken;
+    private ?string $resetToken = null;
 
-    #[ORM\Column(type: "string", length: 255, nullable: true)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $photo = null;
 
+    #[ORM\OneToMany(mappedBy: 'createur', targetEntity: GroupePrive::class)]
+    private Collection $groupesPrivesCree;
+
+    #[ORM\ManyToMany(targetEntity: GroupePrive::class, mappedBy: 'participants')]
+    private Collection $groupesPrives;
 
     public function __construct()
     {
         $this->isActif = true;
         $this->roles = ['ROLE_USER'];
+        $this->groupesPrivesCree = new ArrayCollection();
+        $this->groupesPrives = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -91,43 +93,24 @@ class Participants implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    /**
-     * A visual identifier that represents this user.
-     *
-     * @see UserInterface
-     */
     public function getUserIdentifier(): string
     {
         return (string)$this->email;
     }
 
-    /**
-     * @return list<string>
-     * @see UserInterface
-     *
-     */
     public function getRoles(): array
     {
         $roles = $this->roles;
-        // guarantee every user at least has ROLE_USER
         $roles[] = 'ROLE_USER';
-
         return array_unique($roles);
     }
 
-    /**
-     * @param list<string> $roles
-     */
     public function setRoles(array $roles): static
     {
         $this->roles = $roles;
-
         return $this;
     }
 
-    /**
-     * @see PasswordAuthenticatedUserInterface
-     */
     public function getPassword(): string
     {
         return $this->password;
@@ -136,17 +119,12 @@ class Participants implements UserInterface, PasswordAuthenticatedUserInterface
     public function setPassword(string $password): static
     {
         $this->password = $password;
-
         return $this;
     }
 
-    /**
-     * @see UserInterface
-     */
     public function eraseCredentials(): void
     {
-        // If you store any temporary, sensitive data on the user, clear it here
-        // $this->plainPassword = null;
+        // Clear temporary sensitive data
     }
 
     public function getPseudo(): ?string
@@ -157,7 +135,6 @@ class Participants implements UserInterface, PasswordAuthenticatedUserInterface
     public function setPseudo(string $pseudo): static
     {
         $this->pseudo = $pseudo;
-
         return $this;
     }
 
@@ -169,7 +146,6 @@ class Participants implements UserInterface, PasswordAuthenticatedUserInterface
     public function setNom(string $nom): static
     {
         $this->nom = $nom;
-
         return $this;
     }
 
@@ -181,7 +157,6 @@ class Participants implements UserInterface, PasswordAuthenticatedUserInterface
     public function setPrenom(string $prenom): static
     {
         $this->prenom = $prenom;
-
         return $this;
     }
 
@@ -193,7 +168,6 @@ class Participants implements UserInterface, PasswordAuthenticatedUserInterface
     public function setTelephone(string $telephone): static
     {
         $this->telephone = $telephone;
-
         return $this;
     }
 
@@ -205,7 +179,6 @@ class Participants implements UserInterface, PasswordAuthenticatedUserInterface
     public function setActif(bool $isActif): static
     {
         $this->isActif = $isActif;
-
         return $this;
     }
 
@@ -217,7 +190,6 @@ class Participants implements UserInterface, PasswordAuthenticatedUserInterface
     public function setSite(?Site $site): static
     {
         $this->site = $site;
-
         return $this;
     }
 
@@ -226,22 +198,73 @@ class Participants implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->resetToken;
     }
 
-    public function setResetToken(?string $resetToken): void
+    public function setResetToken(?string $resetToken): static
     {
         $this->resetToken = $resetToken;
+        return $this;
     }
-
 
     public function getPhoto(): ?string
     {
         return $this->photo;
     }
 
-    public function setPhoto(?string $photo): self
+    public function setPhoto(?string $photo): static
     {
         $this->photo = $photo;
         return $this;
     }
 
-}
+    /**
+     * @return Collection<int, GroupePrive>
+     */
+    public function getGroupesPrivesCree(): Collection
+    {
+        return $this->groupesPrivesCree;
+    }
 
+    public function addGroupePriveCree(GroupePrive $groupePrive): static
+    {
+        if (!$this->groupesPrivesCree->contains($groupePrive)) {
+            $this->groupesPrivesCree->add($groupePrive);
+            $groupePrive->setCreateur($this);
+        }
+        return $this;
+    }
+
+    public function removeGroupePriveCree(GroupePrive $groupePrive): static
+    {
+        if ($this->groupesPrivesCree->removeElement($groupePrive)) {
+            // Set the owning side to null (unless already changed)
+            if ($groupePrive->getCreateur() === $this) {
+                $groupePrive->setCreateur(null);
+            }
+        }
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, GroupePrive>
+     */
+    public function getGroupesPrives(): Collection
+    {
+        return $this->groupesPrives;
+    }
+
+    public function addGroupePrive(GroupePrive $groupePrive): static
+    {
+        if (!$this->groupesPrives->contains($groupePrive)) {
+            $this->groupesPrives->add($groupePrive);
+            $groupePrive->addParticipant($this);
+        }
+        return $this;
+    }
+
+    public function removeGroupePrive(GroupePrive $groupePrive): static
+    {
+        if ($this->groupesPrives->removeElement($groupePrive)) {
+            $groupePrive->removeParticipant($this);
+        }
+        return $this;
+    }
+}

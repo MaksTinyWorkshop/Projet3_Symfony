@@ -158,7 +158,13 @@ body::before {
 .custom-a:hover {
     transform: scale(1.2);
 }
-
+.disabled-button {
+    background-color: #d3d3d3;
+    color: #808080;
+    cursor: not-allowed; /* Change le curseur pour indiquer l'indisponibilité */
+    opacity: 0.6;
+    pointer-events: none; /* Empêche les événements de pointer */
+}
 .card-custom {
     max-height: 50vh;
     overflow-y: scroll;

@@ -20,6 +20,9 @@
                         </li>
                     {% endif %}
                     <li class="nav-item">
+                        <a class="nav-link">Bienvenue, {{ app.user.pseudo }}</a>
+                    </li>
+                    <li class="nav-item">
                         <a href="{{ path('sortie_main') }}" class="nav-link" >
                             {{ source('@svg_path/sortie.svg') }}Sorties
                         </a>
@@ -27,6 +30,11 @@
                     <li class="nav-item">
                         <a href="{{ path('participants_details', {'pseudo': app.user.pseudo }) }}" class="nav-link" title="Profil">
                             <i class="fas fa-user"></i> Profil
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ path('groupe_prive_index') }}" class="nav-link">
+                            Groupes Privés
                         </a>
                     </li>
                     <li class="nav-item">

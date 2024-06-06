@@ -19,13 +19,13 @@
                 {{ form_end(form) }}
             </div>
         </div>
-        <a href="{{ path('sortie_creer') }}" role="button" class="btn btn-outline-success"
-        >Créer une sortie</a>
 
-        <a href="{{ path('sortie_mes_sorties', {'pseudo': app.user.pseudo}) }}" role="button"
+            <a href="{{ path('sortie_creer') }}" role="button" class="btn btn-primary btn-device"
+            >Créer une sortie</a>
+
+            <a href="{{ path('sortie_mes_sorties', {'pseudo': app.user.pseudo}) }}" role="button"
            class="btn btn-outline-info">Mes sorties</a>
     </div>
-
 
     {# II . Partie affichage de la liste #}
     <div class="container">

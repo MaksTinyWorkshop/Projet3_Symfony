@@ -105,4 +105,19 @@ class InscriptionsService extends AbstractController
         $this->entityManager->persist($inscription); // Inscription dans la base (sans déc !)
         $this->entityManager->flush();               // Flush (pas l'oublier ce connard !!!)
     }
+
+    // Vérifie si un participant a déjà un événement à une date donnée pour un groupe privé
+    public function hasEventOnDate(Participants $participant, \DateTimeInterface $date): bool
+    {
+        $inscriptions = $this->inscriptionRepository->createQueryBuilder('i')
+            ->join('i.sortie', 's')
+            ->andWhere('i.participant = :participant')
+            ->andWhere('s.dateHeureDebut = :date')
+            ->setParameter('participant', $participant)
+            ->setParameter('date', $date)
+            ->getQuery()
+            ->getResult();
+
+        return count($inscriptions) > 0;
+    }
 }

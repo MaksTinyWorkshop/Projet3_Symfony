@@ -5,6 +5,7 @@ namespace App\Form;
 use App\Entity\Lieu;
 use App\Entity\Site;
 use App\Entity\Sortie;
+use App\Entity\GroupePrive;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -45,22 +46,31 @@ class CreaSortieFormType extends AbstractType
                 'label' => 'Publier',
                 'attr' => ['class' => 'btn btn-success'],
             ]);
+
         if ($options['is_edit']) {
             $builder->add('site', EntityType::class, [
                 'label' => 'Campus Organisateur',
                 'class' => Site::class,
                 'choice_label' => 'nom',
             ]);
-
         }
 
+        if ($options['is_private']) {
+            $builder->add('groupePrive', EntityType::class, [
+                'class' => GroupePrive::class,
+                'choice_label' => 'nom',
+                'placeholder' => 'Sélectionnez un groupe privé',
+                'required' => false,
+            ]);
+        }
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => Sortie::class,
-            'is_edit' => false, // Défaut à false pour la création
+            'is_edit' => false,
+            'is_private' => false,
         ]);
     }
 }

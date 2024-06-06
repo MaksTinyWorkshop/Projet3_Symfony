@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ groupe.nom }}{% endblock %}
+
+{% block body %}
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-lg-8 offset-lg-2">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h1 class="card-title">{{ groupe.nom }}</h1>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-subtitle mb-3">Description</h5>
+                        <p class="card-text">{{ groupe.description }}</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title">Participants</h5>
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        {% for participant in groupe.participants %}
+                            <li class="list-group-item">
+                                {{ participant.pseudo }}
+                                {% if participant == groupe.createur %}
+                                    <span class="badge bg-primary ms-2">Créateur</span>
+                                {% endif %}
+                            </li>
+                        {% else %}
+                            <li class="list-group-item text-muted">Aucun participant pour le moment.</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="mt-4 d-flex justify-content-between">
+                    <a href="{{ path('groupe_prive_index') }}" class="btn btn-secondary">Retour aux Groupes</a>
+                    <a href="{{ path('groupe_prive_creer_evenement', {'id': groupe.id}) }}" class="btn btn-primary">Créer un Événement</a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

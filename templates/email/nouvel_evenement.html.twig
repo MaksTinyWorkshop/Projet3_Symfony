@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Nouvel Événement</title>
+</head>
+<body>
+<h1>Nouvel Événement Créé : {{ sortie.nom }}</h1>
+<p>Bonjour {{ participant.pseudo }},</p>
+<p>Vous avez été ajouté à un nouvel événement :</p>
+<ul>
+    <li><strong>Date :</strong> {{ sortie.dateHeureDebut|date('d/m/Y H:i') }}</li>
+    <li><strong>Lieu :</strong> {{ sortie.lieu.nom }}</li>
+    <li><strong>Description :</strong> {{ sortie.infosSortie }}</li>
+</ul>
+<p>Merci,</p>
+<p>L'équipe Sortir.com</p>
+</body>
+</html>
