@@ -10,8 +10,10 @@
     {% set places = sortie.nbInscriptionsMax %}
     {% for inscrit in inscrits %}
         {% set places = places - 1 %}
-        {% if app.user.pseudo == sortie.organisateur.pseudo %}
-            {% set orgaMatch = true %}
+        {% if sortie.organisateur %}
+            {% if app.user.pseudo == sortie.organisateur.pseudo %}
+                {% set orgaMatch = true %}
+            {% endif %}
         {% endif %}
         {% if inscrit.participant.pseudo == app.user.pseudo %}
             {% set isInscrit = true %}
