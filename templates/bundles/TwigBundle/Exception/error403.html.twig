@@ -1,0 +1,10 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ parent() }} | Erreur {% endblock %}
+
+{% block body %}
+
+    <h1>Tu n'as pas les droits nécessaires pour aller ici !</h1>
+    <a href="{{ path('main') }}" class="btn btn-primary" role="button">Retour</a>
+
+{% endblock %}

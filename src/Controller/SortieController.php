@@ -81,13 +81,15 @@ class SortieController extends AbstractController
 
     /////// route 6 : sorties du user en session
     #[Route('/{pseudo}', name: 'mes_sorties')]
-    public function mesSortiesList(string $pseudo, SortieRepository $sortieRepository): Response
+    public function mesSortiesList(string $pseudo, SortieRepository $sortieRepository, InscriptionsRepository $inscriptionsRepository): Response
     {
         $user = $this->getUser();
         if ($user && $user->getPseudo() === $pseudo) {
             $sortiesList = $sortieRepository->findBy(['organisateur'=> $user]);
+            $inscriptionsList = $inscriptionsRepository->findBy(['participant' => $user]);
             return $this->render('sortie/mes_sorties.html.twig', [
                 'sortiesList' => $sortiesList,
+                'inscriptionsList' => $inscriptionsList
             ]);
         }
         return $this->redirectToRoute('sortie_main');

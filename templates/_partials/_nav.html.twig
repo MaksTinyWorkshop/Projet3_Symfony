@@ -1,8 +1,8 @@
 <nav class="navbar navbar-expand-lg navbar-dark navbar-custom sticky-top">
     <div class="container-fluid">
         <a class="navbar-brand" href="{{ path('main') }}">
-            {{ source('@svg_path/logo.svg') }}
-            <span class="h1">Sortir.com</span>
+            <img src="{{ asset('img/logo/logo.png') }} " alt="le logo du site SORTIR.COM!"
+                 class="d-inline-block align-text-top" style="width: 27vw;"/>
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
                 aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -12,6 +12,9 @@
 
             <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                 {% if app.user %}
+                    <li class="nav-item me-3">
+                        <span class="nav-link">Bienvenue {{ app.user.pseudo }}</span>
+                    </li>
                     {% if is_granted('ROLE_ADMIN') %}
                         <li class="nav-item">
                             <a href="{{ path('admin_index') }}" class="nav-link">
@@ -19,9 +22,6 @@
                             </a>
                         </li>
                     {% endif %}
-                    <li class="nav-item">
-                        <a class="nav-link">Bienvenue, {{ app.user.pseudo }}</a>
-                    </li>
                     <li class="nav-item">
                         <a href="{{ path('sortie_main') }}" class="nav-link" >
                             {{ source('@svg_path/sortie.svg') }}Sorties

@@ -21,7 +21,7 @@
         </div>
 
             <a href="{{ path('sortie_creer') }}" role="button" class="btn btn-primary btn-device"
-            >Créer une sortie</a>
+            >Organiser une sortie</a>
 
             <a href="{{ path('sortie_mes_sorties', {'pseudo': app.user.pseudo}) }}" role="button"
            class="btn btn-outline-info">Mes sorties</a>
@@ -86,7 +86,6 @@
                                     <li class="list-group-item">
                                         <div class="row">
                                             {# Affichage en fonction de taille de screen #}
-
                                             <div class="col">
                                                 <div class="d-block d-lg-none">{{ sortie.dateHeureDebut|date("d/m") }}</div>
                                                 <div class="d-none d-lg-block">{{ sortie.dateHeureDebut|date("d/m - h:i") }}</div>

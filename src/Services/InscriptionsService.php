@@ -57,7 +57,7 @@ class InscriptionsService extends AbstractController
         $inscription = $queryBuilder->getQuery()->getOneOrNullResult();
 
         if($inscription != null) {
-
+            $this->addFlash('success', 'Inscription supprimée');
             $this->entityManager->remove($inscription);
             $this->entityManager->flush();
         }
@@ -102,6 +102,7 @@ class InscriptionsService extends AbstractController
         $inscription = new Inscriptions();
         $inscription->setSortie($sortie);
         $inscription->setParticipant($participant);
+        $this->addFlash('success', "Inscription à la sortie effectuée avec succes.");
         $this->entityManager->persist($inscription); // Inscription dans la base (sans déc !)
         $this->entityManager->flush();               // Flush (pas l'oublier ce connard !!!)
     }

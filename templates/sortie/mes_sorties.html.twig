@@ -4,9 +4,10 @@
 
 {% block body %}
     <div class="row m-5 text-center">
-        <h1>Mes sorties crées</h1>
+        <h1>Mes sorties</h1>
     </div>
-    <div class="card text-center bg-body card-custom">
+    <div class="card text-center bg-body card-custom mb-3">
+        <h2 class="text-center sticky-top bg-body-tertiary">Sorties que j'organise</h2>
         <div class="card-header">
             <div class="row">
                 <div class="col">
@@ -16,11 +17,9 @@
                         <div class="col d-none d-sm-block">Lieu</div>
                     </div>
                 </div>
-
                 <div class="col-auto"></div>
             </div>
         </div>
-
         <div class="card-body">
             <ul class="list-group list-group-flush">
                 {% for sortie in sortiesList %}
@@ -35,19 +34,80 @@
                             </div>
                             <div class="col-auto ps-0">
                                 {% if sortie.etat.id == 1 or sortie.etat.id == 2 %}
-                                <a href="{{ path('sortie_modifier', {'pseudo': app.user.pseudo, 'sortieId': sortie.id}) }}">
-                                    {{ source('@svg_path/settings.svg') }}
-                                </a>
+                                    <a href="{{ path('sortie_modifier', {'pseudo': app.user.pseudo, 'sortieId': sortie.id}) }}">
+                                        {{ source('@svg_path/settings.svg') }}
+                                    </a>
                                 {% endif %}
                             </div>
                         </div>
-
                     </li>
                 {% endfor %}
             </ul>
         </div>
     </div>
+
+    <div class="card text-center bg-body card-custom">
+        <h2 class="text-center sticky-top bg-body-tertiary">Sorties auxquelles je me suis inscrit</h2>
+
+        {% macro renderSection(title, inscriptionsList, etatId, showInscription) %}
+            <div class="card-header">
+                <div class="row">
+                    <div class="col text-center h3">
+                        {{ title }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div class="row justify-content-around">
+                            <div class="col">Sortie</div>
+                            {% if showInscription %}
+                                <div class="col">Inscription</div>
+                            {% endif %}
+                            <div class="col d-none d-sm-block">Lieu</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <ul class="list-group list-group-flush">
+                    {% set found = false %}
+                    {% for inscription in inscriptionsList %}
+                        {% if inscription.sortie.etat.id == etatId %}
+                            {% set found = true %}
+                            <li class="list-group-item">
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="row justify-content-around">
+                                            <div class="col">{{ inscription.sortie.nom }}</div>
+                                            {% if showInscription %}
+                                                <div class="col">
+                                                    <a href="{{ path('inscription_remove', {'sortieId': inscription.sortie.id}) }}"
+                                                       title="se désister"
+                                                       class="custom-a">{{ source('@svg_path/toggle-on.svg') }}</a>
+                                                </div>
+                                            {% endif %}
+                                            <div class="col d-none d-sm-block">{{ inscription.sortie.lieu.nom }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                    {% if not found %}
+                        <li class="list-group-item">
+                            Rien ici pour le moment...
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        {% endmacro %}
+
+        {{ _self.renderSection('Futures', inscriptionsList, 2, true) }}
+        {{ _self.renderSection('En cours', inscriptionsList, 3, false) }}
+        {{ _self.renderSection('Passées', inscriptionsList, 4, false) }}
+    </div>
 {% endblock %}
-
-
-
+{#
+Le bloc {% macro renderSection(title, inscriptionsList, etatId, showInscription) %} est défini pour créer des sections réutilisables.
+Il prend des paramètres pour le titre de la section, la liste des inscriptions, l'ID de l'état, et un booléen pour décider d'afficher ou non l'option d'inscription.
+#}

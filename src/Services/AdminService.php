@@ -35,7 +35,6 @@ class AdminService extends AbstractController
         private UserPasswordHasherInterface $passwordHasher,
     )
     {
-
     }
 
 
@@ -62,7 +61,6 @@ class AdminService extends AbstractController
                 $this->addFlash('warning', 'Un utilisateur avec cet email est déjà enregistré');
             }
         }
-
         return $this->render('admin/importSingle.html.twig', [
             'registrationForm' => $form,
         ]);
@@ -137,7 +135,6 @@ class AdminService extends AbstractController
                 }
 
                 $this->addFlash('success', count($newParticipants) . ' utilisateurs importés avec succès.');
-
 
                 return $this->redirectToRoute('admin_index');
 
