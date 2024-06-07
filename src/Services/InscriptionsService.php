@@ -58,7 +58,7 @@ class InscriptionsService extends AbstractController
         $inscription = $queryBuilder->getQuery()->getOneOrNullResult();
 
         if($inscription != null) {
-            $this->addFlash('success', 'Inscription supprimée');
+            $this->addFlash('success', 'Vous avez bien annulé votre inscription');
             $this->entityManager->remove($inscription);
             $this->entityManager->flush();
         }

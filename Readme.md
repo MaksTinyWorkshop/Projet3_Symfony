@@ -25,6 +25,10 @@ Aussi pour éviter que les mails partent dans la table messenger_, dans config/m
 commenter la première ligne sous 'routing'
 - ![img.png](img.png)
 
+### Système de token
+A ajouter dans le .env
+- ![img_1.png](img_1.png)
+- Le contenu est choisi arbitrairement, c'est une clé unique qui lie les autres
 
 ## Bon à savoir :
 
