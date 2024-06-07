@@ -9,6 +9,7 @@
 
 namespace App\Services;
 
+use App\Entity\Etat;
 use App\Entity\Inscriptions;
 use App\Entity\Participants;
 use App\Entity\Sortie;
@@ -78,6 +79,10 @@ class InscriptionsService extends AbstractController
         if (!$participant) {
             throw new \Exception("L'utilisateur n'existe pas");
         }
+        $etat = $this->entityManager->getRepository(Etat::class)->findOneBy(['id'=> 6]);
+        if (!$etat) {
+            throw new \Exception("L'état n'existe pas");
+        }
 
         //vérification d'insciption à la même date pour un autre event
         $ListeDesInscriptions = $this->inscriptionRepository->createQueryBuilder('ir')
@@ -90,10 +95,11 @@ class InscriptionsService extends AbstractController
 
         // Boucle de vérification sur toutes les inscriptions de l'utilisateur
         foreach ($ListeDesInscriptions as $item) {
+            $stateEventCourant = $item->getSortie()->getEtat()->getId(); // check de l'état de la sortie qu'on essaye de savoir qui que quoi
             $dateEventCourant = $item->getSortie()->getDateHeureDebut()->format('Y-m-d'); // Conversion de format pour avoir juste la date
             $dateEventToCheck = $sortie->getDateHeureDebut()->format('Y-m-d'); // Conversion de format pour avoir juste la date
 
-            if ($dateEventCourant == $dateEventToCheck) { // Si les dates coïncident
+            if ($dateEventCourant == $dateEventToCheck && $stateEventCourant <= 4) { // Si les dates coïncident
                 $this->addFlash('danger', "Pour cette date, vous êtes déjà inscrit à un autre événement."); // Message d'erreur
                 return; // on dégage de la fonction
             }
