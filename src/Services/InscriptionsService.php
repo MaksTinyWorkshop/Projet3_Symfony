@@ -79,10 +79,6 @@ class InscriptionsService extends AbstractController
         if (!$participant) {
             throw new \Exception("L'utilisateur n'existe pas");
         }
-        $etat = $this->entityManager->getRepository(Etat::class)->findOneBy(['id'=> 6]);
-        if (!$etat) {
-            throw new \Exception("L'état n'existe pas");
-        }
 
         //vérification d'insciption à la même date pour un autre event
         $ListeDesInscriptions = $this->inscriptionRepository->createQueryBuilder('ir')
