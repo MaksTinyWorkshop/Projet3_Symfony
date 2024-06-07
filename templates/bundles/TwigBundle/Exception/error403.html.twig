@@ -3,8 +3,11 @@
 {% block title %}{{ parent() }} | Erreur {% endblock %}
 
 {% block body %}
+<div class="container text-center m-5">
+    <img src="{{ asset('img/403.png') }}" alt="Erreur 403">
+    <h1 class="text-center">Tu n'as pas les droits nécessaires pour aller ici !</h1>
+    <a href="{{ path('main') }}" class="btn btn-primary mt-5" role="button" style="scale: 2;">Retour</a>
+</div>
 
-    <h1>Tu n'as pas les droits nécessaires pour aller ici !</h1>
-    <a href="{{ path('main') }}" class="btn btn-primary" role="button">Retour</a>
 
 {% endblock %}

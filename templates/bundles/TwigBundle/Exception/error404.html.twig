@@ -4,7 +4,10 @@
 
 {% block body %}
 
-    <h1>Déso mon coco mais tu veux aller là où c'est pas possible !</h1>
-    <a href="{{ path('main') }}" class="btn btn-primary" role="button">Retour</a>
+    <div class="container text-center m-5">
+        <img src="{{ asset('img/404.png') }}" alt="Erreur 404">
+        <h1 class="text-center">Déso mon coco mais tu veux aller là où c'est pas possible !</h1>
+        <a href="{{ path('main') }}" class="btn btn-primary mt-5" role="button" style="scale: 2;">Retour</a>
+    </div>
 
 {% endblock %}
