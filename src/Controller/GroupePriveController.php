@@ -2,9 +2,11 @@
 
 namespace App\Controller;
 
+use App\Entity\Etat;
 use App\Entity\GroupePrive;
 use App\Entity\Sortie;
-use App\Form\CreaSortieFormType;
+
+use App\Form\CreaSortiePrivateFormType;
 use App\Form\GroupePriveType;
 use App\Repository\GroupePriveRepository;
 use App\Services\InscriptionsService;
@@ -15,19 +17,24 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
+
+//Todo: déporter les méthodes dans un service
+
+#[Route('/groupe-prive', name: 'groupe_prive_')]
 class GroupePriveController extends AbstractController
 {
-    #[Route('/groupes-prives', name: 'groupe_prive_index')]
+    #[Route('/', name: 'index')]
     public function index(GroupePriveRepository $groupePriveRepository): Response
     {
-        $groupes = $groupePriveRepository->findAll();
+        $user = $this->getUser();
+        $groupes = $groupePriveRepository->findBy(['createur' => $user->getId()]);
 
         return $this->render('groupe_prive/index.html.twig', [
             'groupes' => $groupes,
         ]);
     }
 
-    #[Route('/groupe-prive/{id}', name: 'groupe_prive_show', requirements: ['id' => '\d+'])]
+    #[Route('/{id}', name: 'show', requirements: ['id' => '\d+'])]
     public function show(GroupePrive $groupePrive): Response
     {
         return $this->render('groupe_prive/show.html.twig', [
@@ -35,48 +42,54 @@ class GroupePriveController extends AbstractController
         ]);
     }
 
-    #[Route('/groupe-prive/{id}/creer-evenement', name: 'groupe_prive_creer_evenement', requirements: ['id' => '\d+'])]
+    #[Route('/{id}/creer-evenement', name: 'creer_evenement', requirements: ['id' => '\d+'])]
     public function creerEvenement(
         Request $request,
         GroupePrive $groupePrive,
         EntityManagerInterface $entityManager,
         InscriptionsService $inscriptionsService,
-        SendMailService $sendMailService
+        SendMailService $sendMailService,
+
     ): Response {
         $sortie = new Sortie();
-        $form = $this->createForm(CreaSortieFormType::class, $sortie, [
-            'is_private' => true,
+        $nbParticipants = $groupePrive->getParticipants()->count();
+        $form = $this->createForm(CreaSortiePrivateFormType::class, $sortie, [
+            'nbParticipants' => $nbParticipants,
         ]);
-
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $sortie->setOrganisateur($this->getUser());
-            $sortie->setGroupePrive($groupePrive);
+            $sortie->setOrganisateur($this->getUser())
+            ->setGroupePrive($groupePrive)
+            ->setSite($this->getUser()->getSite())
+            ->setEtat($entityManager->getRepository(Etat::class)->findOneBy(['id' => '3']));
 
             foreach ($groupePrive->getParticipants() as $participant) {
                 if ($inscriptionsService->hasEventOnDate($participant, $sortie->getDateHeureDebut())) {
                     $this->addFlash('danger', "L'utilisateur {$participant->getPseudo()} est déjà inscrit à un autre événement ce jour-là.");
-                    return $this->redirectToRoute('groupe_prive_show', ['id' => $groupePrive->getId()]);
+                    // suppression du return ici car si un seul est pris sur cette intervalle ça coupe toute la procédure
                 }
             }
 
             $entityManager->persist($sortie);
             $entityManager->flush();
 
+            ////// Fonctionnel mais désactivé pour éviter de surcharger pendant les phases de test
+            /*
             foreach ($groupePrive->getParticipants() as $participant) {
                 $sendMailService->sendMail(
                     'no-reply@sortir.com',
                     $participant->getEmail(),
                     'Nouvel Événement Créé',
-                    'emails/nouvel_evenement.html.twig',
+                    'email/nouvel_evenement.html.twig',
                     [
                         'sortie' => $sortie,
                         'participant' => $participant,
                     ]
                 );
             }
-
+            */
+            $this->addFlash('success', 'L\'evenement privé '. $sortie->getNom() .' a été créé avec succès.');
             return $this->redirectToRoute('groupe_prive_show', ['id' => $groupePrive->getId()]);
         }
 
@@ -86,7 +99,7 @@ class GroupePriveController extends AbstractController
         ]);
     }
 
-    #[Route('/groupes-prives/creer', name: 'groupe_prive_new')]
+    #[Route('/creer', name: 'new')]
     public function new(
         Request $request,
         EntityManagerInterface $entityManager

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <title>Nouvel Événement</title>
@@ -7,7 +7,7 @@
 <body>
 <h1>Nouvel Événement Créé : {{ sortie.nom }}</h1>
 <p>Bonjour {{ participant.pseudo }},</p>
-<p>Vous avez été ajouté à un nouvel événement :</p>
+<p>Vous avez été ajouté à un nouvel événement privé :</p>
 <ul>
     <li><strong>Date :</strong> {{ sortie.dateHeureDebut|date('d/m/Y H:i') }}</li>
     <li><strong>Lieu :</strong> {{ sortie.lieu.nom }}</li>

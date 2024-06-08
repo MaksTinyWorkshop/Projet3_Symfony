@@ -32,7 +32,6 @@ class CreaSortieFormType extends AbstractType
             ->add('dateLimiteInscription', null, [
                 'widget' => 'single_text',
             ])
-            ->add('nbInscriptionsMax')
             ->add('infosSortie', TextareaType::class, [])
             ->add('lieu', EntityType::class, [
                 'class' => Lieu::class,
@@ -55,14 +54,6 @@ class CreaSortieFormType extends AbstractType
             ]);
         }
 
-        if ($options['is_private']) {
-            $builder->add('groupePrive', EntityType::class, [
-                'class' => GroupePrive::class,
-                'choice_label' => 'nom',
-                'placeholder' => 'Sélectionnez un groupe privé',
-                'required' => false,
-            ]);
-        }
     }
 
     public function configureOptions(OptionsResolver $resolver): void
@@ -70,7 +61,6 @@ class CreaSortieFormType extends AbstractType
         $resolver->setDefaults([
             'data_class' => Sortie::class,
             'is_edit' => false,
-            'is_private' => false,
         ]);
     }
 }
